@@ -766,7 +766,7 @@ Full narrative: §51.
 
 | ID | Item | Mitigation |
 |----|------|------------|
-| TD001 | Host `pnpm` install blocked by Corepack EPERM on this machine | Use `npm` locally; Docker/CI use `pnpm/action-setup` or prebuilt `apps/web/out` |
+| TD001 | Host `pnpm` / Corepack EPERM on some Windows machines | Use `npm` locally; Docker/CI use `pnpm` via Corepack / `pnpm/action-setup` |
 | TD002 | Compose verification requires Docker Desktop running | Document in README; CI builds images even if local daemon is down |
 | TD003 | MLflow Compose uses SQLite + local volume for simplicity | Replace with Postgres backend store before heavy multi-user experiment load |
 | TD004 | Next.js ESLint config is minimal during Phase 1 | Expand to full `eslint-config-next` flat config in Phase 2 polish |

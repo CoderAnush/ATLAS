@@ -2,6 +2,20 @@
 
 All notable changes to ATLAS are documented here.
 
+## [0.1.1] — 2026-07-23 — Next.js production Docker fix
+
+### Fixed
+
+- Replaced nginx + `apps/web/out` static-export web image with a multi-stage Next.js production image (`output: "standalone"`, `node server.js`)
+- Removed `output: "export"` so App Router can support future auth, API routes, sessions, and live updates
+- Updated GitHub Actions Docker job to build the new web image successfully without a prebuilt `out/` directory
+- Compose `web` service now runs the Next.js production server with wget healthchecks
+
+### Changed
+
+- `Dockerfile.web`: deps → builder → runner (pnpm, non-root `nextjs` user)
+- Docs (README, ARCHITECTURE, ROADMAP, idea.md TD001) updated for production Next.js runtime
+
 ## [0.1.0] — 2026-07-23 — Phase 1 Platform Foundation
 
 ### Added
@@ -10,12 +24,11 @@ All notable changes to ATLAS are documented here.
 - FastAPI application factory (`apps/api`) with config, DI container, middleware, exception handlers, health/live/ready/metrics
 - Celery worker foundation (`apps/worker`) with Redis broker and heartbeat task
 - Next.js App Router dashboard shell (`apps/web`) with sidebar navigation, theme switcher, and placeholder module pages
-- Static export (`output: "export"`) served by nginx in Compose for reliable offline image builds
 - SQLAlchemy 2.x + Alembic migration chain (empty foundation revision)
 - MinIO object-storage port + adapter
 - MLflow tracking URI abstraction (no experiment logging yet)
 - Structured JSON logging, Prometheus metrics, OpenTelemetry tracing hook
-- Docker multi-stage images for api/worker; nginx web image; binary-based minio/prometheus/grafana images
+- Docker multi-stage images for api/worker/web; binary-based minio/prometheus/grafana images
 - Docker Compose stack: api, web, worker, postgres, redis, minio, mlflow, prometheus, grafana
 - Helm chart + Kubernetes base manifests for the platform shell
 - GitHub Actions CI (lint, typecheck, tests, image builds)
@@ -28,7 +41,6 @@ All notable changes to ATLAS are documented here.
 
 - Prometheus `prometheus.yml` malformed `global` block (prevented scrape config load)
 - Grafana image missing plugins/logs/provisioning directories
-- Next.js nav hrefs missing trailing slashes under `trailingSlash: true` (static export client routing)
 - Documented Docker Hub TLS workarounds and Python ≥3.11 constraint for slim base images
 
 ### Notes

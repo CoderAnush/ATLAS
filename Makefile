@@ -7,9 +7,9 @@ help:
 	@echo "  make lint           - ruff check + format check"
 	@echo "  make typecheck      - mypy"
 	@echo "  make test           - pytest"
-	@echo "  make web-install    - npm install in apps/web"
-	@echo "  make web-build      - static Next.js export to apps/web/out"
-	@echo "  make compose-up     - build web export + docker compose up --build -d"
+	@echo "  make web-install    - pnpm install in apps/web"
+	@echo "  make web-build      - Next.js production build (.next)"
+	@echo "  make compose-up     - docker compose up --build -d"
 	@echo "  make compose-down   - docker compose down"
 	@echo "  make compose-ps     - docker compose ps"
 	@echo "  make release-check  - lint + typecheck + test + web-build"
@@ -28,12 +28,15 @@ test:
 	uv run pytest -q
 
 web-install:
-	cd apps/web && npm install
+	cd apps/web && pnpm install
 
 web-build: web-install
-	cd apps/web && npm run build
+	cd apps/web && pnpm build
 
-compose-up: web-build
+web-dev: web-install
+	cd apps/web && pnpm dev
+
+compose-up:
 	docker compose up --build -d
 
 compose-down:

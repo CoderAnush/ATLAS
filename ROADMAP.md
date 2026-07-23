@@ -38,7 +38,7 @@ Living delivery plan. **`idea.md` remains the architectural source of truth.** U
 **Release:** **v0.1.0 — ATLAS Platform Foundation** (2026-07-23)
 
 - [x] `uv` Python workspace (`pyproject.toml`, packages)  
-- [x] `pnpm`/`npm` workspace + Next.js app scaffold (static export for Compose)  
+- [x] `pnpm`/`npm` workspace + Next.js app scaffold (production Next.js Docker image)  
 - [x] FastAPI app health endpoints  
 - [x] Docker Compose: api, worker, web, postgres, redis, minio, mlflow, prometheus, grafana  
 - [x] OpenTelemetry hooks + structured logging + Prometheus metrics  

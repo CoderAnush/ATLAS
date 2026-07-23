@@ -5,7 +5,7 @@
 > From Raw Data to Production AI with One Command.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
-[![Version](https://img.shields.io/badge/version-v0.1.0-blue.svg)](./CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-v0.1.1-blue.svg)](./CHANGELOG.md)
 [![Python](https://img.shields.io/badge/python-%3E%3D3.11-blue.svg)](./pyproject.toml)
 [![Phase](https://img.shields.io/badge/phase-1%20frozen-brightgreen.svg)](./ROADMAP.md)
 [![CI](https://img.shields.io/github/actions/workflow/status/CoderAnush/ATLAS/ci.yml?branch=main&label=CI)](https://github.com/CoderAnush/ATLAS/actions)
@@ -54,11 +54,7 @@ On hosts with flaky Docker Hub TLS, pre-fetch Linux binaries once:
 pwsh scripts/dev/fetch-binaries.ps1
 ```
 
-Then build the Next.js static export before Compose web image builds:
-
-```bash
-cd apps/web && npm install && npm run build && cd ../..
-```
+The **web** image builds Next.js inside Docker (multi-stage, `pnpm build` → standalone `node server.js`). No host `out/` directory is required.
 
 ---
 
@@ -69,12 +65,11 @@ cd apps/web && npm install && npm run build && cd ../..
 cp .env.example .env
 # Recommended on Windows / first build:
 #   pwsh scripts/dev/fetch-binaries.ps1
-#   cd apps/web && npm install && npm run build && cd ../..
 docker compose up --build -d
 docker compose ps
 ```
 
-Or: `make compose-up` (builds the web export, then Compose).
+Or: `make compose-up`.
 
 Once healthy:
 
@@ -103,7 +98,7 @@ Dev credentials in Compose (local only): Postgres `atlas`/`atlas`, MinIO `minioa
 ## Architecture (Phase 1)
 
 ```text
-browser → web:3000 (nginx + Next.js static export)
+browser → web:3000 (Next.js production server)
        → api:8000  → postgres / redis / minio / mlflow
 worker ← redis (Celery)
 prometheus → api:/metrics
@@ -119,7 +114,7 @@ Full design: [`ARCHITECTURE.md`](./ARCHITECTURE.md). Locked decisions: [`idea.md
 ```text
 apps/
   api/            FastAPI composition root
-  web/            Next.js App Router shell (static export for Compose)
+  web/            Next.js App Router shell (production Node server in Compose)
   worker/         Celery worker
 packages/         Shared Python libraries (core, contracts, db, storage, telemetry, ml)
                   + atlas-ui placeholder for shared frontend components
@@ -177,10 +172,9 @@ uv run celery -A atlas_worker.celery_app worker --loglevel=INFO
 ## Docker usage notes
 
 - **API / worker** images install from exported `requirements-*.txt` (no `uv` inside the image).
-- **Web** image serves `apps/web/out/` via nginx — run `npm run build` in `apps/web` before `docker compose build web`.
+- **Web** image is a multi-stage Next.js build (`pnpm install` → `pnpm build` → standalone `node server.js`). No nginx; no `apps/web/out`.
 - **MinIO / Prometheus / Grafana** images unpack host-fetched Linux binaries from `infrastructure/docker/bin/` (see `scripts/dev/fetch-binaries.ps1`).
 - **MLflow** image `pip install`s MLflow (first build is slow).
-- Multi-stage builds are used for api/worker; web is a thin nginx stage.
 
 Images built by Compose: `atlas-api`, `atlas-web`, `atlas-worker`, `atlas-minio`, `atlas-minio-init`, `atlas-mlflow`, `atlas-prometheus`, `atlas-grafana`.
 
@@ -203,10 +197,8 @@ Create `docs/screenshots/` and drop PNGs when ready; links above are intentional
 | Symptom | Fix |
 |---------|-----|
 | `docker compose build` fails pulling Hub images (TLS / `HTTP response to HTTPS client`) | Prefer cached tags (`python:3.11-slim`, `postgres:15-alpine`, `redis:7-alpine`, `nginx:stable-alpine`). Run `pwsh scripts/dev/fetch-binaries.ps1` for MinIO/Prometheus/Grafana. |
-| `web` build: missing files under `/usr/share/nginx/html` | Build the Next.js export first: `cd apps/web && npm run build`. |
-| Prometheus unhealthy / YAML parse errors | Ensure `infrastructure/monitoring/prometheus/prometheus.yml` uses a nested `global:` block. |
-| Grafana provisioning directory warnings | Empty `provisioning/plugins` and `provisioning/alerting` dirs are included; rebuild grafana image if upgrading. |
-| Host `pnpm` / Corepack `EPERM` | Use `npm` locally; CI uses `pnpm/action-setup`. |
+| `web` image fails to build | Ensure Docker can pull `node:22-alpine`. The image builds Next.js inside the Dockerfile — no host `out/` directory is needed. |
+| Host `pnpm` / Corepack `EPERM` | Use `npm` locally; Docker/CI use `pnpm`. |
 | `/health/ready` degraded | Check postgres, redis, minio, mlflow containers; see `docker compose logs api`. |
 | Port already in use | Stop conflicting local Postgres/Redis or change Compose port mappings. |
 

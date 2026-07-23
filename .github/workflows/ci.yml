@@ -30,9 +30,6 @@ jobs:
 
   web:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: apps/web
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -41,18 +38,26 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
       - name: Install
+        working-directory: apps/web
         run: pnpm install
       - name: Typecheck
+        working-directory: apps/web
         run: pnpm typecheck
+      - name: Lint
+        working-directory: apps/web
+        run: pnpm lint
       - name: Build
+        working-directory: apps/web
         run: pnpm build
         env:
           NEXT_PUBLIC_API_URL: http://localhost:8000
 
   docker:
     runs-on: ubuntu-latest
-    needs: [python]
+    needs: [python, web]
     steps:
       - uses: actions/checkout@v4
       - name: Build API image
@@ -60,4 +65,4 @@ jobs:
       - name: Build Worker image
         run: docker build -f infrastructure/docker/Dockerfile.worker -t atlas-worker:ci .
       - name: Build Web image
-        run: docker build -f infrastructure/docker/Dockerfile.web -t atlas-web:ci .
+        run: docker build -f infrastructure/docker/Dockerfile.web -t atlas-web:ci --build-arg NEXT_PUBLIC_API_URL=http://localhost:8000 .

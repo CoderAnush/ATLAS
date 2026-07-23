@@ -7,13 +7,13 @@ import { clsx } from "clsx";
 
 const NAV = [
   { href: "/", label: "Dashboard" },
-  { href: "/projects/", label: "Projects" },
-  { href: "/datasets/", label: "Datasets" },
-  { href: "/experiments/", label: "Experiments" },
-  { href: "/models/", label: "Models" },
-  { href: "/deployments/", label: "Deployments" },
-  { href: "/monitoring/", label: "Monitoring" },
-  { href: "/settings/", label: "Settings" },
+  { href: "/projects", label: "Projects" },
+  { href: "/datasets", label: "Datasets" },
+  { href: "/experiments", label: "Experiments" },
+  { href: "/models", label: "Models" },
+  { href: "/deployments", label: "Deployments" },
+  { href: "/monitoring", label: "Monitoring" },
+  { href: "/settings", label: "Settings" },
 ];
 
 export function AppShell({ children }: { children: React.ReactNode }) {
@@ -43,10 +43,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </div>
         <nav className="flex gap-2 overflow-x-auto lg:flex-col lg:gap-1">
           {NAV.map((item) => {
-            const active =
-              item.href === "/"
-                ? pathname === "/"
-                : pathname === item.href || pathname === item.href.slice(0, -1);
+            const active = pathname === item.href;
             return (
               <Link
                 key={item.href}

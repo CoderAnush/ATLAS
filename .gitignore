@@ -81,8 +81,8 @@ out/
 .eslintcache
 
 # --- ML / data / artifacts (never commit raw datasets by default) ---
-data/
-datasets/
+/data/
+/datasets/
 artifacts/
 mlruns/
 mlartifacts/

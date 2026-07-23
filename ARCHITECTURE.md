@@ -18,7 +18,7 @@ grafana → prometheus
 
 Local orchestration: `docker compose up --build` (see root `docker-compose.yml`).
 
-**Web delivery (v0.1.0):** Next.js builds a static export (`apps/web/out`) served by nginx in Compose. Local `next dev` remains available for interactive UI work. Nav routes use trailing slashes to match `trailingSlash: true`.
+**Web delivery:** Next.js App Router production server via multi-stage Docker (`output: "standalone"`, `node server.js`). Not a static export; nginx is not used for the main web service. Supports future auth, API routes, sessions, and live updates.
 
 **Infra images:** When Docker Hub pulls fail, MinIO/Prometheus/Grafana images unpack host-fetched Linux binaries from `infrastructure/docker/bin/` (see `scripts/dev/fetch-binaries.ps1`).
 
