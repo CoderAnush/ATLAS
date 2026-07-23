@@ -1,0 +1,5 @@
+id = "atlas.algorithms.example_baseline"
+name = "Example Baseline Algorithm"
+version = "0.0.0"
+type = "algorithm"
+status = "placeholder"

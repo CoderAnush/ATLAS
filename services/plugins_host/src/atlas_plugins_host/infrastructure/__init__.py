@@ -1,0 +1,1 @@
+"""Infrastructure adapters for plugins_host (DB, queue, external APIs)."""

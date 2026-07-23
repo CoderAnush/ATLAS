@@ -1,0 +1,1 @@
+"""Domain layer for documentation (entities, value objects, domain services)."""

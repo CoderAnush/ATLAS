@@ -1,0 +1,1 @@
+"""Domain layer for catalog (entities, value objects, domain services)."""

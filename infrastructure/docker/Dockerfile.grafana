@@ -1,0 +1,30 @@
+FROM python:3.11-slim
+
+USER root
+COPY infrastructure/docker/bin/grafana.tar.gz /tmp/grafana.tar.gz
+RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates tar libfontconfig1 \
+    && mkdir -p /usr/share/grafana \
+    && tar -xzf /tmp/grafana.tar.gz -C /usr/share/grafana --strip-components=1 \
+    && ln -sf /usr/share/grafana/bin/grafana-server /usr/local/bin/grafana-server \
+    && mkdir -p /var/lib/grafana /var/lib/grafana/plugins /var/lib/grafana/logs /etc/grafana/provisioning/plugins /etc/grafana/provisioning/alerting \
+    && groupadd --system --gid 10001 atlas || true \
+    && id -u atlas >/dev/null 2>&1 || useradd --system --uid 10001 --gid atlas --home /var/lib/grafana --shell /usr/sbin/nologin atlas \
+    && chown -R 10001:10001 /var/lib/grafana /usr/share/grafana /etc/grafana \
+    && rm -rf /tmp/grafana.tar.gz /var/lib/apt/lists/*
+
+ENV GF_PATHS_DATA=/var/lib/grafana \
+    GF_PATHS_HOME=/usr/share/grafana \
+    GF_PATHS_LOGS=/var/lib/grafana/logs \
+    GF_PATHS_PLUGINS=/var/lib/grafana/plugins \
+    GF_PATHS_PROVISIONING=/etc/grafana/provisioning \
+    GF_SERVER_HTTP_PORT=3000
+
+USER 10001
+EXPOSE 3000
+WORKDIR /usr/share/grafana
+
+HEALTHCHECK --interval=15s --timeout=5s --retries=10 \
+  CMD curl -fsS http://127.0.0.1:3000/api/health || exit 1
+
+ENTRYPOINT ["grafana-server"]
+CMD ["--homepath=/usr/share/grafana"]

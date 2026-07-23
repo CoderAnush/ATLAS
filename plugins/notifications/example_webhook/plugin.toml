@@ -1,0 +1,5 @@
+id = "atlas.notifications.example_webhook"
+name = "Example Webhook Notification"
+version = "0.0.0"
+type = "notification"
+status = "placeholder"

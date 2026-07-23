@@ -1,0 +1,24 @@
+# Expects pre-downloaded linux binary at infrastructure/docker/bin/minio
+# Run: scripts/dev/fetch-binaries.ps1 (or .sh)
+FROM python:3.11-slim
+
+USER root
+COPY infrastructure/docker/bin/minio /usr/local/bin/minio
+RUN chmod +x /usr/local/bin/minio \
+    && apt-get update && apt-get install -y --no-install-recommends curl ca-certificates \
+    && groupadd --system --gid 10001 atlas || true \
+    && id -u atlas >/dev/null 2>&1 || useradd --system --uid 10001 --gid atlas --home /data --shell /usr/sbin/nologin atlas \
+    && mkdir -p /data && chown -R 10001:10001 /data \
+    && rm -rf /var/lib/apt/lists/*
+
+USER 10001
+EXPOSE 9000 9001
+VOLUME ["/data"]
+ENV MINIO_ROOT_USER=minioadmin \
+    MINIO_ROOT_PASSWORD=minioadmin
+
+HEALTHCHECK --interval=10s --timeout=5s --retries=10 \
+  CMD curl -fsS http://127.0.0.1:9000/minio/health/live || exit 1
+
+ENTRYPOINT ["minio"]
+CMD ["server", "/data", "--address", ":9000", "--console-address", ":9001"]

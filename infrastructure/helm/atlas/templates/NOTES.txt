@@ -1,0 +1,7 @@
+ATLAS Helm chart (Phase 1 platform shell).
+
+```bash
+helm upgrade --install atlas ./infrastructure/helm/atlas
+```
+
+Enable Ingress and replace image repositories for your registry before production use.

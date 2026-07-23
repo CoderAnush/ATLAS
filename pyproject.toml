@@ -1,0 +1,79 @@
+[project]
+name = "atlas"
+version = "0.1.0"
+description = "ATLAS - Autonomous Training, Learning And Serving"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "ATLAS Contributors" }]
+dependencies = []
+
+[dependency-groups]
+dev = [
+  "ruff>=0.8",
+  "mypy>=1.13",
+  "pytest>=8.3",
+  "pytest-asyncio>=0.24",
+  "httpx>=0.27",
+  "pre-commit>=4.0",
+  "types-redis",
+]
+
+[tool.uv]
+package = false
+
+[tool.uv.workspace]
+members = [
+  "packages/atlas-core",
+  "packages/atlas-contracts",
+  "packages/atlas-db",
+  "packages/atlas-storage",
+  "packages/atlas-telemetry",
+  "packages/atlas-ml",
+  "apps/api",
+  "apps/worker",
+]
+
+[tool.uv.sources]
+atlas-core = { workspace = true }
+atlas-contracts = { workspace = true }
+atlas-db = { workspace = true }
+atlas-storage = { workspace = true }
+atlas-telemetry = { workspace = true }
+atlas-ml = { workspace = true }
+atlas-api = { workspace = true }
+atlas-worker = { workspace = true }
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["apps", "packages", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["UP040"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_unreachable = true
+mypy_path = "packages/atlas-core/src:packages/atlas-contracts/src:packages/atlas-db/src:packages/atlas-storage/src:packages/atlas-telemetry/src:apps/api/src:apps/worker/src"
+packages = ["atlas_core", "atlas_contracts", "atlas_db", "atlas_storage", "atlas_telemetry", "atlas_api", "atlas_worker"]
+exclude = ["alembic", "apps/web", ".venv"]
+
+[[tool.mypy.overrides]]
+module = ["minio.*", "celery.*", "prometheus_client.*", "opentelemetry.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "packages", "apps"]
+addopts = "-ra"
+pythonpath = [
+  "packages/atlas-core/src",
+  "packages/atlas-contracts/src",
+  "packages/atlas-db/src",
+  "packages/atlas-storage/src",
+  "packages/atlas-telemetry/src",
+  "apps/api/src",
+  "apps/worker/src",
+]

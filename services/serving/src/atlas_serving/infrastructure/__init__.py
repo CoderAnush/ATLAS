@@ -1,0 +1,1 @@
+"""Infrastructure adapters for serving (DB, queue, external APIs)."""

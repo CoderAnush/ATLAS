@@ -1,0 +1,20 @@
+# Lightweight MLflow tracking server
+FROM python:3.11-slim
+
+USER root
+RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates \
+    && pip install --no-cache-dir "mlflow==2.20.1" \
+    && groupadd --system --gid 10001 atlas || true \
+    && id -u atlas >/dev/null 2>&1 || useradd --system --uid 10001 --gid atlas --home /mlflow --shell /usr/sbin/nologin atlas \
+    && mkdir -p /mlflow/artifacts && chown -R 10001:10001 /mlflow \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /mlflow
+USER 10001
+EXPOSE 5000
+HEALTHCHECK --interval=15s --timeout=10s --start-period=40s --retries=10 \
+  CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:5000/health')"
+
+CMD ["mlflow", "server", "--host", "0.0.0.0", "--port", "5000", \
+     "--backend-store-uri", "sqlite:////mlflow/mlflow.db", \
+     "--default-artifact-root", "/mlflow/artifacts"]

@@ -1,0 +1,1 @@
+"""Domain layer for registry (entities, value objects, domain services)."""

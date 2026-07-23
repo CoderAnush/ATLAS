@@ -1,0 +1,1 @@
+"""HTTP adapters for identity (mounted by apps/api)."""

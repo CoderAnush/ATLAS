@@ -1,0 +1,30 @@
+[project]
+name = "atlas-api"
+version = "0.1.0"
+description = "ATLAS modular-monolith API application."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "alembic>=1.13",
+    "atlas-contracts",
+    "atlas-core",
+    "atlas-db",
+    "atlas-storage",
+    "atlas-telemetry",
+    "fastapi>=0.115",
+    "httpx>=0.27",
+    "pydantic-settings>=2.6",
+    "python-multipart>=0.0.12",
+    "redis>=5.2",
+    "uvicorn[standard]>=0.30",
+]
+
+[project.scripts]
+atlas-api = "atlas_api.main:run"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/atlas_api"]

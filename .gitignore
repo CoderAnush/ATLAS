@@ -1,0 +1,130 @@
+# ATLAS .gitignore
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+Desktop.ini
+ehthumbs.db
+
+# --- Editors / IDEs ---
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json.example
+*.swp
+*.swo
+*~
+
+# --- Env / secrets ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+.credentials/
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.venv/
+venv/
+ENV/
+.env/
+.uv/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+.hypothesis/
+.cache/
+pytestdebug.log
+
+# --- Node / frontend ---
+node_modules/
+.pnpm-store/
+.npm/
+.yarn/
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+.next/
+out/
+.turbo/
+*.tsbuildinfo
+.eslintcache
+
+# --- ML / data / artifacts (never commit raw datasets by default) ---
+data/
+datasets/
+artifacts/
+mlruns/
+mlartifacts/
+models/raw/
+*.parquet
+*.h5
+*.pkl
+*.joblib
+*.onnx
+!**/fixtures/**/*.parquet
+!**/testdata/**/*
+
+# --- Docker / local volumes ---
+.docker/
+docker-data/
+postgres-data/
+redis-data/
+minio-data/
+infrastructure/docker/bin/
+!infrastructure/docker/bin/.gitkeep
+
+# --- Logs / tmp ---
+logs/
+*.log
+tmp/
+temp/
+.tmp/
+
+# --- Terraform / IaC state (if added later) ---
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# --- Coverage / reports ---
+reports/
+site/
+docs/_build/
+
+# --- Cursor / local agent ---
+.cursor/cache/

@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: atlas
+  labels:
+    app.kubernetes.io/part-of: atlas
+---
+# Reference kustomize base. Prefer the Helm chart for installs.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: atlas-api
+  namespace: atlas
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: atlas-api
+  template:
+    metadata:
+      labels:
+        app: atlas-api
+    spec:
+      containers:
+        - name: api
+          image: atlas/api:0.1.0
+          ports:
+            - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: atlas-api
+  namespace: atlas
+spec:
+  selector:
+    app: atlas-api
+  ports:
+    - port: 8000
+      targetPort: 8000

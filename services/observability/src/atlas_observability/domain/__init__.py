@@ -1,0 +1,1 @@
+"""Domain layer for observability (entities, value objects, domain services)."""

@@ -1,0 +1,1 @@
+"""Domain layer for cost (entities, value objects, domain services)."""

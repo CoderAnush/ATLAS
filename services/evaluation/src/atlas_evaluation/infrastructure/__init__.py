@@ -1,0 +1,1 @@
+"""Infrastructure adapters for evaluation (DB, queue, external APIs)."""

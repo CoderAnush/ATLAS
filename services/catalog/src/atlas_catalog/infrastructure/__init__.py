@@ -1,0 +1,1 @@
+"""Infrastructure adapters for catalog (DB, queue, external APIs)."""

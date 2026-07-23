@@ -1,0 +1,47 @@
+FROM python:3.11-slim AS builder
+
+WORKDIR /app
+ENV PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PYTHONDONTWRITEBYTECODE=1
+
+RUN apt-get update && apt-get install -y --no-install-recommends build-essential libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY infrastructure/docker/requirements-api.txt /tmp/requirements-api.txt
+RUN python -m venv /app/.venv \
+    && /app/.venv/bin/pip install --upgrade pip \
+    && /app/.venv/bin/pip install -r /tmp/requirements-api.txt
+
+COPY packages /app/packages
+COPY apps/api /app/apps/api
+RUN /app/.venv/bin/pip install \
+      /app/packages/atlas-core \
+      /app/packages/atlas-contracts \
+      /app/packages/atlas-db \
+      /app/packages/atlas-storage \
+      /app/packages/atlas-telemetry \
+      /app/apps/api
+
+FROM python:3.11-slim AS runtime
+
+RUN apt-get update && apt-get install -y --no-install-recommends libpq5 curl ca-certificates \
+    && rm -rf /var/lib/apt/lists/* \
+    && groupadd --system --gid 10001 atlas || true \
+    && id -u atlas >/dev/null 2>&1 || useradd --system --uid 10001 --gid atlas --home /app --shell /usr/sbin/nologin atlas
+
+WORKDIR /app
+ENV PATH="/app/.venv/bin:$PATH" \
+    VIRTUAL_ENV="/app/.venv" \
+    PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1
+
+COPY --from=builder /app/.venv /app/.venv
+COPY --from=builder /app/packages /app/packages
+COPY --from=builder /app/apps/api /app/apps/api
+
+USER 10001
+EXPOSE 8000
+HEALTHCHECK --interval=15s --timeout=5s --start-period=25s --retries=8 \
+  CMD curl -fsS http://127.0.0.1:8000/health/live || exit 1
+
+CMD ["uvicorn", "atlas_api.main:app", "--host", "0.0.0.0", "--port", "8000"]

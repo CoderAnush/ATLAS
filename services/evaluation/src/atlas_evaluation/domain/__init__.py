@@ -1,0 +1,1 @@
+"""Domain layer for evaluation (entities, value objects, domain services)."""

@@ -1,0 +1,1 @@
+"""Domain layer for profiling (entities, value objects, domain services)."""

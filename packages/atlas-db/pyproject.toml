@@ -1,0 +1,14 @@
+[project]
+name = "atlas-db"
+version = "0.1.0"
+description = "Database infrastructure utilities for ATLAS."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = ["atlas-core", "sqlalchemy>=2", "psycopg[binary]>=3"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/atlas_db"]

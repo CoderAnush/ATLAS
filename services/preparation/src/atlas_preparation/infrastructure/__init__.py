@@ -1,0 +1,1 @@
+"""Infrastructure adapters for preparation (DB, queue, external APIs)."""

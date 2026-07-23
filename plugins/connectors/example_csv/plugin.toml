@@ -1,0 +1,6 @@
+id = "atlas.connectors.example_csv"
+name = "Example CSV Connector"
+version = "0.0.0"
+type = "connector"
+entry = "plugin:register"
+status = "placeholder"

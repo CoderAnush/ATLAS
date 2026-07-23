@@ -1,0 +1,7 @@
+[atlas]
+env = "development"
+log_level = "DEBUG"
+
+[features]
+agents_enabled = false
+plugins_enabled = false

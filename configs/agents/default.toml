@@ -1,0 +1,8 @@
+# Default agent budgets and model preferences — refined when LLM wiring lands.
+[orchestrator]
+max_steps = 32
+max_wall_time_seconds = 3600
+
+[budget]
+max_llm_tokens = 200000
+max_train_hours = 4

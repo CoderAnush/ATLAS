@@ -1,0 +1,1 @@
+"""Domain layer for modeling (entities, value objects, domain services)."""

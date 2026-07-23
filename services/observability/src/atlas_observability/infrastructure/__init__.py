@@ -1,0 +1,1 @@
+"""Infrastructure adapters for observability (DB, queue, external APIs)."""

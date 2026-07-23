@@ -1,0 +1,6 @@
+apiVersion: v2
+name: atlas
+description: ATLAS — Autonomous Training, Learning And Serving (platform shell)
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

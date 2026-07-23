@@ -1,0 +1,1 @@
+"""Infrastructure adapters for documentation (DB, queue, external APIs)."""

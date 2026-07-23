@@ -1,0 +1,45 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Source+Sans+3:wght@400;500;600;700&display=swap");
+
+:root {
+  --atlas-bg: #f3efe6;
+  --atlas-panel: #fffdf8;
+  --atlas-ink: #1c2430;
+  --atlas-muted: #5c6674;
+  --atlas-accent: #0f6a5c;
+  --atlas-line: #d9d2c5;
+  --font-display: "Fraunces", Georgia, serif;
+  --font-sans: "Source Sans 3", "Segoe UI", sans-serif;
+}
+
+.dark {
+  --atlas-bg: #12171f;
+  --atlas-panel: #1a212c;
+  --atlas-ink: #eef2f7;
+  --atlas-muted: #9aa5b5;
+  --atlas-accent: #3dbaa4;
+  --atlas-line: #2a3341;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--atlas-ink);
+  background:
+    radial-gradient(circle at top left, rgba(15, 106, 92, 0.12), transparent 40%),
+    linear-gradient(180deg, var(--atlas-bg), color-mix(in srgb, var(--atlas-bg) 85%, #d7e6e1));
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}

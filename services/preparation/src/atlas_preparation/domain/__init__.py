@@ -1,0 +1,1 @@
+"""Domain layer for preparation (entities, value objects, domain services)."""

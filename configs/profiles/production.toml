@@ -1,0 +1,7 @@
+[atlas]
+env = "production"
+log_level = "INFO"
+
+[features]
+agents_enabled = true
+plugins_enabled = true

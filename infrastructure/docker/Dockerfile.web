@@ -1,0 +1,10 @@
+# Serves a prebuilt Next.js static export (apps/web/out) with nginx.
+# Build export first: `cd apps/web && pnpm install && pnpm build` (or npm).
+# CI builds the export in the Node job before the Docker job when needed.
+FROM nginx:stable-alpine
+COPY infrastructure/docker/nginx-web.conf /etc/nginx/conf.d/default.conf
+COPY apps/web/out/ /usr/share/nginx/html/
+EXPOSE 3000
+HEALTHCHECK --interval=15s --timeout=5s --start-period=5s --retries=8 \
+  CMD wget -qO- http://127.0.0.1:3000/ >/dev/null || exit 1
+CMD ["nginx", "-g", "daemon off;"]

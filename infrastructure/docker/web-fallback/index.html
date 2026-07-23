@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ATLAS</title>
+    <style>
+      :root {
+        --bg: #f3efe6;
+        --panel: #fffdf8;
+        --ink: #1c2430;
+        --muted: #5c6674;
+        --accent: #0f6a5c;
+        --line: #d9d2c5;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: "Segoe UI", sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at top left, rgba(15, 106, 92, 0.12), transparent 40%),
+          linear-gradient(180deg, var(--bg), #e7efe9);
+        min-height: 100vh;
+      }
+      .shell { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
+      aside { background: color-mix(in srgb, var(--panel) 92%, white); border-right: 1px solid var(--line); padding: 1.5rem; }
+      main { padding: 2rem; }
+      h1 { font-size: 2rem; margin: 0; }
+      p { color: var(--muted); line-height: 1.5; }
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        max-width: 48rem;
+      }
+      a { color: var(--accent); }
+      nav a { display: block; padding: 0.5rem 0; color: var(--muted); text-decoration: none; }
+      @media (max-width: 800px) {
+        .shell { grid-template-columns: 1fr; }
+        aside { border-right: 0; border-bottom: 1px solid var(--line); }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <aside>
+        <h1>ATLAS</h1>
+        <p>AI Engineering Platform</p>
+        <nav>
+          <a href="/">Dashboard</a>
+          <a href="/">Projects</a>
+          <a href="/">Datasets</a>
+          <a href="/">Experiments</a>
+          <a href="/">Models</a>
+          <a href="/">Deployments</a>
+          <a href="/">Monitoring</a>
+          <a href="/">Settings</a>
+        </nav>
+      </aside>
+      <main>
+        <div class="card">
+          <p style="text-transform: uppercase; letter-spacing: 0.16em; font-size: 0.75rem;">Phase 1 foundation</p>
+          <h2>Platform shell</h2>
+          <p>
+            This is the Compose fallback web shell. The full Next.js App Router UI lives in
+            <code>apps/web</code>. API docs:
+            <a href="http://localhost:8000/docs" target="_blank" rel="noreferrer">http://localhost:8000/docs</a>
+          </p>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

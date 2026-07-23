@@ -1,0 +1,1 @@
+"""Domain layer for explainability (entities, value objects, domain services)."""

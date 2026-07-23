@@ -1,0 +1,72 @@
+global:
+  nameOverride: atlas
+  fullnameOverride: ""
+
+imagePullSecrets: []
+
+api:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: atlas/api
+    tag: "0.1.0"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8000
+  resources: {}
+
+worker:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: atlas/worker
+    tag: "0.1.0"
+    pullPolicy: IfNotPresent
+  resources: {}
+
+web:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: atlas/web
+    tag: "0.1.0"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 3000
+  resources: {}
+
+ingress:
+  enabled: false
+  className: ""
+  hosts:
+    - host: atlas.local
+      paths:
+        - path: /
+          pathType: Prefix
+          service: web
+        - path: /api
+          pathType: Prefix
+          service: api
+  tls: []
+
+config:
+  atlasEnv: production
+  atlasLogLevel: INFO
+  atlasCorsOrigins: https://atlas.local
+  postgresHost: postgres
+  postgresPort: "5432"
+  postgresDb: atlas
+  redisUrl: redis://redis:6379/0
+  minioEndpoint: minio:9000
+  minioBucket: atlas
+  minioSecure: "false"
+  mlflowTrackingUri: http://mlflow:5000
+
+secrets:
+  postgresUser: atlas
+  postgresPassword: atlas
+  minioAccessKey: minioadmin
+  minioSecretKey: minioadmin
+  atlasSecretKey: change-me

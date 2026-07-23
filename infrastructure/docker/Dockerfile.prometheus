@@ -1,0 +1,26 @@
+# Expects infrastructure/docker/bin/prometheus.tar.gz (linux-amd64 release)
+FROM python:3.11-slim
+
+USER root
+COPY infrastructure/docker/bin/prometheus.tar.gz /tmp/prometheus.tar.gz
+RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates tar \
+    && tar -xzf /tmp/prometheus.tar.gz -C /tmp \
+    && mv /tmp/prometheus-*/prometheus /usr/local/bin/prometheus \
+    && mkdir -p /etc/prometheus /prometheus \
+    && mv /tmp/prometheus-*/consoles /etc/prometheus/ \
+    && mv /tmp/prometheus-*/console_libraries /etc/prometheus/ \
+    && groupadd --system --gid 10001 atlas || true \
+    && id -u atlas >/dev/null 2>&1 || useradd --system --uid 10001 --gid atlas --home /prometheus --shell /usr/sbin/nologin atlas \
+    && chown -R 10001:10001 /prometheus /etc/prometheus \
+    && rm -rf /tmp/prometheus* /var/lib/apt/lists/*
+
+USER 10001
+EXPOSE 9090
+VOLUME ["/prometheus"]
+WORKDIR /prometheus
+
+HEALTHCHECK --interval=15s --timeout=5s --retries=10 \
+  CMD curl -fsS http://127.0.0.1:9090/-/healthy || exit 1
+
+ENTRYPOINT ["prometheus"]
+CMD ["--config.file=/etc/prometheus/prometheus.yml", "--storage.tsdb.path=/prometheus"]

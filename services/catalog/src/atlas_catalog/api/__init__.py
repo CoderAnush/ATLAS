@@ -1,0 +1,1 @@
+"""HTTP adapters for catalog (mounted by apps/api)."""

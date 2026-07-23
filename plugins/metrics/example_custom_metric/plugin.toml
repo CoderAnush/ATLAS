@@ -1,0 +1,5 @@
+id = "atlas.metrics.example_custom"
+name = "Example Custom Metric"
+version = "0.0.0"
+type = "metric"
+status = "placeholder"
