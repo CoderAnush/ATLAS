@@ -2,15 +2,17 @@
 
 High-level system design. For locked decisions, modules, and contracts, see **[`idea.md`](./idea.md)** (source of truth).
 
-**Last Updated:** 2026-07-23 (Phase 1 platform shell implemented)
+**Last Updated:** 2026-07-24 (Phase 2 identity & multi-tenancy)
 
 ATLAS is an **Autonomous AI Engineering Platform (AAEP)**. Full specification: [`idea.md`](./idea.md) §30–§52. This file remains a concise topology guide; **`idea.md` wins on conflicts**.
 
-### Phase 1 runtime topology
+### Phase 2 runtime topology
 
 ```text
-browser → web:3000
-       → api:8000  → postgres / redis / minio / mlflow
+browser → web:3000 (Next.js auth + shell)
+       → api:8000
+            /v1/auth/* · /v1/organizations/* · /v1/api-keys/* · /v1/projects/*
+            → postgres (identity.*) / redis / minio / mlflow
 worker ← redis
 prometheus → api:/metrics
 grafana → prometheus
@@ -18,7 +20,11 @@ grafana → prometheus
 
 Local orchestration: `docker compose up --build` (see root `docker-compose.yml`).
 
-**Web delivery:** Next.js App Router production server via multi-stage Docker (`output: "standalone"`, `node server.js`). Not a static export; nginx is not used for the main web service. Supports future auth, API routes, sessions, and live updates.
+**Auth:** JWT access + rotating refresh; optional `X-API-Key`.  
+**Tenancy:** organization context on principal; repositories filter by `organization_id`.  
+**RBAC:** owner > admin > ml_engineer > data_scientist > approver > viewer.  
+
+**Web delivery:** Next.js App Router production server via multi-stage Docker (`output: "standalone"`, `node server.js`).
 
 **Infra images:** When Docker Hub pulls fail, MinIO/Prometheus/Grafana images unpack host-fetched Linux binaries from `infrastructure/docker/bin/` (see `scripts/dev/fetch-binaries.ps1`).
 
@@ -223,6 +229,63 @@ Client → TLS → API Gateway middleware
 ```
 
 Secrets via environment / K8s Secrets / vault later. Plugins isolated progressively (process → container).
+
+### 10.1 Authentication flow (Phase 2)
+
+```text
+Register/Login
+   → Argon2 verify / hash
+   → create Session + RefreshToken (hashed)
+   → issue JWT access (short-lived) + refresh (opaque, rotating)
+   → audit: login | register
+
+Access request
+   → Bearer JWT  OR  X-API-Key (hashed lookup)
+   → principal: user_id, org_id, role, session_id
+   → tenant middleware binds organization context
+
+Refresh
+   → validate refresh hash, revoke old, mint new pair (rotation)
+   → revoked / expired → 401
+
+Logout
+   → revoke session (+ refresh tokens) → audit
+```
+
+Forgot/reset password and email verification are wired as architecture with a **stubbed mailer** (tokens stored hashed; no SMTP in Phase 2).
+
+### 10.2 Authorization & RBAC
+
+| Role | Typical powers |
+|------|----------------|
+| owner | Billing, delete org, all admin |
+| admin | Members, settings, API keys, projects |
+| ml_engineer | Train/deploy scoped project ops (later phases) |
+| data_scientist | Experiment / data scoped ops (later phases) |
+| approver | HITL gates (later phases) |
+| viewer | Read-only |
+
+Hierarchy: `owner > admin > ml_engineer > data_scientist > approver > viewer`.  
+Endpoint guards call `require_permission(...)`; project membership can further narrow access.
+
+### 10.3 Multi-tenancy
+
+- Every authenticated principal carries `organization_id` (active org).
+- Repositories filter by `organization_id`; handlers must not query across tenants.
+- Switching org updates `users.active_organization_id` and is audited.
+- Projects belong to exactly one organization.
+
+### 10.4 Identity schema (`identity`)
+
+Tables: `users`, `organizations`, `memberships`, `projects`, `project_memberships`, `sessions`, `refresh_tokens`, `api_keys`, `audit_logs`.  
+Migration: `apps/api/alembic/versions/0002_identity_auth.py`.
+
+```text
+organizations 1──* memberships *──1 users
+organizations 1──* projects 1──* project_memberships
+users 1──* sessions / refresh_tokens / api_keys
+* ──▶ audit_logs (append-only)
+```
 
 ---
 

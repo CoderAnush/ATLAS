@@ -4,8 +4,8 @@
 > *From Raw Data to Production AI with One Command.*
 
 **Internal product identity:** **ATLAS — Autonomous AI Engineering Platform (AAEP)**  
-**Status:** Phase 1 frozen — **v0.1.0 Platform Foundation**; awaiting Phase 2 instructions  
-**Last Updated:** 2026-07-23  
+**Status:** Phase 2 complete — **v0.2.0 Identity & Authentication**; awaiting Phase 3 instructions  
+**Last Updated:** 2026-07-24  
 **Primary Branch:** `main`  
 **License:** MIT  
 **Repository:** https://github.com/CoderAnush/ATLAS  
@@ -735,13 +735,20 @@ Full narrative: §51.
 - [x] MinIO storage port/adapter + MLflow URI abstraction  
 - [x] Local verification of Compose health + quality gates for **v0.1.0 Platform Foundation**  
 
-### Next (Phase 2 — do not start until instructed)
+### Completed (Phase 2)
 
-- [ ] Identity context + JWT auth  
-- [ ] OAuth/OIDC hooks  
-- [ ] RBAC + tenancy  
-- [ ] API keys  
-- [ ] Audit log foundation  
+- [x] Identity context + JWT auth (access + rotating refresh)  
+- [x] OAuth/OIDC hooks (provider list stub)  
+- [x] RBAC + tenancy (org + project membership)  
+- [x] API keys (hashed, rotatable, revocable)  
+- [x] Audit log foundation  
+
+### Next (Phase 3 — do not start until instructed)
+
+- [ ] Project CRUD (catalog) + dataset upload  
+- [ ] MinIO-backed dataset versions  
+- [ ] Connector interfaces (SQL, S3 stubs)  
+- [ ] Dataset metadata catalog  
 
 ### Architecture follow-ups (docs/design)
 

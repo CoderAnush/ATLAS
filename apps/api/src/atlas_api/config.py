@@ -24,6 +24,8 @@ class Settings(BaseSettings):
     atlas_api_host: str = "0.0.0.0"
     atlas_api_port: int = 8000
     atlas_secret_key: str = Field(default="change-me-in-production")
+    atlas_access_token_minutes: int = 15
+    atlas_refresh_token_days: int = 14
     atlas_cors_origins: str = "http://localhost:3000,http://127.0.0.1:3000"
 
     postgres_host: str = "localhost"

@@ -6,13 +6,15 @@ import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
+# Ensure identity models are registered on Base.metadata for Alembic / runtime.
+import atlas_identity.infrastructure.models  # noqa: F401
 from atlas_telemetry.logging import configure_logging
 from atlas_telemetry.tracing import setup_tracing
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from atlas_api import __version__
-from atlas_api.api.errors import register_exception_handlers
+from atlas_api.api.errors import SecurityHeadersMiddleware, register_exception_handlers
 from atlas_api.api.v1 import api_v1_router, root_health_router
 from atlas_api.config import Settings, get_settings
 from atlas_api.di import build_container
@@ -55,7 +57,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     app = FastAPI(
         title="ATLAS API",
-        description="Autonomous Training, Learning And Serving — platform foundation",
+        description="Autonomous Training, Learning And Serving — identity & platform API",
         version=__version__,
         lifespan=lifespan,
         docs_url="/docs",
@@ -65,6 +67,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.settings = settings
     app.state.container = build_container(settings)
 
+    app.add_middleware(SecurityHeadersMiddleware)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origins or ["*"],

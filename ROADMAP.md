@@ -52,16 +52,20 @@ Living delivery plan. **`idea.md` remains the architectural source of truth.** U
 
 ---
 
-## Phase 2 — Authentication & Tenancy
+## Phase 2 — Authentication & Tenancy ✅
 
-- [ ] Users, organizations/tenants  
-- [ ] JWT access/refresh  
-- [ ] OAuth/OIDC provider hooks  
-- [ ] RBAC roles & project membership  
-- [ ] API keys  
-- [ ] Audit log foundation  
+**Release:** **v0.2.0 — ATLAS Identity & Authentication** (2026-07-24)
 
-**Exit criteria:** Authenticated multi-tenant API access with role checks.
+- [x] Users, organizations/tenants  
+- [x] JWT access/refresh (with rotation + revocation)  
+- [x] OAuth/OIDC provider hooks (stub / not_configured)  
+- [x] RBAC roles & project membership  
+- [x] API keys  
+- [x] Audit log foundation  
+
+**Exit criteria:** Authenticated multi-tenant API access with role checks. **Met.**
+
+**Completed:** 2026-07-24 — do not start Phase 3 until explicitly approved.
 
 ---
 

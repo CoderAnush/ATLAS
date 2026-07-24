@@ -1,23 +1,25 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { clsx } from "clsx";
+import { useAuth } from "@/lib/auth";
 
 const NAV = [
   { href: "/", label: "Dashboard" },
   { href: "/projects", label: "Projects" },
-  { href: "/datasets", label: "Datasets" },
-  { href: "/experiments", label: "Experiments" },
-  { href: "/models", label: "Models" },
-  { href: "/deployments", label: "Deployments" },
-  { href: "/monitoring", label: "Monitoring" },
   { href: "/settings", label: "Settings" },
+  { href: "/settings/api-keys", label: "API Keys" },
+  { href: "/settings/members", label: "Members" },
 ];
+
+const PUBLIC = new Set(["/login", "/register", "/forgot-password"]);
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, organizations, loading, logout, switchOrganization } = useAuth();
   const [dark, setDark] = useState(false);
 
   useEffect(() => {
@@ -27,11 +29,34 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     document.documentElement.classList.toggle("dark", preferDark);
   }, []);
 
+  useEffect(() => {
+    if (loading) return;
+    const isPublic = PUBLIC.has(pathname);
+    if (!user && !isPublic) {
+      router.replace("/login");
+    }
+    if (user && isPublic) {
+      router.replace("/");
+    }
+  }, [user, loading, pathname, router]);
+
   function toggleTheme() {
     const next = !dark;
     setDark(next);
     document.documentElement.classList.toggle("dark", next);
     window.localStorage.setItem("atlas-theme", next ? "dark" : "light");
+  }
+
+  if (PUBLIC.has(pathname)) {
+    return <main className="min-h-screen">{children}</main>;
+  }
+
+  if (loading || !user) {
+    return (
+      <main className="grid min-h-screen place-items-center text-atlas-muted">
+        Loading ATLAS…
+      </main>
+    );
   }
 
   return (
@@ -60,20 +85,49 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             );
           })}
         </nav>
+        <div className="mt-8 space-y-2 border-t border-atlas-line pt-4">
+          <label className="text-xs uppercase tracking-wide text-atlas-muted">Organization</label>
+          <select
+            className="w-full rounded-md border border-atlas-line bg-atlas-bg px-2 py-2 text-sm"
+            value={user.active_organization_id || ""}
+            onChange={(e) => void switchOrganization(e.target.value)}
+          >
+            {organizations.map((org) => (
+              <option key={org.id} value={org.id}>
+                {org.name}
+              </option>
+            ))}
+          </select>
+        </div>
       </aside>
       <div className="flex min-h-screen flex-col">
         <header className="flex items-center justify-between border-b border-atlas-line bg-atlas-panel/70 px-6 py-4 backdrop-blur">
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-atlas-muted">Phase 1 foundation</p>
-            <h1 className="font-display text-xl text-atlas-ink">Platform shell</h1>
+            <p className="text-xs uppercase tracking-[0.2em] text-atlas-muted">Phase 2 identity</p>
+            <h1 className="font-display text-xl text-atlas-ink">Signed in as {user.full_name}</h1>
           </div>
-          <button
-            type="button"
-            onClick={toggleTheme}
-            className="rounded-md border border-atlas-line px-3 py-2 text-sm text-atlas-ink hover:bg-atlas-bg"
-          >
-            {dark ? "Light" : "Dark"} theme
-          </button>
+          <div className="flex items-center gap-2">
+            <Link
+              href="/settings/profile"
+              className="rounded-md border border-atlas-line px-3 py-2 text-sm text-atlas-ink hover:bg-atlas-bg"
+            >
+              Profile
+            </Link>
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="rounded-md border border-atlas-line px-3 py-2 text-sm text-atlas-ink hover:bg-atlas-bg"
+            >
+              {dark ? "Light" : "Dark"} theme
+            </button>
+            <button
+              type="button"
+              onClick={() => void logout()}
+              className="rounded-md bg-atlas-accent px-3 py-2 text-sm text-white"
+            >
+              Log out
+            </button>
+          </div>
         </header>
         <main className="flex-1 p-6">{children}</main>
       </div>

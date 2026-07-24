@@ -2,6 +2,31 @@
 
 All notable changes to ATLAS are documented here.
 
+## [0.2.0] — 2026-07-24 — ATLAS Identity & Authentication
+
+### Added
+
+- `services/identity` Clean Architecture package (domain, application, infrastructure, API)
+- JWT access + rotating refresh tokens, Argon2 password hashing, session revocation
+- Organizations, memberships, invitations, organization switching
+- RBAC roles: owner, admin, ml_engineer, data_scientist, approver, viewer
+- Project-scoped membership foundation (no dataset features)
+- API keys (create / list / rotate / revoke) with hashed storage and `X-API-Key` auth
+- Audit log trail for auth and tenancy events
+- OAuth/OIDC provider hook endpoint (stub / not_configured)
+- Forgot/reset password architecture (mailer stubbed)
+- Security headers middleware, login throttling via Redis
+- Alembic revision `0002_identity_auth` (`identity` schema)
+- Web: login, register, forgot password, protected shell, profile, API keys, members, org switcher
+- Identity integration tests (`tests/test_identity.py`)
+
+### Changed
+
+- API version bumped to 0.2.0; Compose API image runs migrations on startup
+- Dockerfile.api installs `atlas-identity`
+- Root `VERSION` and `@atlas/web` set to `0.2.0`
+- Added `py.typed` markers across workspace packages for mypy
+
 ## [0.1.1] — 2026-07-23 — Next.js production Docker fix
 
 ### Fixed
@@ -45,5 +70,4 @@ All notable changes to ATLAS are documented here.
 
 ### Notes
 
-- No authentication, datasets, training, agents, or Workflow Compiler in this release (deferred to later phases per `idea.md` / `ROADMAP.md`).
-- GitHub Release for **“ATLAS Platform Foundation”** can be created from tag `v0.1.0` after push.
+- No datasets, training, agents, or Workflow Compiler in Phase 1 (deferred to later phases).

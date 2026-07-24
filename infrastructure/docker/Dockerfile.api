@@ -13,6 +13,7 @@ RUN python -m venv /app/.venv \
     && /app/.venv/bin/pip install -r /tmp/requirements-api.txt
 
 COPY packages /app/packages
+COPY services/identity /app/services/identity
 COPY apps/api /app/apps/api
 RUN /app/.venv/bin/pip install \
       /app/packages/atlas-core \
@@ -20,6 +21,7 @@ RUN /app/.venv/bin/pip install \
       /app/packages/atlas-db \
       /app/packages/atlas-storage \
       /app/packages/atlas-telemetry \
+      /app/services/identity \
       /app/apps/api
 
 FROM python:3.11-slim AS runtime
@@ -37,11 +39,13 @@ ENV PATH="/app/.venv/bin:$PATH" \
 
 COPY --from=builder /app/.venv /app/.venv
 COPY --from=builder /app/packages /app/packages
+COPY --from=builder /app/services/identity /app/services/identity
 COPY --from=builder /app/apps/api /app/apps/api
 
+WORKDIR /app/apps/api
 USER 10001
 EXPOSE 8000
 HEALTHCHECK --interval=15s --timeout=5s --start-period=25s --retries=8 \
   CMD curl -fsS http://127.0.0.1:8000/health/live || exit 1
 
-CMD ["uvicorn", "atlas_api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["sh", "-c", "python run_migrations.py && uvicorn atlas_api.main:app --host 0.0.0.0 --port 8000"]

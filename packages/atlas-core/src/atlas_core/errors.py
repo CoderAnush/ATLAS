@@ -15,3 +15,11 @@ class NotFoundError(AtlasError):
 
 class DependencyError(AtlasError):
     """Raised when an infrastructure dependency is unavailable."""
+
+
+class UnauthorizedError(AtlasError):
+    """Raised when authentication is missing or invalid."""
+
+
+class ForbiddenError(AtlasError):
+    """Raised when the caller lacks permission."""

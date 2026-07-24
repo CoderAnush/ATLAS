@@ -5,20 +5,20 @@
 > From Raw Data to Production AI with One Command.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
-[![Version](https://img.shields.io/badge/version-v0.1.1-blue.svg)](./CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-v0.2.0-blue.svg)](./CHANGELOG.md)
 [![Python](https://img.shields.io/badge/python-%3E%3D3.11-blue.svg)](./pyproject.toml)
-[![Phase](https://img.shields.io/badge/phase-1%20frozen-brightgreen.svg)](./ROADMAP.md)
+[![Phase](https://img.shields.io/badge/phase-2%20identity-brightgreen.svg)](./ROADMAP.md)
 [![CI](https://img.shields.io/github/actions/workflow/status/CoderAnush/ATLAS/ci.yml?branch=main&label=CI)](https://github.com/CoderAnush/ATLAS/actions)
 
 ATLAS is an enterprise-grade **Autonomous AI Engineering Platform (AAEP)**. Upload data, describe your goal in natural language, and receive a trained, explainable, deployable, monitored model—orchestrated by specialized AI agents.
 
 | | |
 |---|---|
-| **Release** | **v0.1.0 — ATLAS Platform Foundation** |
-| **Status** | Phase 1 frozen — permanent platform base |
+| **Release** | **v0.2.0 — ATLAS Identity & Authentication** |
+| **Status** | Phase 2 complete — identity, RBAC, multi-tenancy |
 | **License** | MIT |
 
-Business features (auth, datasets, training, agents) start in **Phase 2+**. Do not implement them until the roadmap phase is explicitly approved.
+Phase 2 (identity) is complete. Dataset ingestion and later features start only with explicit Phase 3+ approval.
 
 ---
 
@@ -58,7 +58,31 @@ The **web** image builds Next.js inside Docker (multi-stage, `pnpm build` → st
 
 ---
 
-## Quick start (Docker)
+## Authentication (Phase 2)
+
+```bash
+# Register (creates org + owner membership)
+curl -X POST http://localhost:8000/v1/auth/register \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"you@example.com","password":"Str0ng!Pass","full_name":"You","organization_name":"Acme"}'
+
+# Login
+curl -X POST http://localhost:8000/v1/auth/login \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"you@example.com","password":"Str0ng!Pass"}'
+```
+
+Web UI: http://localhost:3000/login · `/register` · authenticated dashboard after sign-in.
+
+OpenAPI: http://localhost:8000/docs
+
+After upgrading from v0.1.x, ensure identity migrations run (API container runs `alembic upgrade head` on start):
+
+```bash
+docker compose up --build -d api
+# or locally (with Postgres reachable):
+# cd apps/api && uv run python run_migrations.py
+```
 
 ```bash
 # From the repository root
@@ -206,7 +230,7 @@ Create `docs/screenshots/` and drop PNGs when ready; links above are intentional
 
 ## Roadmap
 
-See [`ROADMAP.md`](./ROADMAP.md). Phase 1 (platform foundation) is **frozen** at v0.1.0. Phase 2 begins only with explicit approval.
+See [`ROADMAP.md`](./ROADMAP.md). Phase 1 is **frozen** at v0.1.0. Phase 2 (identity) is complete at **v0.2.0**. Do not start Phase 3 until explicitly approved.
 
 ---
 
@@ -236,9 +260,9 @@ See [`CONTRIBUTING.md`](./CONTRIBUTING.md). Short version:
 
 ## Version
 
-**v0.1.0 — ATLAS Platform Foundation**
+**v0.2.0 — ATLAS Identity & Authentication**
 
-Tagged on `main`. Create a GitHub Release from the tag when ready (title: *ATLAS Platform Foundation*).
+Ready to tag on `main` when approved. Create a GitHub Release from the tag (title: *ATLAS Identity & Authentication*).
 
 ---
 
