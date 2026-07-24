@@ -26,6 +26,7 @@ class Settings(BaseSettings):
     atlas_secret_key: str = Field(default="change-me-in-production")
     atlas_access_token_minutes: int = 15
     atlas_refresh_token_days: int = 14
+    atlas_max_upload_bytes: int = 536_870_912  # 512 MiB default
     atlas_cors_origins: str = "http://localhost:3000,http://127.0.0.1:3000"
 
     postgres_host: str = "localhost"

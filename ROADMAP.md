@@ -69,15 +69,19 @@ Living delivery plan. **`idea.md` remains the architectural source of truth.** U
 
 ---
 
-## Phase 3 — Dataset Ingestion
+## Phase 3 — Dataset Ingestion ✅
 
-- [ ] Project CRUD  
-- [ ] Upload CSV / Excel / JSON / Parquet  
-- [ ] MinIO-backed dataset versions  
-- [ ] Connector interfaces (SQL, S3 stubs)  
-- [ ] Dataset metadata catalog  
+**Release:** **v0.3.0 — ATLAS Dataset Ingestion Platform** (2026-07-24)
 
-**Exit criteria:** User can upload a dataset and list versions in the UI.
+- [x] Project CRUD (catalog)  
+- [x] Upload CSV / Excel / JSON / Parquet / TSV / ZIP  
+- [x] MinIO-backed dataset versions  
+- [x] Connector interfaces (SQL, S3 stubs)  
+- [x] Dataset metadata catalog  
+
+**Exit criteria:** User can upload a dataset and list versions in the UI. **Met.**
+
+**Completed:** 2026-07-24 — do not start Phase 4 until explicitly approved.
 
 ---
 

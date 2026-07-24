@@ -2,6 +2,7 @@
 
 from datetime import timedelta
 from io import BytesIO
+from typing import BinaryIO
 
 from minio import Minio
 
@@ -17,11 +18,31 @@ class MinioObjectStorage:
         self, bucket: str, object_name: str, data: bytes, *, content_type: str | None = None
     ) -> None:
         """Store bytes in MinIO."""
-        self._client.put_object(
+        self.upload_stream(
             bucket,
             object_name,
             BytesIO(data),
             length=len(data),
+            content_type=content_type,
+        )
+
+    def upload_stream(
+        self,
+        bucket: str,
+        object_name: str,
+        stream: BinaryIO,
+        length: int,
+        *,
+        content_type: str | None = None,
+        part_size: int = 10 * 1024 * 1024,
+    ) -> None:
+        """Stream bytes into MinIO using multipart when length warrants it."""
+        self._client.put_object(
+            bucket,
+            object_name,
+            stream,
+            length=length,
+            part_size=part_size,
             content_type=content_type or "application/octet-stream",
         )
 

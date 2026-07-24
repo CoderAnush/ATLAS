@@ -1,9 +1,30 @@
-# Service: catalog
+# Catalog Service
 
-Projects, datasets, dataset versions, connectors (CSV/SQL/S3/…).
+Bounded context for **projects**, **datasets**, **versions**, and **connectors**.
 
-**Architecture:** Clean Architecture (domain / application / infrastructure).  
-**Status:** Placeholder — no business logic yet.  
-**Extraction:** Microservice candidate per `ARCHITECTURE.md`.
+## Layout
 
-Related agents and phases: see `idea.md` and `ROADMAP.md`.
+```text
+domain/           statuses, formats, validation
+application/      use cases + schemas
+infrastructure/   SQLAlchemy models, repository, estimates
+api/              FastAPI routers
+```
+
+Mounted by `apps/api` under `/v1/projects`, `/v1/datasets`, `/v1/connectors`.
+
+## Storage layout (MinIO)
+
+```text
+{tenant}/{project}/{dataset}/{version}/{uuid}{ext}
+```
+
+Files are never stored in PostgreSQL — only metadata.
+
+## Statuses
+
+`uploading` → `validating` → `ready` | `failed` → `archived` | `deleted`
+
+## Formats
+
+CSV, TSV, Excel (`.xlsx`), JSON, Parquet, ZIP (of supported members).

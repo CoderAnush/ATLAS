@@ -1,7 +1,7 @@
 """Ports defining the object-storage boundary."""
 
 from datetime import timedelta
-from typing import Protocol, runtime_checkable
+from typing import BinaryIO, Protocol, runtime_checkable
 
 
 @runtime_checkable
@@ -12,6 +12,18 @@ class ObjectStorage(Protocol):
         self, bucket: str, object_name: str, data: bytes, *, content_type: str | None = None
     ) -> None:
         """Store bytes at the requested bucket and object path."""
+
+    def upload_stream(
+        self,
+        bucket: str,
+        object_name: str,
+        stream: BinaryIO,
+        length: int,
+        *,
+        content_type: str | None = None,
+        part_size: int = 10 * 1024 * 1024,
+    ) -> None:
+        """Stream an object into storage without buffering the full payload in memory."""
 
     def download(self, bucket: str, object_name: str) -> bytes:
         """Return the complete stored object as bytes."""

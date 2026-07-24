@@ -4,7 +4,7 @@
 > *From Raw Data to Production AI with One Command.*
 
 **Internal product identity:** **ATLAS — Autonomous AI Engineering Platform (AAEP)**  
-**Status:** Phase 2 complete — **v0.2.0 Identity & Authentication**; awaiting Phase 3 instructions  
+**Status:** Phase 3 complete — **v0.3.0 Dataset Ingestion Platform**; awaiting Phase 4 instructions  
 **Last Updated:** 2026-07-24  
 **Primary Branch:** `main`  
 **License:** MIT  
@@ -743,12 +743,24 @@ Full narrative: §51.
 - [x] API keys (hashed, rotatable, revocable)  
 - [x] Audit log foundation  
 
-### Next (Phase 3 — do not start until instructed)
+### Completed (Phase 3)
 
-- [ ] Project CRUD (catalog) + dataset upload  
-- [ ] MinIO-backed dataset versions  
-- [ ] Connector interfaces (SQL, S3 stubs)  
-- [ ] Dataset metadata catalog  
+- [x] Project CRUD (catalog) + dataset upload  
+- [x] MinIO-backed dataset versions (immutable)  
+- [x] Connector interfaces (SQL, S3 stubs)  
+- [x] Dataset metadata catalog + search/filter  
+
+### Next (Phase 4 — do not start until instructed)
+
+- [ ] Profiling pipeline (dtypes, nulls, distributions)  
+- [ ] Target / problem-type heuristics  
+- [ ] Dataset Understanding Agent  
+
+### Architecture notes (Phase 3)
+
+- **Projects SoT:** `catalog.projects` owns datasets. `identity.projects` retained from Phase 2 for legacy RBAC scaffolding; application `/v1/projects` is catalog.  
+- **D023:** Phase 3 ships linear immutable versions; branch/snapshot UI deferred.  
+- **Statistics:** `dataset_statistics` holds row/column *estimates* only — not Phase 4 EDA.
 
 ### Architecture follow-ups (docs/design)
 
@@ -780,6 +792,8 @@ Full narrative: §51.
 | TD006 | Docker Hub/GHCR TLS failures on some hosts | Prefer cached base tags; host-fetch MinIO/Prometheus/Grafana via `scripts/dev/fetch-binaries.ps1`; mitigated for v0.1.0 verification |
 | TD007 | Compose defaults to `postgres:15-alpine` when 16 cannot be pulled | Align to Postgres 16 when registry access is healthy; both supported by SQLAlchemy |
 | TD008 | Celery worker healthcheck uses `inspect ping` (hostname-sensitive) | Acceptable for Phase 1; replace with lighter liveness probe if flaky in CI |
+| TD009 | `identity.projects` coexists with `catalog.projects` | Prefer catalog SoT; consider deprecation migration later |
+| TD010 | pytest-cov not in workspace; Phase 3 coverage not machine-measured | Add `pytest-cov` in a tooling polish PR if gating on % |
 
 ---
 

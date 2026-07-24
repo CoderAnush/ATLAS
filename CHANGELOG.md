@@ -2,6 +2,35 @@
 
 All notable changes to ATLAS are documented here.
 
+## [0.3.0] — 2026-07-24 — ATLAS Dataset Ingestion Platform
+
+### Added
+
+- `services/catalog` Clean Architecture package (domain, application, infrastructure, API)
+- Catalog project CRUD (source of truth for dataset ownership)
+- Dataset upload (CSV, TSV, Excel, JSON, Parquet, ZIP) with streaming spool + MinIO storage
+- Multipart upload jobs (init / parts / complete)
+- Immutable dataset versions (v1, v2, …) under `tenant/project/dataset/version/uuid.ext`
+- Metadata: checksum SHA-256, mime, encoding, size, row/column estimates, storage keys
+- Validation: extension/MIME/size, empty files, path traversal, zip-bomb heuristics, magic sniff
+- Search/filter/sort, favorites, archive/restore, soft-delete, signed download URLs
+- Connector stubs (`sql` / `s3` / `stub`), comments, lineage, download logs, permissions, tags
+- Alembic revision `0003_dataset_catalog` (`catalog` schema, 13 tables)
+- Web: projects, project detail, dataset browser, drag-drop uploader with progress, dataset detail & versions
+- Catalog unit + API integration tests; Prometheus counters for upload/download/delete
+- `atlas_max_upload_bytes` setting (default 512 MiB); `ObjectStorage.upload_stream`
+- UUIDv7 helpers in `atlas-core`
+
+### Changed
+
+- Version bumped to **0.3.0** across workspace / web / VERSION
+- `/v1/projects` served by catalog (identity `projects` tables retained for legacy RBAC scaffolding)
+- Dockerfile.api installs `atlas-catalog`
+
+### Notes
+
+- No profiling/EDA/agents (Phase 4+). `dataset_statistics` stores estimates only.
+
 ## [0.2.0] — 2026-07-24 — ATLAS Identity & Authentication
 
 ### Added

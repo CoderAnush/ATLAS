@@ -5,6 +5,7 @@ from __future__ import annotations
 import os
 from logging.config import fileConfig
 
+import atlas_catalog.infrastructure.models  # noqa: F401
 import atlas_identity.infrastructure.models  # noqa: F401
 from alembic import context
 from atlas_db.base import Base

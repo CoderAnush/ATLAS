@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import logging
 
+from atlas_catalog.domain import ConflictError as CatalogConflict
+from atlas_catalog.domain import ValidationError as CatalogValidation
 from atlas_core.errors import (
     AtlasError,
     ConfigError,
@@ -71,6 +73,14 @@ def register_exception_handlers(app: FastAPI) -> None:
     @app.exception_handler(ConflictError)
     async def conflict_handler(_: Request, exc: ConflictError) -> JSONResponse:
         return JSONResponse(status_code=409, content={"detail": str(exc), "type": "conflict"})
+
+    @app.exception_handler(CatalogConflict)
+    async def catalog_conflict_handler(_: Request, exc: CatalogConflict) -> JSONResponse:
+        return JSONResponse(status_code=409, content={"detail": str(exc), "type": "conflict"})
+
+    @app.exception_handler(CatalogValidation)
+    async def catalog_validation_handler(_: Request, exc: CatalogValidation) -> JSONResponse:
+        return JSONResponse(status_code=400, content={"detail": str(exc), "type": "validation_error"})
 
     @app.exception_handler(RateLimitError)
     async def rate_limit_handler(_: Request, exc: RateLimitError) -> JSONResponse:

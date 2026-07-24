@@ -5,20 +5,20 @@
 > From Raw Data to Production AI with One Command.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
-[![Version](https://img.shields.io/badge/version-v0.2.0-blue.svg)](./CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-v0.3.0-blue.svg)](./CHANGELOG.md)
 [![Python](https://img.shields.io/badge/python-%3E%3D3.11-blue.svg)](./pyproject.toml)
-[![Phase](https://img.shields.io/badge/phase-2%20identity-brightgreen.svg)](./ROADMAP.md)
+[![Phase](https://img.shields.io/badge/phase-3%20datasets-brightgreen.svg)](./ROADMAP.md)
 [![CI](https://img.shields.io/github/actions/workflow/status/CoderAnush/ATLAS/ci.yml?branch=main&label=CI)](https://github.com/CoderAnush/ATLAS/actions)
 
 ATLAS is an enterprise-grade **Autonomous AI Engineering Platform (AAEP)**. Upload data, describe your goal in natural language, and receive a trained, explainable, deployable, monitored model—orchestrated by specialized AI agents.
 
 | | |
 |---|---|
-| **Release** | **v0.2.0 — ATLAS Identity & Authentication** |
-| **Status** | Phase 2 complete — identity, RBAC, multi-tenancy |
+| **Release** | **v0.3.0 — ATLAS Dataset Ingestion Platform** |
+| **Status** | Phase 3 complete — projects, datasets, versions, MinIO |
 | **License** | MIT |
 
-Phase 2 (identity) is complete. Dataset ingestion and later features start only with explicit Phase 3+ approval.
+Phase 3 (dataset ingestion) is complete. Profiling and later features start only with explicit Phase 4+ approval.
 
 ---
 
@@ -76,7 +76,23 @@ Web UI: http://localhost:3000/login · `/register` · authenticated dashboard af
 
 OpenAPI: http://localhost:8000/docs
 
-After upgrading from v0.1.x, ensure identity migrations run (API container runs `alembic upgrade head` on start):
+## Datasets (Phase 3)
+
+```bash
+# Create a project
+curl -X POST http://localhost:8000/v1/projects \
+  -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
+  -d '{"name":"Demo","description":"First project"}'
+
+# Upload a CSV
+curl -X POST http://localhost:8000/v1/datasets/upload \
+  -H "Authorization: Bearer $TOKEN" \
+  -F project_id=$PROJECT_ID -F file=@./data.csv
+```
+
+UI: http://localhost:3000/projects · `/datasets` · `/datasets/upload`
+
+After upgrading from v0.2.x, ensure catalog migrations run (API container runs `alembic upgrade head` on start):
 
 ```bash
 docker compose up --build -d api
@@ -230,7 +246,7 @@ Create `docs/screenshots/` and drop PNGs when ready; links above are intentional
 
 ## Roadmap
 
-See [`ROADMAP.md`](./ROADMAP.md). Phase 1 is **frozen** at v0.1.0. Phase 2 (identity) is complete at **v0.2.0**. Do not start Phase 3 until explicitly approved.
+See [`ROADMAP.md`](./ROADMAP.md). Phase 1–3 complete through **v0.3.0**. Do not start Phase 4 until explicitly approved.
 
 ---
 
@@ -260,9 +276,9 @@ See [`CONTRIBUTING.md`](./CONTRIBUTING.md). Short version:
 
 ## Version
 
-**v0.2.0 — ATLAS Identity & Authentication**
+**v0.3.0 — ATLAS Dataset Ingestion Platform**
 
-Ready to tag on `main` when approved. Create a GitHub Release from the tag (title: *ATLAS Identity & Authentication*).
+Ready to tag on `main` when approved. Create a GitHub Release from the tag (title: *ATLAS Dataset Ingestion Platform*).
 
 ---
 

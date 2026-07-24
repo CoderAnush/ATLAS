@@ -2,31 +2,25 @@
 
 High-level system design. For locked decisions, modules, and contracts, see **[`idea.md`](./idea.md)** (source of truth).
 
-**Last Updated:** 2026-07-24 (Phase 2 identity & multi-tenancy)
+**Last Updated:** 2026-07-24 (Phase 3 dataset ingestion)
 
 ATLAS is an **Autonomous AI Engineering Platform (AAEP)**. Full specification: [`idea.md`](./idea.md) §30–§52. This file remains a concise topology guide; **`idea.md` wins on conflicts**.
 
-### Phase 2 runtime topology
+### Phase 3 runtime topology
 
 ```text
-browser → web:3000 (Next.js auth + shell)
+browser → web:3000 (projects · datasets · upload)
        → api:8000
-            /v1/auth/* · /v1/organizations/* · /v1/api-keys/* · /v1/projects/*
-            → postgres (identity.*) / redis / minio / mlflow
+            /v1/auth/* · /v1/organizations/* · /v1/api-keys/*
+            /v1/projects/* · /v1/datasets/* · /v1/connectors/*
+            → postgres (identity.* · catalog.*) / redis / minio / mlflow
 worker ← redis
 prometheus → api:/metrics
-grafana → prometheus
 ```
 
-Local orchestration: `docker compose up --build` (see root `docker-compose.yml`).
-
-**Auth:** JWT access + rotating refresh; optional `X-API-Key`.  
-**Tenancy:** organization context on principal; repositories filter by `organization_id`.  
-**RBAC:** owner > admin > ml_engineer > data_scientist > approver > viewer.  
-
-**Web delivery:** Next.js App Router production server via multi-stage Docker (`output: "standalone"`, `node server.js`).
-
-**Infra images:** When Docker Hub pulls fail, MinIO/Prometheus/Grafana images unpack host-fetched Linux binaries from `infrastructure/docker/bin/` (see `scripts/dev/fetch-binaries.ps1`).
+**Catalog:** files in MinIO only; metadata in `catalog` schema.  
+**Versions:** immutable; path `{tenant}/{project}/{dataset}/{version}/{uuid}{ext}`.  
+**Estimates:** row/column counts only — full profiling is Phase 4.
 
 ---
 

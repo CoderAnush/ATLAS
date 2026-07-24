@@ -1,6 +1,6 @@
 [project]
 name = "atlas"
-version = "0.2.0"
+version = "0.3.0"
 description = "ATLAS - Autonomous Training, Learning And Serving"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -31,6 +31,7 @@ members = [
   "packages/atlas-telemetry",
   "packages/atlas-ml",
   "services/identity",
+  "services/catalog",
   "apps/api",
   "apps/worker",
 ]
@@ -43,32 +44,33 @@ atlas-storage = { workspace = true }
 atlas-telemetry = { workspace = true }
 atlas-ml = { workspace = true }
 atlas-identity = { workspace = true }
+atlas-catalog = { workspace = true }
 atlas-api = { workspace = true }
 atlas-worker = { workspace = true }
 
 [tool.ruff]
 line-length = 100
 target-version = "py311"
-src = ["apps", "packages", "tests"]
+src = ["apps", "packages", "services", "tests"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
-ignore = ["UP040", "E501"]
+ignore = ["UP040", "E501", "B008"]
 
 [tool.mypy]
 python_version = "3.11"
 strict = true
 warn_unreachable = true
-mypy_path = "packages/atlas-core/src:packages/atlas-contracts/src:packages/atlas-db/src:packages/atlas-storage/src:packages/atlas-telemetry/src:services/identity/src:apps/api/src:apps/worker/src"
-packages = ["atlas_core", "atlas_contracts", "atlas_db", "atlas_storage", "atlas_telemetry", "atlas_identity", "atlas_api", "atlas_worker"]
+mypy_path = "packages/atlas-core/src:packages/atlas-contracts/src:packages/atlas-db/src:packages/atlas-storage/src:packages/atlas-telemetry/src:services/identity/src:services/catalog/src:apps/api/src:apps/worker/src"
+packages = ["atlas_core", "atlas_contracts", "atlas_db", "atlas_storage", "atlas_telemetry", "atlas_identity", "atlas_catalog", "atlas_api", "atlas_worker"]
 exclude = ["alembic", "apps/web", ".venv"]
 
 [[tool.mypy.overrides]]
-module = ["minio.*", "celery.*", "prometheus_client.*", "opentelemetry.*", "argon2.*", "jwt.*"]
+module = ["minio.*", "celery.*", "prometheus_client.*", "opentelemetry.*", "argon2.*", "jwt.*", "openpyxl.*", "pyarrow.*"]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
-testpaths = ["tests", "packages", "apps"]
+testpaths = ["tests", "packages", "apps", "services/catalog"]
 addopts = "-ra"
 pythonpath = [
   "packages/atlas-core/src",
@@ -77,6 +79,7 @@ pythonpath = [
   "packages/atlas-storage/src",
   "packages/atlas-telemetry/src",
   "services/identity/src",
+  "services/catalog/src",
   "apps/api/src",
   "apps/worker/src",
 ]

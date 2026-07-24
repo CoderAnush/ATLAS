@@ -7,6 +7,7 @@ import uuid
 import pytest
 from atlas_api.app import create_app
 from atlas_api.config import Settings
+from atlas_catalog.infrastructure import models as _catalog_models  # noqa: F401
 from atlas_db.base import Base
 from atlas_db.session import create_session_factory
 from atlas_identity.domain.rbac import OrgRole, Permission, has_permission
@@ -30,10 +31,17 @@ def engine():
         cursor.execute("PRAGMA foreign_keys=ON")
         cursor.close()
 
-    # Map identity.* tables onto the default SQLite schema.
+    # Map schemas onto SQLite default; skip identity.projects* (catalog owns projects).
     with engine.begin() as conn:
-        conn_ex = conn.execution_options(schema_translate_map={"identity": None})
-        Base.metadata.create_all(conn_ex)
+        conn_ex = conn.execution_options(
+            schema_translate_map={"identity": None, "catalog": None}
+        )
+        tables = [
+            t
+            for t in Base.metadata.sorted_tables
+            if not (t.schema == "identity" and t.name in {"projects", "project_memberships"})
+        ]
+        Base.metadata.create_all(conn_ex, tables=tables)
     yield engine
     engine.dispose()
 
@@ -52,7 +60,9 @@ def client(engine) -> TestClient:
 
     def _factory():  # type: ignore[no-untyped-def]
         session = factory()
-        session.connection(execution_options={"schema_translate_map": {"identity": None}})
+        session.connection(
+            execution_options={"schema_translate_map": {"identity": None, "catalog": None}}
+        )
         return session
 
     app.state.container.session_factory = _factory  # type: ignore[assignment]

@@ -89,7 +89,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     async (path: string, init: RequestInit = {}) => {
       const headers = new Headers(init.headers || {});
       if (accessToken) headers.set("Authorization", `Bearer ${accessToken}`);
-      if (!headers.has("Content-Type") && init.body) {
+      const isFormData = typeof FormData !== "undefined" && init.body instanceof FormData;
+      if (!headers.has("Content-Type") && init.body && !isFormData) {
         headers.set("Content-Type", "application/json");
       }
       let response = await fetch(`${API_URL}${path}`, { ...init, headers });

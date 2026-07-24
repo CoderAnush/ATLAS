@@ -9,6 +9,8 @@ import { useAuth } from "@/lib/auth";
 const NAV = [
   { href: "/", label: "Dashboard" },
   { href: "/projects", label: "Projects" },
+  { href: "/datasets", label: "Datasets" },
+  { href: "/datasets/upload", label: "Upload" },
   { href: "/settings", label: "Settings" },
   { href: "/settings/api-keys", label: "API Keys" },
   { href: "/settings/members", label: "Members" },
@@ -103,7 +105,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <div className="flex min-h-screen flex-col">
         <header className="flex items-center justify-between border-b border-atlas-line bg-atlas-panel/70 px-6 py-4 backdrop-blur">
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-atlas-muted">Phase 2 identity</p>
+            <p className="text-xs uppercase tracking-[0.2em] text-atlas-muted">Phase 3 datasets</p>
             <h1 className="font-display text-xl text-atlas-ink">Signed in as {user.full_name}</h1>
           </div>
           <div className="flex items-center gap-2">

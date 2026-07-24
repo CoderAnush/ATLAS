@@ -307,5 +307,6 @@ def build_identity_router() -> APIRouter:
     router.include_router(auth_router)
     router.include_router(orgs_router)
     router.include_router(keys_router)
-    router.include_router(projects_router)
+    # Phase 3: project CRUD lives in atlas-catalog (/v1/projects).
+    # identity.projects table retained for legacy RBAC membership rows.
     return router

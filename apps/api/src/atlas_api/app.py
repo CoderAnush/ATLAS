@@ -6,7 +6,7 @@ import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
-# Ensure identity models are registered on Base.metadata for Alembic / runtime.
+import atlas_catalog.infrastructure.models  # noqa: F401
 import atlas_identity.infrastructure.models  # noqa: F401
 from atlas_telemetry.logging import configure_logging
 from atlas_telemetry.tracing import setup_tracing
@@ -57,7 +57,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     app = FastAPI(
         title="ATLAS API",
-        description="Autonomous Training, Learning And Serving — identity & platform API",
+        description="Autonomous Training, Learning And Serving — platform API",
         version=__version__,
         lifespan=lifespan,
         docs_url="/docs",

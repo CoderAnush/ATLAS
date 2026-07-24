@@ -1,0 +1,26 @@
+[project]
+name = "atlas-catalog"
+version = "0.3.0"
+description = "ATLAS catalog — projects, datasets, versions, and connectors."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "atlas-core",
+  "atlas-contracts",
+  "atlas-db",
+  "atlas-storage",
+  "atlas-telemetry",
+  "atlas-identity",
+  "pydantic>=2.9",
+  "sqlalchemy>=2.0",
+  "python-multipart>=0.0.9",
+  "openpyxl>=3.1",
+  "pyarrow>=17.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/atlas_catalog"]

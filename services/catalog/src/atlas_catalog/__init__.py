@@ -1,3 +1,3 @@
-"""ATLAS catalog bounded context (placeholder)."""
+"""ATLAS catalog bounded context — projects and datasets."""
 
-__version__ = "0.0.0"
+__version__ = "0.3.0"
