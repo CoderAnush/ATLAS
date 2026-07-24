@@ -1,13 +1,19 @@
 [project]
 name = "atlas-worker"
-version = "0.1.0"
+version = "0.4.0"
 description = "ATLAS asynchronous worker application."
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "atlas-core",
     "atlas-telemetry",
+    "atlas-db",
+    "atlas-storage",
+    "atlas-identity",
+    "atlas-catalog",
+    "atlas-profiling",
     "celery[redis]>=5.4",
+    "minio>=7.2",
     "pydantic-settings>=2.6",
     "redis>=5.2",
 ]

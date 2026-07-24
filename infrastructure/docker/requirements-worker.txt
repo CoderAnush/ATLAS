@@ -4,12 +4,24 @@ amqp==5.3.1
     # via kombu
 annotated-types==0.7.0
     # via pydantic
+argon2-cffi==25.1.0
+    # via
+    #   atlas-identity
+    #   minio
+argon2-cffi-bindings==25.1.0
+    # via argon2-cffi
 async-timeout==5.0.1 ; python_full_version < '3.11.3'
     # via redis
 billiard==4.2.4
     # via celery
 celery==5.6.3
     # via atlas-worker
+certifi==2026.7.22
+    # via minio
+cffi==2.1.0
+    # via argon2-cffi-bindings
+charset-normalizer==3.4.9
+    # via reportlab
 click==8.4.2
     # via
     #   celery
@@ -24,8 +36,44 @@ click-repl==0.3.0
     # via celery
 colorama==0.4.6 ; sys_platform == 'win32'
     # via click
+dnspython==2.8.0
+    # via email-validator
+email-validator==2.3.0
+    # via atlas-identity
+et-xmlfile==2.0.0
+    # via openpyxl
+greenlet==3.5.4 ; platform_machine == 'AMD64' or platform_machine == 'WIN32' or platform_machine == 'aarch64' or platform_machine == 'amd64' or platform_machine == 'ppc64le' or platform_machine == 'win32' or platform_machine == 'x86_64'
+    # via sqlalchemy
+idna==3.18
+    # via email-validator
+joblib==1.5.3
+    # via scikit-learn
 kombu==5.6.2
     # via celery
+minio==7.2.20
+    # via
+    #   atlas-storage
+    #   atlas-worker
+narwhals==2.24.0
+    # via
+    #   plotly
+    #   scikit-learn
+numpy==2.4.6 ; python_full_version < '3.12'
+    # via
+    #   atlas-profiling
+    #   pandas
+    #   scikit-learn
+    #   scipy
+numpy==2.5.1 ; python_full_version >= '3.12'
+    # via
+    #   atlas-profiling
+    #   pandas
+    #   scikit-learn
+    #   scipy
+openpyxl==3.1.5
+    # via
+    #   atlas-catalog
+    #   atlas-profiling
 opentelemetry-api==1.44.0
     # via
     #   atlas-telemetry
@@ -36,34 +84,88 @@ opentelemetry-sdk==1.44.0
 opentelemetry-semantic-conventions==0.65b0
     # via opentelemetry-sdk
 packaging==26.2
-    # via kombu
+    # via
+    #   kombu
+    #   plotly
+pandas==3.0.5
+    # via atlas-profiling
+pillow==12.3.0
+    # via reportlab
+plotly==6.9.0
+    # via atlas-profiling
 prometheus-client==0.25.0
     # via atlas-telemetry
 prompt-toolkit==3.0.52
     # via click-repl
+psycopg==3.3.4
+    # via atlas-db
+psycopg-binary==3.3.4 ; implementation_name != 'pypy'
+    # via psycopg
+pyarrow==25.0.0
+    # via
+    #   atlas-catalog
+    #   atlas-profiling
+pycparser==3.0 ; implementation_name != 'PyPy'
+    # via cffi
+pycryptodome==3.23.0
+    # via minio
 pydantic==2.13.4
-    # via pydantic-settings
+    # via
+    #   atlas-catalog
+    #   atlas-contracts
+    #   atlas-identity
+    #   atlas-profiling
+    #   pydantic-settings
 pydantic-core==2.46.4
     # via pydantic
 pydantic-settings==2.14.2
     # via atlas-worker
+pyjwt==2.13.0
+    # via atlas-identity
 python-dateutil==2.9.0.post0
-    # via celery
+    # via
+    #   celery
+    #   pandas
 python-dotenv==1.2.2
     # via pydantic-settings
+python-multipart==0.0.32
+    # via atlas-catalog
 redis==6.4.0
     # via
     #   atlas-worker
     #   kombu
+reportlab==5.0.0
+    # via atlas-profiling
+scikit-learn==1.9.0
+    # via atlas-profiling
+scipy==1.17.1 ; python_full_version < '3.12'
+    # via
+    #   atlas-profiling
+    #   scikit-learn
+scipy==1.18.0 ; python_full_version >= '3.12'
+    # via
+    #   atlas-profiling
+    #   scikit-learn
 six==1.17.0
     # via python-dateutil
+sqlalchemy==2.0.51
+    # via
+    #   atlas-catalog
+    #   atlas-db
+    #   atlas-identity
+    #   atlas-profiling
+threadpoolctl==3.6.0
+    # via scikit-learn
 typing-extensions==4.16.0
     # via
+    #   minio
     #   opentelemetry-api
     #   opentelemetry-sdk
     #   opentelemetry-semantic-conventions
+    #   psycopg
     #   pydantic
     #   pydantic-core
+    #   sqlalchemy
     #   typing-inspection
 typing-inspection==0.4.2
     # via
@@ -72,9 +174,13 @@ typing-inspection==0.4.2
 tzdata==2026.3
     # via
     #   kombu
+    #   pandas
+    #   psycopg
     #   tzlocal
 tzlocal==5.4.4
     # via celery
+urllib3==2.7.0
+    # via minio
 vine==5.1.0
     # via
     #   amqp

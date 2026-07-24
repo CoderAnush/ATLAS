@@ -5,20 +5,20 @@
 > From Raw Data to Production AI with One Command.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
-[![Version](https://img.shields.io/badge/version-v0.3.0-blue.svg)](./CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-v0.4.0-blue.svg)](./CHANGELOG.md)
 [![Python](https://img.shields.io/badge/python-%3E%3D3.11-blue.svg)](./pyproject.toml)
-[![Phase](https://img.shields.io/badge/phase-3%20datasets-brightgreen.svg)](./ROADMAP.md)
+[![Phase](https://img.shields.io/badge/phase-4%20profiling-brightgreen.svg)](./ROADMAP.md)
 [![CI](https://img.shields.io/github/actions/workflow/status/CoderAnush/ATLAS/ci.yml?branch=main&label=CI)](https://github.com/CoderAnush/ATLAS/actions)
 
 ATLAS is an enterprise-grade **Autonomous AI Engineering Platform (AAEP)**. Upload data, describe your goal in natural language, and receive a trained, explainable, deployable, monitored model—orchestrated by specialized AI agents.
 
 | | |
 |---|---|
-| **Release** | **v0.3.0 — ATLAS Dataset Ingestion Platform** |
-| **Status** | Phase 3 complete — projects, datasets, versions, MinIO |
+| **Release** | **v0.4.0 — ATLAS Dataset Understanding Platform** |
+| **Status** | Phase 4 complete — profiling, agent, EDA reports |
 | **License** | MIT |
 
-Phase 3 (dataset ingestion) is complete. Profiling and later features start only with explicit Phase 4+ approval.
+Phase 4 (dataset understanding) is complete. Cleaning and later features start only with explicit Phase 5+ approval.
 
 ---
 
@@ -92,7 +92,21 @@ curl -X POST http://localhost:8000/v1/datasets/upload \
 
 UI: http://localhost:3000/projects · `/datasets` · `/datasets/upload`
 
-After upgrading from v0.2.x, ensure catalog migrations run (API container runs `alembic upgrade head` on start):
+## Profiling (Phase 4)
+
+```bash
+# Start async profiling job
+curl -X POST http://localhost:8000/v1/profiling/run/$DATASET_ID \
+  -H "Authorization: Bearer $TOKEN"
+
+# Read summary
+curl http://localhost:8000/v1/profiling/$DATASET_ID/summary \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+UI: http://localhost:3000/profiling
+
+After upgrading, ensure migrations run (API container runs `alembic upgrade head` on start):
 
 ```bash
 docker compose up --build -d api
@@ -246,7 +260,7 @@ Create `docs/screenshots/` and drop PNGs when ready; links above are intentional
 
 ## Roadmap
 
-See [`ROADMAP.md`](./ROADMAP.md). Phase 1–3 complete through **v0.3.0**. Do not start Phase 4 until explicitly approved.
+See [`ROADMAP.md`](./ROADMAP.md). Phases 1–4 complete through **v0.4.0**. Do not start Phase 5 until explicitly approved.
 
 ---
 
@@ -276,9 +290,9 @@ See [`CONTRIBUTING.md`](./CONTRIBUTING.md). Short version:
 
 ## Version
 
-**v0.3.0 — ATLAS Dataset Ingestion Platform**
+**v0.4.0 — ATLAS Dataset Understanding Platform**
 
-Ready to tag on `main` when approved. Create a GitHub Release from the tag (title: *ATLAS Dataset Ingestion Platform*).
+Ready to tag on `main` when approved. Create a GitHub Release from the tag (title: *ATLAS Dataset Understanding Platform*).
 
 ---
 

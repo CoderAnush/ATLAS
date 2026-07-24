@@ -1,9 +1,14 @@
-# Service: profiling
+# Profiling Service
 
-Dataset profiling, EDA, quality analysis, leakage heuristics.
+Dataset understanding, automated EDA, quality scoring, leakage heuristics, and report artifacts.
 
-**Architecture:** Clean Architecture (domain / application / infrastructure).  
-**Status:** Placeholder — no business logic yet.  
-**Extraction:** Microservice candidate per `ARCHITECTURE.md`.
+## Layout
 
-Related agents and phases: see `idea.md` and `ROADMAP.md`.
+```text
+domain/           enums, LLM port
+application/      ProfilingService + schemas
+infrastructure/   engine, loader, artifacts, models, repository
+api/              /v1/profiling/*
+```
+
+Profiling runs asynchronously via Celery (`atlas.worker.profiling`). In `testing` env the API may run inline.

@@ -8,6 +8,7 @@ from contextlib import asynccontextmanager
 
 import atlas_catalog.infrastructure.models  # noqa: F401
 import atlas_identity.infrastructure.models  # noqa: F401
+import atlas_profiling.infrastructure.models  # noqa: F401
 from atlas_telemetry.logging import configure_logging
 from atlas_telemetry.tracing import setup_tracing
 from fastapi import FastAPI

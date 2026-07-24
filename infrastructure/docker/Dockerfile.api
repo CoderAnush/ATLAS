@@ -15,6 +15,7 @@ RUN python -m venv /app/.venv \
 COPY packages /app/packages
 COPY services/identity /app/services/identity
 COPY services/catalog /app/services/catalog
+COPY services/profiling /app/services/profiling
 COPY apps/api /app/apps/api
 RUN /app/.venv/bin/pip install \
       /app/packages/atlas-core \
@@ -24,6 +25,7 @@ RUN /app/.venv/bin/pip install \
       /app/packages/atlas-telemetry \
       /app/services/identity \
       /app/services/catalog \
+      /app/services/profiling \
       /app/apps/api
 
 FROM python:3.11-slim AS runtime
@@ -43,6 +45,7 @@ COPY --from=builder /app/.venv /app/.venv
 COPY --from=builder /app/packages /app/packages
 COPY --from=builder /app/services/identity /app/services/identity
 COPY --from=builder /app/services/catalog /app/services/catalog
+COPY --from=builder /app/services/profiling /app/services/profiling
 COPY --from=builder /app/apps/api /app/apps/api
 
 WORKDIR /app/apps/api

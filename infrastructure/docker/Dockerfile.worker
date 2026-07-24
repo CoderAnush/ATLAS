@@ -4,7 +4,7 @@ WORKDIR /app
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1 \
     PYTHONDONTWRITEBYTECODE=1
 
-RUN apt-get update && apt-get install -y --no-install-recommends build-essential \
+RUN apt-get update && apt-get install -y --no-install-recommends build-essential libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
 COPY infrastructure/docker/requirements-worker.txt /tmp/requirements-worker.txt
@@ -13,15 +13,26 @@ RUN python -m venv /app/.venv \
     && /app/.venv/bin/pip install -r /tmp/requirements-worker.txt
 
 COPY packages /app/packages
+COPY services/identity /app/services/identity
+COPY services/catalog /app/services/catalog
+COPY services/profiling /app/services/profiling
 COPY apps/worker /app/apps/worker
 RUN /app/.venv/bin/pip install \
       /app/packages/atlas-core \
+      /app/packages/atlas-contracts \
+      /app/packages/atlas-db \
+      /app/packages/atlas-storage \
       /app/packages/atlas-telemetry \
+      /app/services/identity \
+      /app/services/catalog \
+      /app/services/profiling \
       /app/apps/worker
 
 FROM python:3.11-slim AS runtime
 
-RUN groupadd --system --gid 10001 atlas || true \
+RUN apt-get update && apt-get install -y --no-install-recommends libpq5 \
+    && rm -rf /var/lib/apt/lists/* \
+    && groupadd --system --gid 10001 atlas || true \
     && id -u atlas >/dev/null 2>&1 || useradd --system --uid 10001 --gid atlas --home /app --shell /usr/sbin/nologin atlas
 
 WORKDIR /app
@@ -32,6 +43,7 @@ ENV PATH="/app/.venv/bin:$PATH" \
 
 COPY --from=builder /app/.venv /app/.venv
 COPY --from=builder /app/packages /app/packages
+COPY --from=builder /app/services /app/services
 COPY --from=builder /app/apps/worker /app/apps/worker
 
 USER 10001

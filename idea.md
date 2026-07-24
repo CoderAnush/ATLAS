@@ -4,7 +4,7 @@
 > *From Raw Data to Production AI with One Command.*
 
 **Internal product identity:** **ATLAS — Autonomous AI Engineering Platform (AAEP)**  
-**Status:** Phase 3 complete — **v0.3.0 Dataset Ingestion Platform**; awaiting Phase 4 instructions  
+**Status:** Phase 4 complete — **v0.4.0 Dataset Understanding Platform**; awaiting Phase 5 instructions  
 **Last Updated:** 2026-07-24  
 **Primary Branch:** `main`  
 **License:** MIT  
@@ -750,11 +750,20 @@ Full narrative: §51.
 - [x] Connector interfaces (SQL, S3 stubs)  
 - [x] Dataset metadata catalog + search/filter  
 
-### Next (Phase 4 — do not start until instructed)
+### Completed (Phase 4)
 
-- [ ] Profiling pipeline (dtypes, nulls, distributions)  
-- [ ] Target / problem-type heuristics  
-- [ ] Dataset Understanding Agent  
+- [x] Profiling pipeline (dtypes, nulls, distributions, correlations)  
+- [x] Target / problem-type heuristics  
+- [x] Leakage heuristics  
+- [x] Dataset Understanding Agent (deterministic + optional LLM)  
+- [x] EDA report artifacts in MinIO  
+
+### Next (Phase 5 — do not start until instructed)
+
+- [ ] Missing values, duplicates, outliers strategies  
+- [ ] Encoding / scaling pipelines  
+- [ ] Versioned preparation recipes  
+- [ ] Data Cleaning Agent  
 
 ### Architecture notes (Phase 3)
 
@@ -794,6 +803,8 @@ Full narrative: §51.
 | TD008 | Celery worker healthcheck uses `inspect ping` (hostname-sensitive) | Acceptable for Phase 1; replace with lighter liveness probe if flaky in CI |
 | TD009 | `identity.projects` coexists with `catalog.projects` | Prefer catalog SoT; consider deprecation migration later |
 | TD010 | pytest-cov not in workspace; Phase 3 coverage not machine-measured | Add `pytest-cov` in a tooling polish PR if gating on % |
+| TD011 | Docker Desktop engine can return HTTP 500 after heavy local image builds/WSL stress; Compose ops stall until Desktop restart | Separate infra from app bugs; restart Docker Desktop, then `docker compose up -d` |
+| TD012 | Phase 4 API must ship `celery` client to publish tasks; worker package is not installed in API image (by design) | Keep broker publish via `Celery.send_task`; never import `atlas_worker` from API |
 
 ---
 

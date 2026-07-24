@@ -2,6 +2,33 @@
 
 All notable changes to ATLAS are documented here.
 
+## [0.4.0] — 2026-07-24 — ATLAS Dataset Understanding Platform
+
+### Added
+
+- `services/profiling` Clean Architecture package (engine, quality, leakage, artifacts)
+- First production agent: Dataset Understanding (`agents/dataset_understanding` + `atlas_profiling.application.agent`)
+- Deterministic profiling: dtypes, missingness, duplicates, numeric/categorical/text/datetime stats
+- Correlations (Pearson/Spearman/Kendall), outliers (IQR/Z/modified-Z/IsolationForest scores)
+- Target & problem-type heuristics; data quality score (0–100) + health band
+- Leakage heuristics (IDs, near-perfect predictors, future/timestamp names)
+- Template NL summary with optional LLM provider port (stub by default)
+- Reports: JSON, Markdown, HTML, PDF + Plotly visualization JSON stored in MinIO
+- Async jobs via Celery (`atlas.worker.profiling`); inline execution in `testing` env
+- Alembic `0004_dataset_profiling` (`profiling` schema, 7 tables)
+- API under `/v1/profiling/*`
+- Web: profiling launcher + dataset understanding report tabs
+- Unit + API integration tests for profiling
+
+### Changed
+
+- Version **0.4.0**; worker image installs catalog/profiling stack
+- Dockerfile.api installs `atlas-profiling`
+
+### Notes
+
+- No cleaning, feature engineering, or training (Phase 5+)
+
 ## [0.3.0] — 2026-07-24 — ATLAS Dataset Ingestion Platform
 
 ### Added

@@ -1,24 +1,5 @@
-"""Dataset Understanding Agent implementation placeholder.
+"""Dataset Understanding Agent module."""
 
-Replace `run` with a real agent that validates contracts from atlas-contracts.
-"""
+from atlas_agent_dataset_understanding import AGENT_NAME, run
 
-from __future__ import annotations
-
-from typing import Any
-
-
-AGENT_NAME = "dataset_understanding"
-
-
-def run(request: dict[str, Any]) -> dict[str, Any]:
-    """Execute the agent (stub)."""
-    return {
-        "status": "not_implemented",
-        "agent": AGENT_NAME,
-        "artifacts": [],
-        "metrics": {},
-        "messages": ["Placeholder agent — implement in later phases."],
-        "next_hints": [],
-        "echo": request,
-    }
+__all__ = ["AGENT_NAME", "run"]

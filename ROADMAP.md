@@ -85,15 +85,19 @@ Living delivery plan. **`idea.md` remains the architectural source of truth.** U
 
 ---
 
-## Phase 4 — Dataset Analysis
+## Phase 4 — Dataset Analysis ✅
 
-- [ ] Profiling pipeline (dtypes, nulls, distributions, correlations)  
-- [ ] Target / problem-type heuristics  
-- [ ] Leakage heuristics  
-- [ ] Dataset Understanding Agent (structured + LLM summary)  
-- [ ] EDA report artifacts  
+**Release:** **v0.4.0 — ATLAS Dataset Understanding Platform** (2026-07-24)
 
-**Exit criteria:** Upload → automatic profile + readable EDA summary.
+- [x] Profiling pipeline (dtypes, nulls, distributions, correlations)  
+- [x] Target / problem-type heuristics  
+- [x] Leakage heuristics  
+- [x] Dataset Understanding Agent (structured + optional LLM summary)  
+- [x] EDA report artifacts (JSON/MD/HTML/PDF + Plotly JSON)  
+
+**Exit criteria:** Upload → automatic profile + readable EDA summary. **Met.**
+
+**Completed:** 2026-07-24 — do not start Phase 5 until explicitly approved.
 
 ---
 

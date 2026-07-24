@@ -2,25 +2,23 @@
 
 High-level system design. For locked decisions, modules, and contracts, see **[`idea.md`](./idea.md)** (source of truth).
 
-**Last Updated:** 2026-07-24 (Phase 3 dataset ingestion)
+**Last Updated:** 2026-07-24 (Phase 4 dataset understanding)
 
 ATLAS is an **Autonomous AI Engineering Platform (AAEP)**. Full specification: [`idea.md`](./idea.md) §30–§52. This file remains a concise topology guide; **`idea.md` wins on conflicts**.
 
-### Phase 3 runtime topology
+### Phase 4 runtime topology
 
 ```text
-browser → web:3000 (projects · datasets · upload)
-       → api:8000
-            /v1/auth/* · /v1/organizations/* · /v1/api-keys/*
-            /v1/projects/* · /v1/datasets/* · /v1/connectors/*
-            → postgres (identity.* · catalog.*) / redis / minio / mlflow
-worker ← redis
-prometheus → api:/metrics
+browser → web:3000 (/profiling)
+       → api:8000 /v1/profiling/*
+            → enqueue Celery job
+worker → download dataset from MinIO → Dataset Understanding Agent
+       → persist profiling.* + artifacts to MinIO
+postgres: identity.* · catalog.* · profiling.*
 ```
 
-**Catalog:** files in MinIO only; metadata in `catalog` schema.  
-**Versions:** immutable; path `{tenant}/{project}/{dataset}/{version}/{uuid}{ext}`.  
-**Estimates:** row/column counts only — full profiling is Phase 4.
+**Profiling:** deterministic EDA first; LLM summarization optional via provider port.  
+**Artifacts:** JSON / Markdown / HTML / PDF / Plotly JSON under tenant-scoped MinIO keys.
 
 ---
 

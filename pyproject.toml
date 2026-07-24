@@ -1,6 +1,6 @@
 [project]
 name = "atlas"
-version = "0.3.0"
+version = "0.4.0"
 description = "ATLAS - Autonomous Training, Learning And Serving"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -32,6 +32,7 @@ members = [
   "packages/atlas-ml",
   "services/identity",
   "services/catalog",
+  "services/profiling",
   "apps/api",
   "apps/worker",
 ]
@@ -45,6 +46,7 @@ atlas-telemetry = { workspace = true }
 atlas-ml = { workspace = true }
 atlas-identity = { workspace = true }
 atlas-catalog = { workspace = true }
+atlas-profiling = { workspace = true }
 atlas-api = { workspace = true }
 atlas-worker = { workspace = true }
 
@@ -58,19 +60,25 @@ select = ["E", "F", "I", "UP", "B"]
 ignore = ["UP040", "E501", "B008"]
 
 [tool.mypy]
-python_version = "3.11"
+python_version = "3.12"
 strict = true
 warn_unreachable = true
-mypy_path = "packages/atlas-core/src:packages/atlas-contracts/src:packages/atlas-db/src:packages/atlas-storage/src:packages/atlas-telemetry/src:services/identity/src:services/catalog/src:apps/api/src:apps/worker/src"
-packages = ["atlas_core", "atlas_contracts", "atlas_db", "atlas_storage", "atlas_telemetry", "atlas_identity", "atlas_catalog", "atlas_api", "atlas_worker"]
+mypy_path = "packages/atlas-core/src:packages/atlas-contracts/src:packages/atlas-db/src:packages/atlas-storage/src:packages/atlas-telemetry/src:services/identity/src:services/catalog/src:services/profiling/src:apps/api/src:apps/worker/src:agents/dataset_understanding/src"
+packages = ["atlas_core", "atlas_contracts", "atlas_db", "atlas_storage", "atlas_telemetry", "atlas_identity", "atlas_catalog", "atlas_profiling", "atlas_api", "atlas_worker"]
 exclude = ["alembic", "apps/web", ".venv"]
 
 [[tool.mypy.overrides]]
-module = ["minio.*", "celery.*", "prometheus_client.*", "opentelemetry.*", "argon2.*", "jwt.*", "openpyxl.*", "pyarrow.*"]
+module = ["minio.*", "celery.*", "prometheus_client.*", "opentelemetry.*", "argon2.*", "jwt.*", "openpyxl.*", "pyarrow.*", "plotly.*", "sklearn.*", "scipy.*", "reportlab.*", "pandas.*", "numpy.*"]
 ignore_missing_imports = true
 
+[[tool.mypy.overrides]]
+module = ["numpy", "numpy.*"]
+follow_imports = "skip"
+ignore_errors = true
+disable_error_code = ["syntax", "import-untyped"]
+
 [tool.pytest.ini_options]
-testpaths = ["tests", "packages", "apps", "services/catalog"]
+testpaths = ["tests", "packages", "apps", "services/catalog", "services/profiling"]
 addopts = "-ra"
 pythonpath = [
   "packages/atlas-core/src",
@@ -80,6 +88,8 @@ pythonpath = [
   "packages/atlas-telemetry/src",
   "services/identity/src",
   "services/catalog/src",
+  "services/profiling/src",
+  "agents/dataset_understanding/src",
   "apps/api/src",
   "apps/worker/src",
 ]

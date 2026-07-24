@@ -34,7 +34,7 @@ def engine():
     # Map schemas onto SQLite default; skip identity.projects* (catalog owns projects).
     with engine.begin() as conn:
         conn_ex = conn.execution_options(
-            schema_translate_map={"identity": None, "catalog": None}
+            schema_translate_map={"identity": None, "catalog": None, "profiling": None}
         )
         tables = [
             t
@@ -61,7 +61,7 @@ def client(engine) -> TestClient:
     def _factory():  # type: ignore[no-untyped-def]
         session = factory()
         session.connection(
-            execution_options={"schema_translate_map": {"identity": None, "catalog": None}}
+            execution_options={"schema_translate_map": {"identity": None, "catalog": None, "profiling": None}}
         )
         return session
 

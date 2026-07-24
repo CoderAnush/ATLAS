@@ -7,6 +7,7 @@ from logging.config import fileConfig
 
 import atlas_catalog.infrastructure.models  # noqa: F401
 import atlas_identity.infrastructure.models  # noqa: F401
+import atlas_profiling.infrastructure.models  # noqa: F401
 from alembic import context
 from atlas_db.base import Base
 from sqlalchemy import engine_from_config, pool

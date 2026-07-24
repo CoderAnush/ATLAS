@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import atlas_catalog.infrastructure.models  # noqa: F401
 import atlas_identity.infrastructure.models  # noqa: F401
+import atlas_profiling.infrastructure.models  # noqa: F401
 from alembic import command
 from alembic.config import Config
 
