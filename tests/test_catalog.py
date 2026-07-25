@@ -23,7 +23,9 @@ class FakeStorage:
     def __init__(self) -> None:
         self.objects: dict[str, bytes] = {}
 
-    def upload(self, bucket: str, object_name: str, data: bytes, *, content_type: str | None = None) -> None:
+    def upload(
+        self, bucket: str, object_name: str, data: bytes, *, content_type: str | None = None
+    ) -> None:
         self.objects[f"{bucket}/{object_name}"] = data
 
     def upload_stream(
@@ -94,7 +96,9 @@ def client(engine) -> TestClient:
     def _factory():  # type: ignore[no-untyped-def]
         session = factory()
         session.connection(
-            execution_options={"schema_translate_map": {"identity": None, "catalog": None, "profiling": None}}
+            execution_options={
+                "schema_translate_map": {"identity": None, "catalog": None, "profiling": None}
+            }
         )
         return session
 

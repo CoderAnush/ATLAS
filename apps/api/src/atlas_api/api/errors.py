@@ -80,7 +80,9 @@ def register_exception_handlers(app: FastAPI) -> None:
 
     @app.exception_handler(CatalogValidation)
     async def catalog_validation_handler(_: Request, exc: CatalogValidation) -> JSONResponse:
-        return JSONResponse(status_code=400, content={"detail": str(exc), "type": "validation_error"})
+        return JSONResponse(
+            status_code=400, content={"detail": str(exc), "type": "validation_error"}
+        )
 
     @app.exception_handler(RateLimitError)
     async def rate_limit_handler(_: Request, exc: RateLimitError) -> JSONResponse:
@@ -98,7 +100,9 @@ def register_exception_handlers(app: FastAPI) -> None:
 
     @app.exception_handler(ValueError)
     async def value_handler(_: Request, exc: ValueError) -> JSONResponse:
-        return JSONResponse(status_code=400, content={"detail": str(exc), "type": "validation_error"})
+        return JSONResponse(
+            status_code=400, content={"detail": str(exc), "type": "validation_error"}
+        )
 
     @app.exception_handler(AtlasError)
     async def atlas_handler(_: Request, exc: AtlasError) -> JSONResponse:

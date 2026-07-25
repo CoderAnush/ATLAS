@@ -210,10 +210,14 @@ class ProfilingService:
                         )
                     )
             self.repo.add_quality(
-                QualityReportModel(organization_id=org_id, profile_id=row.id, report=profile["quality"])
+                QualityReportModel(
+                    organization_id=org_id, profile_id=row.id, report=profile["quality"]
+                )
             )
             self.repo.add_leakage(
-                LeakageReportModel(organization_id=org_id, profile_id=row.id, report=profile["leakage"])
+                LeakageReportModel(
+                    organization_id=org_id, profile_id=row.id, report=profile["leakage"]
+                )
             )
             for atype, key, ctype, payload in artifacts:
                 self.repo.add_artifact(
@@ -236,7 +240,11 @@ class ProfilingService:
             PROFILING_DURATION.observe(time.perf_counter() - started)
             logger.info(
                 "ProfilingFinished",
-                extra={"tenant_id": str(org_id), "dataset_id": str(dataset_id), "job_id": str(job.id)},
+                extra={
+                    "tenant_id": str(org_id),
+                    "dataset_id": str(dataset_id),
+                    "job_id": str(job.id),
+                },
             )
             if profile["leakage"].get("findings"):
                 logger.info(
@@ -264,7 +272,9 @@ class ProfilingService:
             )
             raise
 
-    def get_profile(self, user_id: uuid.UUID, org_id: uuid.UUID, dataset_id: uuid.UUID) -> dict[str, Any]:
+    def get_profile(
+        self, user_id: uuid.UUID, org_id: uuid.UUID, dataset_id: uuid.UUID
+    ) -> dict[str, Any]:
         self._require(user_id, org_id, Permission.PROJECT_READ)
         profile = self.repo.get_latest_profile(org_id, dataset_id)
         if profile is None:

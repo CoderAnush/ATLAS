@@ -78,7 +78,9 @@ def profile_numeric(series: pd.Series) -> dict[str, Any]:
     desc = clean.describe(percentiles=[0.25, 0.5, 0.75, 0.9, 0.95, 0.99])
     q1, q3 = float(desc["25%"]), float(desc["75%"])
     iqr = q3 - q1
-    hist_counts, hist_edges = np.histogram(clean.to_numpy(), bins=min(20, max(5, int(np.sqrt(len(clean))))))
+    hist_counts, hist_edges = np.histogram(
+        clean.to_numpy(), bins=min(20, max(5, int(np.sqrt(len(clean)))))
+    )
     return {
         "count": int(len(clean)),
         "mean": _safe_float(desc["mean"]),
@@ -127,7 +129,9 @@ def profile_text(series: pd.Series) -> dict[str, Any]:
     for text in non_null.head(2000):
         tokens.update(w.lower() for w in text.split() if w)
     # lightweight language heuristic
-    ascii_ratio = non_null.head(500).apply(lambda s: sum(ord(c) < 128 for c in s) / max(len(s), 1)).mean()
+    ascii_ratio = (
+        non_null.head(500).apply(lambda s: sum(ord(c) < 128 for c in s) / max(len(s), 1)).mean()
+    )
     language = "en" if ascii_ratio > 0.85 else "unknown"
     return {
         "avg_length": _safe_float(lengths.mean()),
@@ -170,7 +174,12 @@ def profile_datetime(series: pd.Series) -> dict[str, Any]:
 def outlier_report(series: pd.Series) -> dict[str, Any]:
     clean = pd.to_numeric(series, errors="coerce").dropna()
     if len(clean) < 10:
-        return {"iqr_count": 0, "zscore_count": 0, "modified_z_count": 0, "isolation_forest_count": 0}
+        return {
+            "iqr_count": 0,
+            "zscore_count": 0,
+            "modified_z_count": 0,
+            "isolation_forest_count": 0,
+        }
     q1, q3 = clean.quantile(0.25), clean.quantile(0.75)
     iqr = q3 - q1
     iqr_mask = (clean < q1 - 1.5 * iqr) | (clean > q3 + 1.5 * iqr)
@@ -201,13 +210,21 @@ def outlier_report(series: pd.Series) -> dict[str, Any]:
 
 def correlation_matrix(df: pd.DataFrame, numeric_cols: list[str]) -> dict[str, Any]:
     if len(numeric_cols) < 2:
-        return {"columns": numeric_cols, "pearson": [], "spearman": [], "kendall": [], "high_pairs": []}
+        return {
+            "columns": numeric_cols,
+            "pearson": [],
+            "spearman": [],
+            "kendall": [],
+            "high_pairs": [],
+        }
     sub = df[numeric_cols].apply(pd.to_numeric, errors="coerce")
     pearson = sub.corr(method="pearson")
     spearman = sub.corr(method="spearman")
     # Kendall can be expensive — limit columns
     kendall_cols = numeric_cols[:12]
-    kendall = sub[kendall_cols].corr(method="kendall") if len(kendall_cols) >= 2 else pearson.iloc[:0, :0]
+    kendall = (
+        sub[kendall_cols].corr(method="kendall") if len(kendall_cols) >= 2 else pearson.iloc[:0, :0]
+    )
     high_pairs: list[dict[str, Any]] = []
     for i, a in enumerate(numeric_cols):
         for b in numeric_cols[i + 1 :]:
@@ -264,7 +281,9 @@ def detect_target(df: pd.DataFrame, kinds: dict[str, ColumnKind]) -> dict[str, A
     }
 
 
-def detect_problem_type(df: pd.DataFrame, target: dict[str, Any], kinds: dict[str, ColumnKind]) -> ProblemType:
+def detect_problem_type(
+    df: pd.DataFrame, target: dict[str, Any], kinds: dict[str, ColumnKind]
+) -> ProblemType:
     col = target.get("column")
     datetime_cols = [c for c, k in kinds.items() if k is ColumnKind.DATETIME]
     if datetime_cols and col and kinds.get(col) in {ColumnKind.FLOAT, ColumnKind.INTEGER}:
@@ -330,7 +349,12 @@ def leakage_report(
     for col, kind in kinds.items():
         if kind is ColumnKind.ID:
             findings.append(
-                {"type": "identifier", "column": col, "severity": "high", "detail": "Likely identifier"}
+                {
+                    "type": "identifier",
+                    "column": col,
+                    "severity": "high",
+                    "detail": "Likely identifier",
+                }
             )
     target_col = target.get("column")
     if target_col and target_col in df.columns:
@@ -341,7 +365,11 @@ def leakage_report(
             if kind in {ColumnKind.FLOAT, ColumnKind.INTEGER, ColumnKind.BOOLEAN}:
                 try:
                     x = pd.to_numeric(df[col], errors="coerce")
-                    yt = pd.to_numeric(y, errors="coerce") if not pd.api.types.is_numeric_dtype(y) else y
+                    yt = (
+                        pd.to_numeric(y, errors="coerce")
+                        if not pd.api.types.is_numeric_dtype(y)
+                        else y
+                    )
                     mask = x.notna() & yt.notna()
                     if mask.sum() < 20:
                         continue
@@ -458,7 +486,9 @@ def profile_dataframe(df: pd.DataFrame, *, file_size_bytes: int | None = None) -
         column_reports.append(report)
 
     numeric_cols = [
-        c for c, k in kinds.items() if k in {ColumnKind.INTEGER, ColumnKind.FLOAT} and working[c].nunique() > 1
+        c
+        for c, k in kinds.items()
+        if k in {ColumnKind.INTEGER, ColumnKind.FLOAT} and working[c].nunique() > 1
     ]
     corr = correlation_matrix(working, numeric_cols[:40])
     target = detect_target(working, kinds)
@@ -503,7 +533,9 @@ def _recommendations(
     if quality["duplicate_rows"]:
         tips.append(f"Remove or investigate {quality['duplicate_rows']} duplicate rows.")
     for finding in leakage.get("findings", [])[:8]:
-        tips.append(f"Leakage/{finding['type']}: review column `{finding['column']}` ({finding['detail']}).")
+        tips.append(
+            f"Leakage/{finding['type']}: review column `{finding['column']}` ({finding['detail']})."
+        )
     for col in columns:
         if col.get("kind") == ColumnKind.ID.value:
             tips.append(f"Consider dropping identifier `{col['name']}` from features.")
@@ -512,7 +544,9 @@ def _recommendations(
             ColumnKind.FLOAT.value,
             ColumnKind.INTEGER.value,
         }:
-            tips.append(f"`{col['name']}` has {outs['iqr_count']} IQR outliers (do not auto-clean here).")
+            tips.append(
+                f"`{col['name']}` has {outs['iqr_count']} IQR outliers (do not auto-clean here)."
+            )
     if target.get("column"):
         tips.append(
             f"Inferred target `{target['column']}` (confidence {target['confidence']:.0%}) for {problem.value}."

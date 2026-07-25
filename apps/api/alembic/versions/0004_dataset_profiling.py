@@ -37,12 +37,29 @@ def upgrade() -> None:
         sa.Column("created_by_user_id", UuidType, nullable=False),
         sa.Column("started_at", sa.DateTime(timezone=True), nullable=True),
         sa.Column("completed_at", sa.DateTime(timezone=True), nullable=True),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("now()"), nullable=False),
-        sa.Column("updated_at", sa.DateTime(timezone=True), server_default=sa.text("now()"), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column(
+            "updated_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
         schema="profiling",
     )
-    op.create_index("ix_profiling_jobs_organization_id", "profiling_jobs", ["organization_id"], schema="profiling")
-    op.create_index("ix_profiling_jobs_dataset_id", "profiling_jobs", ["dataset_id"], schema="profiling")
+    op.create_index(
+        "ix_profiling_jobs_organization_id",
+        "profiling_jobs",
+        ["organization_id"],
+        schema="profiling",
+    )
+    op.create_index(
+        "ix_profiling_jobs_dataset_id", "profiling_jobs", ["dataset_id"], schema="profiling"
+    )
     op.create_index("ix_profiling_jobs_status", "profiling_jobs", ["status"], schema="profiling")
 
     op.create_table(
@@ -63,13 +80,29 @@ def upgrade() -> None:
         sa.Column("quality_overall", sa.Float(), nullable=False),
         sa.Column("summary", sa.Text(), nullable=False, server_default=""),
         sa.Column("profile_json", JsonType, nullable=False, server_default=sa.text("'{}'::json")),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("now()"), nullable=False),
-        sa.UniqueConstraint("organization_id", "dataset_id", "dataset_version", name="uq_profile_dataset_ver"),
+        sa.Column(
+            "created_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.UniqueConstraint(
+            "organization_id", "dataset_id", "dataset_version", name="uq_profile_dataset_ver"
+        ),
         schema="profiling",
     )
-    op.create_index("ix_dataset_profiles_organization_id", "dataset_profiles", ["organization_id"], schema="profiling")
-    op.create_index("ix_dataset_profiles_dataset_id", "dataset_profiles", ["dataset_id"], schema="profiling")
-    op.create_index("ix_dataset_profiles_job_id", "dataset_profiles", ["job_id"], schema="profiling")
+    op.create_index(
+        "ix_dataset_profiles_organization_id",
+        "dataset_profiles",
+        ["organization_id"],
+        schema="profiling",
+    )
+    op.create_index(
+        "ix_dataset_profiles_dataset_id", "dataset_profiles", ["dataset_id"], schema="profiling"
+    )
+    op.create_index(
+        "ix_dataset_profiles_job_id", "dataset_profiles", ["job_id"], schema="profiling"
+    )
 
     op.create_table(
         "column_profiles",
@@ -84,11 +117,20 @@ def upgrade() -> None:
         sa.Column("unique_count", sa.Integer(), nullable=False, server_default=sa.text("0")),
         sa.Column("nearly_constant", sa.Boolean(), nullable=False, server_default=sa.text("false")),
         sa.Column("details", JsonType, nullable=False, server_default=sa.text("'{}'::json")),
-        sa.ForeignKeyConstraint(["profile_id"], ["profiling.dataset_profiles.id"], ondelete="CASCADE"),
+        sa.ForeignKeyConstraint(
+            ["profile_id"], ["profiling.dataset_profiles.id"], ondelete="CASCADE"
+        ),
         schema="profiling",
     )
-    op.create_index("ix_column_profiles_organization_id", "column_profiles", ["organization_id"], schema="profiling")
-    op.create_index("ix_column_profiles_profile_id", "column_profiles", ["profile_id"], schema="profiling")
+    op.create_index(
+        "ix_column_profiles_organization_id",
+        "column_profiles",
+        ["organization_id"],
+        schema="profiling",
+    )
+    op.create_index(
+        "ix_column_profiles_profile_id", "column_profiles", ["profile_id"], schema="profiling"
+    )
 
     op.create_table(
         "column_statistics",
@@ -97,11 +139,20 @@ def upgrade() -> None:
         sa.Column("profile_id", UuidType, nullable=False),
         sa.Column("column_name", sa.String(length=255), nullable=False),
         sa.Column("statistics", JsonType, nullable=False, server_default=sa.text("'{}'::json")),
-        sa.ForeignKeyConstraint(["profile_id"], ["profiling.dataset_profiles.id"], ondelete="CASCADE"),
+        sa.ForeignKeyConstraint(
+            ["profile_id"], ["profiling.dataset_profiles.id"], ondelete="CASCADE"
+        ),
         schema="profiling",
     )
-    op.create_index("ix_column_statistics_organization_id", "column_statistics", ["organization_id"], schema="profiling")
-    op.create_index("ix_column_statistics_profile_id", "column_statistics", ["profile_id"], schema="profiling")
+    op.create_index(
+        "ix_column_statistics_organization_id",
+        "column_statistics",
+        ["organization_id"],
+        schema="profiling",
+    )
+    op.create_index(
+        "ix_column_statistics_profile_id", "column_statistics", ["profile_id"], schema="profiling"
+    )
 
     op.create_table(
         "quality_reports",
@@ -109,11 +160,18 @@ def upgrade() -> None:
         sa.Column("organization_id", UuidType, nullable=False),
         sa.Column("profile_id", UuidType, nullable=False),
         sa.Column("report", JsonType, nullable=False, server_default=sa.text("'{}'::json")),
-        sa.ForeignKeyConstraint(["profile_id"], ["profiling.dataset_profiles.id"], ondelete="CASCADE"),
+        sa.ForeignKeyConstraint(
+            ["profile_id"], ["profiling.dataset_profiles.id"], ondelete="CASCADE"
+        ),
         sa.UniqueConstraint("profile_id"),
         schema="profiling",
     )
-    op.create_index("ix_quality_reports_organization_id", "quality_reports", ["organization_id"], schema="profiling")
+    op.create_index(
+        "ix_quality_reports_organization_id",
+        "quality_reports",
+        ["organization_id"],
+        schema="profiling",
+    )
 
     op.create_table(
         "leakage_reports",
@@ -121,11 +179,18 @@ def upgrade() -> None:
         sa.Column("organization_id", UuidType, nullable=False),
         sa.Column("profile_id", UuidType, nullable=False),
         sa.Column("report", JsonType, nullable=False, server_default=sa.text("'{}'::json")),
-        sa.ForeignKeyConstraint(["profile_id"], ["profiling.dataset_profiles.id"], ondelete="CASCADE"),
+        sa.ForeignKeyConstraint(
+            ["profile_id"], ["profiling.dataset_profiles.id"], ondelete="CASCADE"
+        ),
         sa.UniqueConstraint("profile_id"),
         schema="profiling",
     )
-    op.create_index("ix_leakage_reports_organization_id", "leakage_reports", ["organization_id"], schema="profiling")
+    op.create_index(
+        "ix_leakage_reports_organization_id",
+        "leakage_reports",
+        ["organization_id"],
+        schema="profiling",
+    )
 
     op.create_table(
         "profiling_artifacts",
@@ -136,12 +201,29 @@ def upgrade() -> None:
         sa.Column("storage_key", sa.String(length=512), nullable=False),
         sa.Column("content_type", sa.String(length=128), nullable=False),
         sa.Column("size_bytes", sa.BigInteger(), nullable=False, server_default=sa.text("0")),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("now()"), nullable=False),
-        sa.ForeignKeyConstraint(["profile_id"], ["profiling.dataset_profiles.id"], ondelete="CASCADE"),
+        sa.Column(
+            "created_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.ForeignKeyConstraint(
+            ["profile_id"], ["profiling.dataset_profiles.id"], ondelete="CASCADE"
+        ),
         schema="profiling",
     )
-    op.create_index("ix_profiling_artifacts_organization_id", "profiling_artifacts", ["organization_id"], schema="profiling")
-    op.create_index("ix_profiling_artifacts_profile_id", "profiling_artifacts", ["profile_id"], schema="profiling")
+    op.create_index(
+        "ix_profiling_artifacts_organization_id",
+        "profiling_artifacts",
+        ["organization_id"],
+        schema="profiling",
+    )
+    op.create_index(
+        "ix_profiling_artifacts_profile_id",
+        "profiling_artifacts",
+        ["profile_id"],
+        schema="profiling",
+    )
 
 
 def downgrade() -> None:

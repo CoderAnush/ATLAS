@@ -100,7 +100,7 @@ def run_profiling_job(self: Any, job_id: str) -> dict[str, str]:
                 job_id,
                 self.request.retries + 1,
             )
-            raise self.retry(exc=exc, countdown=2 ** self.request.retries) from exc
+            raise self.retry(exc=exc, countdown=2**self.request.retries) from exc
         logger.exception("profiling job failed job_id=%s", job_id)
         _persist_failed(job_id, str(exc))
         raise

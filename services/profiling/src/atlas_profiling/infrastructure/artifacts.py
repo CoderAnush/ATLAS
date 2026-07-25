@@ -63,7 +63,7 @@ pre{{white-space:pre-wrap;background:#1a222c;padding:1rem;border-radius:8px}}
 h1,h2{{color:#7dd3fc}}
 </style></head><body>
 <h1>ATLAS Dataset Understanding</h1>
-<p>{summary.replace(chr(10), '<br/>')}</p>
+<p>{summary.replace(chr(10), "<br/>")}</p>
 <pre>{md}</pre>
 </body></html>
 """
@@ -86,7 +86,9 @@ def build_pdf(summary: str, profile: dict[str, Any]) -> bytes:
         c.drawString(40, y, line[:100])
         y -= 14
     y -= 10
-    c.drawString(40, y, f"Quality overall: {profile['quality']['overall']} ({profile['quality']['health']})")
+    c.drawString(
+        40, y, f"Quality overall: {profile['quality']['overall']} ({profile['quality']['health']})"
+    )
     y -= 14
     c.drawString(40, y, f"Problem: {profile['problem_type']}")
     c.showPage()
@@ -108,9 +110,7 @@ def build_visualizations(df_sample: Any, profile: dict[str, Any]) -> dict[str, A
     cols = corr.get("columns") or []
     matrix = corr.get("pearson") or []
     if cols and matrix:
-        fig = go.Figure(
-            data=go.Heatmap(z=matrix, x=cols, y=cols, colorscale="RdBu", zmid=0)
-        )
+        fig = go.Figure(data=go.Heatmap(z=matrix, x=cols, y=cols, colorscale="RdBu", zmid=0))
         fig.update_layout(title="Pearson correlation")
         figs["correlation_heatmap"] = json.loads(fig.to_json())
 
@@ -127,9 +127,7 @@ def build_visualizations(df_sample: Any, profile: dict[str, Any]) -> dict[str, A
         if not hist.get("counts"):
             continue
         edges = hist.get("edges") or []
-        centers = [
-            ((edges[i] or 0) + (edges[i + 1] or 0)) / 2 for i in range(len(edges) - 1)
-        ]
+        centers = [((edges[i] or 0) + (edges[i + 1] or 0)) / 2 for i in range(len(edges) - 1)]
         fig = go.Figure(data=[go.Bar(x=centers, y=hist["counts"])])
         fig.update_layout(title=f"Histogram: {col['name']}")
         figs["distributions"].append({"column": col["name"], "figure": json.loads(fig.to_json())})
@@ -138,14 +136,18 @@ def build_visualizations(df_sample: Any, profile: dict[str, Any]) -> dict[str, A
     target = profile.get("target", {}).get("column")
     if target and target in getattr(df_sample, "columns", []):
         vc = df_sample[target].astype(str).value_counts().head(20)
-        fig = px.pie(names=vc.index.astype(str), values=vc.values, title=f"Target imbalance: {target}")
+        fig = px.pie(
+            names=vc.index.astype(str), values=vc.values, title=f"Target imbalance: {target}"
+        )
         figs["class_imbalance"] = json.loads(fig.to_json())
         fig2 = px.bar(x=vc.index.astype(str), y=vc.values, title=f"Value counts: {target}")
         figs["value_counts"] = json.loads(fig2.to_json())
 
     # boxplot for first numeric
     for col in profile["columns"]:
-        if col.get("kind") in {"integer", "float"} and col["name"] in getattr(df_sample, "columns", []):
+        if col.get("kind") in {"integer", "float"} and col["name"] in getattr(
+            df_sample, "columns", []
+        ):
             fig = px.box(df_sample, y=col["name"], title=f"Boxplot: {col['name']}")
             figs["boxplot"] = json.loads(fig.to_json())
             break

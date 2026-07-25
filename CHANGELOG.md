@@ -25,6 +25,10 @@ All notable changes to ATLAS are documented here.
 - Version **0.4.0**; worker image installs catalog/profiling stack
 - Dockerfile.api installs `atlas-profiling`
 
+### Fixed
+
+- Ruff format compliance for CI (`ruff format --check apps packages tests`) so the python job passes
+
 ### Notes
 
 - No cleaning, feature engineering, or training (Phase 5+)

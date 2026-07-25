@@ -24,7 +24,9 @@ class FakeStorage:
     def __init__(self) -> None:
         self.objects: dict[str, bytes] = {}
 
-    def upload(self, bucket: str, object_name: str, data: bytes, *, content_type: str | None = None) -> None:
+    def upload(
+        self, bucket: str, object_name: str, data: bytes, *, content_type: str | None = None
+    ) -> None:
         self.objects[f"{bucket}/{object_name}"] = data
 
     def upload_stream(

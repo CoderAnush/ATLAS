@@ -89,7 +89,9 @@ class ProfilingRepository:
     def list_artifacts(self, profile_id: uuid.UUID) -> list[ProfilingArtifactModel]:
         return list(
             self.session.scalars(
-                select(ProfilingArtifactModel).where(ProfilingArtifactModel.profile_id == profile_id)
+                select(ProfilingArtifactModel).where(
+                    ProfilingArtifactModel.profile_id == profile_id
+                )
             ).all()
         )
 

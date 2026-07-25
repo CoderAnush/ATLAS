@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 """Run Alembic migrations (used inside Compose / local uv)."""
+
 from __future__ import annotations
 
 import atlas_catalog.infrastructure.models  # noqa: F401

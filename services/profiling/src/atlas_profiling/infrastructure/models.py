@@ -36,7 +36,9 @@ class ProfilingJobModel(Base):
     __table_args__ = {"schema": "profiling"}
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=_uuid)
-    organization_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
+    organization_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), nullable=False, index=True
+    )
     dataset_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
     dataset_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
     status: Mapped[str] = mapped_column(String(32), nullable=False, default="queued", index=True)
@@ -56,12 +58,16 @@ class ProfilingJobModel(Base):
 class DatasetProfileModel(Base):
     __tablename__ = "dataset_profiles"
     __table_args__ = (
-        UniqueConstraint("organization_id", "dataset_id", "dataset_version", name="uq_profile_dataset_ver"),
+        UniqueConstraint(
+            "organization_id", "dataset_id", "dataset_version", name="uq_profile_dataset_ver"
+        ),
         {"schema": "profiling"},
     )
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=_uuid)
-    organization_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
+    organization_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), nullable=False, index=True
+    )
     dataset_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
     dataset_version: Mapped[int] = mapped_column(Integer, nullable=False)
     job_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), index=True)
@@ -86,9 +92,13 @@ class ColumnProfileModel(Base):
     __table_args__ = {"schema": "profiling"}
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=_uuid)
-    organization_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
+    organization_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), nullable=False, index=True
+    )
     profile_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("profiling.dataset_profiles.id", ondelete="CASCADE"), index=True
+        UUID(as_uuid=True),
+        ForeignKey("profiling.dataset_profiles.id", ondelete="CASCADE"),
+        index=True,
     )
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     kind: Mapped[str] = mapped_column(String(32), nullable=False)
@@ -105,9 +115,13 @@ class ColumnStatisticsModel(Base):
     __table_args__ = {"schema": "profiling"}
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=_uuid)
-    organization_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
+    organization_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), nullable=False, index=True
+    )
     profile_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("profiling.dataset_profiles.id", ondelete="CASCADE"), index=True
+        UUID(as_uuid=True),
+        ForeignKey("profiling.dataset_profiles.id", ondelete="CASCADE"),
+        index=True,
     )
     column_name: Mapped[str] = mapped_column(String(255), nullable=False)
     statistics: Mapped[dict[str, Any]] = mapped_column(JsonType, nullable=False, default=dict)
@@ -118,9 +132,13 @@ class QualityReportModel(Base):
     __table_args__ = {"schema": "profiling"}
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=_uuid)
-    organization_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
+    organization_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), nullable=False, index=True
+    )
     profile_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("profiling.dataset_profiles.id", ondelete="CASCADE"), unique=True
+        UUID(as_uuid=True),
+        ForeignKey("profiling.dataset_profiles.id", ondelete="CASCADE"),
+        unique=True,
     )
     report: Mapped[dict[str, Any]] = mapped_column(JsonType, nullable=False, default=dict)
 
@@ -130,9 +148,13 @@ class LeakageReportModel(Base):
     __table_args__ = {"schema": "profiling"}
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=_uuid)
-    organization_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
+    organization_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), nullable=False, index=True
+    )
     profile_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("profiling.dataset_profiles.id", ondelete="CASCADE"), unique=True
+        UUID(as_uuid=True),
+        ForeignKey("profiling.dataset_profiles.id", ondelete="CASCADE"),
+        unique=True,
     )
     report: Mapped[dict[str, Any]] = mapped_column(JsonType, nullable=False, default=dict)
 
@@ -142,11 +164,17 @@ class ProfilingArtifactModel(Base):
     __table_args__ = {"schema": "profiling"}
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=_uuid)
-    organization_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
-    profile_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("profiling.dataset_profiles.id", ondelete="CASCADE"), index=True
+    organization_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), nullable=False, index=True
     )
-    artifact_type: Mapped[str] = mapped_column(String(64), nullable=False)  # json|markdown|html|pdf|plotly
+    profile_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("profiling.dataset_profiles.id", ondelete="CASCADE"),
+        index=True,
+    )
+    artifact_type: Mapped[str] = mapped_column(
+        String(64), nullable=False
+    )  # json|markdown|html|pdf|plotly
     storage_key: Mapped[str] = mapped_column(String(512), nullable=False)
     content_type: Mapped[str] = mapped_column(String(128), nullable=False)
     size_bytes: Mapped[int] = mapped_column(BigInteger, nullable=False, default=0)
