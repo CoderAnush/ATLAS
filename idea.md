@@ -4,8 +4,8 @@
 > *From Raw Data to Production AI with One Command.*
 
 **Internal product identity:** **ATLAS — Autonomous AI Engineering Platform (AAEP)**  
-**Status:** Phase 4 complete — **v0.4.0 Dataset Understanding Platform**; awaiting Phase 5 instructions  
-**Last Updated:** 2026-07-24  
+**Status:** Phase 5 complete — **v0.5.0 Intelligent Data Preparation Platform**; awaiting Phase 6 instructions  
+**Last Updated:** 2026-07-26  
 **Primary Branch:** `main`  
 **License:** MIT  
 **Repository:** https://github.com/CoderAnush/ATLAS  
@@ -758,12 +758,19 @@ Full narrative: §51.
 - [x] Dataset Understanding Agent (deterministic + optional LLM)  
 - [x] EDA report artifacts in MinIO  
 
-### Next (Phase 5 — do not start until instructed)
+### Completed (Phase 5)
 
-- [ ] Missing values, duplicates, outliers strategies  
-- [ ] Encoding / scaling pipelines  
-- [ ] Versioned preparation recipes  
-- [ ] Data Cleaning Agent  
+- [x] Missing values, duplicates, outliers strategies  
+- [x] Versioned preparation recipes (HITL approve → new catalog version)  
+- [x] Data Cleaning Agent  
+- [ ] Encoding / scaling pipelines *(Phase 6 Feature Engineering)*  
+
+### Next (Phase 6 — do not start until instructed)
+
+- [ ] Feature generation & selection baselines  
+- [ ] Time-series / text feature hooks  
+- [ ] Feature Engineering Agent  
+- [ ] Feature store interface (stub)  
 
 ### Architecture notes (Phase 3)
 

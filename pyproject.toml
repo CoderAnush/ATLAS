@@ -1,6 +1,6 @@
 [project]
 name = "atlas"
-version = "0.4.0"
+version = "0.5.0"
 description = "ATLAS - Autonomous Training, Learning And Serving"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -33,6 +33,7 @@ members = [
   "services/identity",
   "services/catalog",
   "services/profiling",
+  "services/preparation",
   "apps/api",
   "apps/worker",
 ]
@@ -47,6 +48,7 @@ atlas-ml = { workspace = true }
 atlas-identity = { workspace = true }
 atlas-catalog = { workspace = true }
 atlas-profiling = { workspace = true }
+atlas-preparation = { workspace = true }
 atlas-api = { workspace = true }
 atlas-worker = { workspace = true }
 
@@ -63,8 +65,8 @@ ignore = ["UP040", "E501", "B008"]
 python_version = "3.12"
 strict = true
 warn_unreachable = true
-mypy_path = "packages/atlas-core/src:packages/atlas-contracts/src:packages/atlas-db/src:packages/atlas-storage/src:packages/atlas-telemetry/src:services/identity/src:services/catalog/src:services/profiling/src:apps/api/src:apps/worker/src:agents/dataset_understanding/src"
-packages = ["atlas_core", "atlas_contracts", "atlas_db", "atlas_storage", "atlas_telemetry", "atlas_identity", "atlas_catalog", "atlas_profiling", "atlas_api", "atlas_worker"]
+mypy_path = "packages/atlas-core/src:packages/atlas-contracts/src:packages/atlas-db/src:packages/atlas-storage/src:packages/atlas-telemetry/src:services/identity/src:services/catalog/src:services/profiling/src:services/preparation/src:apps/api/src:apps/worker/src:agents/dataset_understanding/src:agents/data_cleaning/src"
+packages = ["atlas_core", "atlas_contracts", "atlas_db", "atlas_storage", "atlas_telemetry", "atlas_identity", "atlas_catalog", "atlas_profiling", "atlas_preparation", "atlas_api", "atlas_worker"]
 exclude = ["alembic", "apps/web", ".venv"]
 
 [[tool.mypy.overrides]]
@@ -78,7 +80,7 @@ ignore_errors = true
 disable_error_code = ["syntax", "import-untyped"]
 
 [tool.pytest.ini_options]
-testpaths = ["tests", "packages", "apps", "services/catalog", "services/profiling"]
+testpaths = ["tests", "packages", "apps", "services/catalog", "services/profiling", "services/preparation"]
 addopts = "-ra"
 pythonpath = [
   "packages/atlas-core/src",
@@ -89,7 +91,9 @@ pythonpath = [
   "services/identity/src",
   "services/catalog/src",
   "services/profiling/src",
+  "services/preparation/src",
   "agents/dataset_understanding/src",
+  "agents/data_cleaning/src",
   "apps/api/src",
   "apps/worker/src",
 ]

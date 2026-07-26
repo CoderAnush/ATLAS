@@ -8,6 +8,7 @@ from contextlib import asynccontextmanager
 
 import atlas_catalog.infrastructure.models  # noqa: F401
 import atlas_identity.infrastructure.models  # noqa: F401
+import atlas_preparation.infrastructure.models  # noqa: F401
 import atlas_profiling.infrastructure.models  # noqa: F401
 from atlas_telemetry.logging import configure_logging
 from atlas_telemetry.tracing import setup_tracing
@@ -29,14 +30,15 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     """Start and stop application resources."""
     settings: Settings = app.state.settings
     logger.info("Starting ATLAS API env=%s version=%s", settings.atlas_env, __version__)
-    try:
-        client = app.state.container.minio_client
-        bucket = settings.minio_bucket
-        if not client.bucket_exists(bucket):
-            client.make_bucket(bucket)
-            logger.info("Created MinIO bucket %s", bucket)
-    except Exception as exc:  # noqa: BLE001
-        logger.warning("MinIO bucket ensure failed: %s", exc)
+    if settings.atlas_env != "testing":
+        try:
+            client = app.state.container.minio_client
+            bucket = settings.minio_bucket
+            if not client.bucket_exists(bucket):
+                client.make_bucket(bucket)
+                logger.info("Created MinIO bucket %s", bucket)
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("MinIO bucket ensure failed: %s", exc)
     yield
     logger.info("Shutting down ATLAS API")
     try:

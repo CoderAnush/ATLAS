@@ -15,7 +15,11 @@ celery_app = Celery(
     "atlas",
     broker=settings.redis_url,
     backend=settings.redis_url,
-    include=["atlas_worker.tasks.heartbeat", "atlas_worker.tasks.profiling"],
+    include=[
+        "atlas_worker.tasks.heartbeat",
+        "atlas_worker.tasks.profiling",
+        "atlas_worker.tasks.preparation",
+    ],
 )
 
 celery_app.conf.update(

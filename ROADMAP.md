@@ -97,18 +97,20 @@ Living delivery plan. **`idea.md` remains the architectural source of truth.** U
 
 **Exit criteria:** Upload → automatic profile + readable EDA summary. **Met.**
 
-**Completed:** 2026-07-24 — do not start Phase 5 until explicitly approved.
+**Completed:** 2026-07-24 — Phase 4 complete.
 
 ---
 
 ## Phase 5 — Cleaning Pipeline
 
-- [ ] Missing values, duplicates, outliers strategies  
-- [ ] Encoding / scaling pipelines  
-- [ ] Versioned preparation recipes  
-- [ ] Data Cleaning Agent  
+- [x] Missing values, duplicates, outliers strategies  
+- [x] Versioned preparation recipes (HITL approve → new dataset version)  
+- [x] Data Cleaning Agent  
+- [ ] Encoding / scaling pipelines *(deferred to Phase 6 Feature Engineering)*  
 
-**Exit criteria:** Reproducible cleaned dataset artifact from a profiled source.
+**Exit criteria:** Reproducible cleaned dataset artifact from a profiled source. **Met** (approve creates catalog vN+1 + recipe/report).
+
+**Completed:** 2026-07-26 — do not start Phase 6 until explicitly approved.
 
 ---
 

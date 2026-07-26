@@ -14,6 +14,8 @@ from atlas_catalog.infrastructure import models as _catalog_models  # noqa: F401
 from atlas_db.base import Base
 from atlas_db.session import create_session_factory
 from atlas_identity.infrastructure import models as _identity_models  # noqa: F401
+from atlas_preparation.infrastructure import models as _prep_models  # noqa: F401
+from atlas_profiling.infrastructure import models as _profiling_models  # noqa: F401
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine, event
 from sqlalchemy.pool import StaticPool
@@ -68,7 +70,12 @@ def engine():
 
     with engine.begin() as conn:
         conn_ex = conn.execution_options(
-            schema_translate_map={"identity": None, "catalog": None, "profiling": None}
+            schema_translate_map={
+                "identity": None,
+                "catalog": None,
+                "profiling": None,
+                "preparation": None,
+            }
         )
         tables = [
             t
@@ -97,7 +104,12 @@ def client(engine) -> TestClient:
         session = factory()
         session.connection(
             execution_options={
-                "schema_translate_map": {"identity": None, "catalog": None, "profiling": None}
+                "schema_translate_map": {
+                    "identity": None,
+                    "catalog": None,
+                    "profiling": None,
+                    "preparation": None,
+                }
             }
         )
         return session

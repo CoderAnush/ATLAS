@@ -2,6 +2,33 @@
 
 All notable changes to ATLAS are documented here.
 
+## [0.5.0] — 2026-07-26 — ATLAS Intelligent Data Preparation Platform
+
+### Added
+
+- `services/preparation` Clean Architecture package (cleaning engine, recipes, HITL approval, versioned outputs)
+- Data Cleaning Agent (`agents/data_cleaning` + `atlas_preparation.application.agent`)
+- Missing-value strategies: mean, median, mode, constant, ffill, bfill, interpolate, KNN, iterative, drop rows/columns
+- Duplicate handling: exact, near-duplicates, duplicate IDs
+- Outlier detection: IQR, Z-score, modified Z, IsolationForest, LOF, DBSCAN with remove/cap/winsorize/leave
+- Categorical/text/datetime/numeric hygiene transforms; executable JSON cleaning recipes
+- Before/after quality comparison + transformation history
+- Async Celery jobs (`atlas.worker.preparation`) with awaiting_approval → approve/reject
+- Approve creates a **new catalog dataset version** (never overwrites) + lineage `cleaned_from`
+- Alembic `0005_data_preparation` (`preparation` schema, 8 tables)
+- API under `/v1/preparation/*`
+- Web: preparation launcher + plan/recipe/before-after/timeline + HITL edit/approve/reject/export
+- Unit + API integration tests for preparation
+
+### Changed
+
+- Version **0.5.0**; API/worker images install `atlas-preparation`
+
+### Notes
+
+- No feature engineering, training, HPO, or AutoML (Phase 6+)
+- Encoding/scaling pipelines remain deferred to Feature Engineering (Phase 6) per AAEP sequencing
+
 ## [0.4.0] — 2026-07-24 — ATLAS Dataset Understanding Platform
 
 ### Added

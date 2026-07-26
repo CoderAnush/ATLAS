@@ -1,0 +1,31 @@
+[project]
+name = "atlas-preparation"
+version = "0.5.0"
+description = "ATLAS preparation — data cleaning, recipes, HITL approval, versioned cleaned datasets."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "atlas-core",
+  "atlas-contracts",
+  "atlas-db",
+  "atlas-storage",
+  "atlas-telemetry",
+  "atlas-identity",
+  "atlas-catalog",
+  "atlas-profiling",
+  "pydantic>=2.9",
+  "sqlalchemy>=2.0",
+  "pandas>=2.2",
+  "numpy>=1.26",
+  "scipy>=1.11",
+  "scikit-learn>=1.4",
+  "pyarrow>=17.0",
+  "openpyxl>=3.1",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/atlas_preparation"]

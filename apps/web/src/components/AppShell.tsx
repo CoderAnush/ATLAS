@@ -12,6 +12,7 @@ const NAV = [
   { href: "/datasets", label: "Datasets" },
   { href: "/datasets/upload", label: "Upload" },
   { href: "/profiling", label: "Profiling" },
+  { href: "/preparation", label: "Preparation" },
   { href: "/settings", label: "Settings" },
   { href: "/settings/api-keys", label: "API Keys" },
   { href: "/settings/members", label: "Members" },

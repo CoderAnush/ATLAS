@@ -1,7 +1,6 @@
-# Data Cleaning Agent
+# ATLAS Data Cleaning Agent
 
-Missing values, duplicates, outliers, encoding, scaling, normalization — produces versioned clean datasets.
+Status: **Active (Phase 5)**
 
-**Status:** Placeholder  
-**Contracts:** `packages/atlas-contracts` (AgentRequest / AgentResponse)  
-**See:** `idea.md` § AI Agents
+Produces a human-approvable cleaning recipe from a dataframe (+ optional profiling report).
+Implementation lives in `atlas_preparation.application.agent` and is re-exported here.

@@ -2,9 +2,25 @@
 
 High-level system design. For locked decisions, modules, and contracts, see **[`idea.md`](./idea.md)** (source of truth).
 
-**Last Updated:** 2026-07-24 (Phase 4 dataset understanding)
+**Last Updated:** 2026-07-26 (Phase 5 data preparation)
 
 ATLAS is an **Autonomous AI Engineering Platform (AAEP)**. Full specification: [`idea.md`](./idea.md) §30–§52. This file remains a concise topology guide; **`idea.md` wins on conflicts**.
+
+### Phase 5 runtime topology
+
+```text
+browser → web:3000 (/preparation)
+       → api:8000 /v1/preparation/*
+            → enqueue Celery job (atlas.worker.preparation)
+worker → download dataset + optional profile → Data Cleaning Agent
+       → persist preparation.* plan/recipe/report (awaiting_approval)
+human  → approve/reject (+ optional edited steps)
+       → on approve: apply recipe → new catalog dataset version + lineage cleaned_from
+postgres: identity.* · catalog.* · profiling.* · preparation.*
+```
+
+**Preparation:** never mutates the source version; HITL gate before writing cleaned artifacts.  
+**Recipes:** versioned JSON step lists, replayable via `apply_recipe`.
 
 ### Phase 4 runtime topology
 

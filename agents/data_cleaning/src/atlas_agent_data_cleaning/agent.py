@@ -1,23 +1,30 @@
-"""Data Cleaning Agent implementation placeholder.
+"""Data Cleaning Agent module.
 
-Replace `run` with a real agent that validates contracts from atlas-contracts.
+Thin re-export of the preparation-package agent for the agents/ tree layout.
 """
 
 from __future__ import annotations
 
 from typing import Any
 
-AGENT_NAME = "data_cleaning"
+from atlas_contracts.agents import AgentRequest, AgentResponse
+from atlas_preparation.application.agent import (
+    AGENT_NAME,
+    run_data_cleaning_agent,
+    template_summary,
+)
+
+__all__ = ["AGENT_NAME", "run", "template_summary"]
 
 
-def run(request: dict[str, Any]) -> dict[str, Any]:
-    """Execute the agent (stub)."""
-    return {
-        "status": "not_implemented",
-        "agent": AGENT_NAME,
-        "artifacts": [],
-        "metrics": {},
-        "messages": ["Placeholder agent — implement in later phases."],
-        "next_hints": [],
-        "echo": request,
-    }
+def run(
+    request: AgentRequest | dict[str, Any] | None = None,
+    *,
+    dataframe: Any | None = None,
+    profile: dict[str, Any] | None = None,
+    strategies: dict[str, Any] | None = None,
+) -> AgentResponse:
+    """Execute the data cleaning agent."""
+    return run_data_cleaning_agent(
+        request, dataframe=dataframe, profile=profile, strategies=strategies
+    )

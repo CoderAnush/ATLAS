@@ -1,4 +1,4 @@
-"""Profiling API integration tests."""
+"""Preparation API integration tests."""
 
 from __future__ import annotations
 
@@ -91,7 +91,7 @@ def engine():
 def client(engine) -> TestClient:
     settings = Settings(
         atlas_env="testing",
-        atlas_secret_key="test-secret-key-for-jwt-signing-phase4",
+        atlas_secret_key="test-secret-key-for-jwt-signing-phase5",
         atlas_json_logs=False,
         database_url="sqlite+pysqlite:///:memory:",
         atlas_max_upload_bytes=5_000_000,
@@ -135,9 +135,9 @@ def client(engine) -> TestClient:
 def _auth(client: TestClient) -> dict:
     suffix = uuid.uuid4().hex[:8]
     payload = {
-        "email": f"prof_{suffix}@example.com",
+        "email": f"prep_{suffix}@example.com",
         "password": "Str0ng!Pass",
-        "full_name": "Profiler",
+        "full_name": "Preparer",
         "organization_name": f"Org {suffix}",
     }
     response = client.post("/v1/auth/register", json=payload)
@@ -147,40 +147,72 @@ def _auth(client: TestClient) -> dict:
     return data
 
 
-def test_profiling_run_and_summary(client: TestClient) -> None:
+def test_preparation_run_approve_flow(client: TestClient) -> None:
     auth = _auth(client)
     h = auth["_headers"]
     pid = client.post("/v1/projects", headers=h, json={"name": "P"}).json()["id"]
-    csv_bytes = b"id,age,salary,survived\n1,20,30000,0\n2,30,40000,1\n3,40,50000,0\n4,25,35000,1\n"
+    csv_bytes = b"id,age,country\n1,20,US\n2,,us\n3,40,UK\n3,40,UK\n"
     up = client.post(
         "/v1/datasets/upload",
         headers=h,
-        data={"project_id": pid, "name": "titanic-mini"},
-        files={"file": ("t.csv", io.BytesIO(csv_bytes), "text/csv")},
+        data={"project_id": pid, "name": "messy"},
+        files={"file": ("m.csv", io.BytesIO(csv_bytes), "text/csv")},
     )
     assert up.status_code == 201, up.text
     did = up.json()["id"]
 
-    run = client.post(f"/v1/profiling/run/{did}", headers=h)
+    # Profile first (optional but mirrors real flow)
+    client.post(f"/v1/profiling/run/{did}", headers=h)
+
+    run = client.post(f"/v1/preparation/run/{did}", headers=h, json={"strategies": {}})
     assert run.status_code == 202, run.text
     job_id = run.json()["job_id"]
 
-    job = client.get(f"/v1/profiling/jobs/{job_id}", headers=h)
+    job = client.get(f"/v1/preparation/jobs/{job_id}", headers=h)
     assert job.status_code == 200
-    assert job.json()["status"] == "completed"
+    assert job.json()["status"] == "awaiting_approval"
 
-    summary = client.get(f"/v1/profiling/{did}/summary", headers=h)
+    summary = client.get(f"/v1/preparation/{did}", headers=h)
     assert summary.status_code == 200, summary.text
     body = summary.json()
-    assert body["rows"] == 4
-    assert body["quality_overall"] > 0
-    assert "summary" in body
+    assert body["status"] == "awaiting_approval"
+    assert body["recipe_id"]
 
-    quality = client.get(f"/v1/profiling/{did}/quality", headers=h)
-    assert quality.status_code == 200
-    stats = client.get(f"/v1/profiling/{did}/statistics", headers=h)
-    assert stats.status_code == 200
-    assert isinstance(stats.json(), list)
-    profile = client.get(f"/v1/profiling/{did}", headers=h)
-    assert profile.status_code == 200
-    assert "columns" in profile.json()
+    recipe = client.get(f"/v1/preparation/recipe/{body['recipe_id']}", headers=h)
+    assert recipe.status_code == 200
+    assert "steps" in recipe.json()["recipe_json"]
+
+    approve = client.post("/v1/preparation/approve", headers=h, json={"job_id": job_id})
+    assert approve.status_code == 200, approve.text
+    assert approve.json()["status"] == "completed"
+
+    ds = client.get(f"/v1/datasets/{did}", headers=h)
+    assert ds.status_code == 200
+    assert ds.json()["current_version"] >= 2
+
+    final = client.get(f"/v1/preparation/{did}", headers=h)
+    assert final.json()["status"] == "completed"
+    assert final.json()["output_version"] is not None
+
+
+def test_preparation_reject(client: TestClient) -> None:
+    auth = _auth(client)
+    h = auth["_headers"]
+    pid = client.post("/v1/projects", headers=h, json={"name": "P"}).json()["id"]
+    csv_bytes = b"a,b\n1,2\n3,\n"
+    up = client.post(
+        "/v1/datasets/upload",
+        headers=h,
+        data={"project_id": pid, "name": "rej"},
+        files={"file": ("r.csv", io.BytesIO(csv_bytes), "text/csv")},
+    )
+    did = up.json()["id"]
+    run = client.post(f"/v1/preparation/run/{did}", headers=h, json={})
+    job_id = run.json()["job_id"]
+    rej = client.post(
+        "/v1/preparation/reject", headers=h, json={"job_id": job_id, "reason": "nope"}
+    )
+    assert rej.status_code == 200
+    assert rej.json()["status"] == "rejected"
+    ds = client.get(f"/v1/datasets/{did}", headers=h)
+    assert ds.json()["current_version"] == 1

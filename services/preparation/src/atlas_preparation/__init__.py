@@ -1,3 +1,5 @@
-"""ATLAS preparation bounded context (placeholder)."""
+"""ATLAS preparation package."""
 
-__version__ = "0.0.0"
+from __future__ import annotations
+
+__version__ = "0.5.0"
