@@ -30,6 +30,7 @@ from atlas_feature_store.domain import FeatureSetStatus, JobStatus
 from atlas_feature_store.infrastructure.engine import (
     apply_pipeline,
     estimate_usefulness,
+    json_safe,
     memory_safe_sample,
     run_feature_engineering,
 )
@@ -243,10 +244,12 @@ class FeatureStoreService:
                 summary=summary_text,
                 selected_features=result.get("preview_columns", [])[:50],
                 rejected_features=rejected_list,
-                pipeline_json=result["pipeline"],
-                report_json=result["report"],
-                graph_json=result.get("visualizations") or result.get("graph") or {},
-                recommendations_json={"recommendations": result.get("recommendations", [])},
+                pipeline_json=json_safe(result["pipeline"]),
+                report_json=json_safe(result["report"]),
+                graph_json=json_safe(result.get("visualizations") or result.get("graph") or {}),
+                recommendations_json=json_safe(
+                    {"recommendations": result.get("recommendations", [])}
+                ),
                 rows=rows,
                 columns=cols,
                 quality_score=quality,
@@ -262,7 +265,7 @@ class FeatureStoreService:
                     feature_set_id=feature_set.id,
                     step_order=step_idx,
                     kind=str(getattr(kind_raw, "value", kind_raw)),
-                    params=step_data.get("params", {}) or {},
+                    params=json_safe(step_data.get("params", {}) or {}),
                     input_columns=list(
                         step_data.get("columns") or step_data.get("input_columns") or []
                     ),
@@ -304,7 +307,7 @@ class FeatureStoreService:
                 stats = FeatureStatisticsModel(
                     organization_id=org_id,
                     feature_id=registry_feature.id,
-                    stats_json=feat_stats,
+                    stats_json=json_safe(feat_stats),
                     uniqueness=feat_stats.get("uniqueness", 0.0),
                     variance=feat_stats.get("variance", 0.0),
                     missing_pct=feat_stats.get("missing_pct", 0.0),
@@ -362,11 +365,16 @@ class FeatureStoreService:
             return feature_set
 
         except Exception as exc:
+            self.repo.session.rollback()
+            job = self.repo.get_job_any(job_id)
+            if job is None:
+                raise
             job.status = JobStatus.FAILED.value
             job.error_message = str(exc)[:2000]
             job.completed_at = utcnow()
             FEATURE_GENERATION_FAILED.inc()
             self.repo.append_history(job, "FeatureGenerationFailed", {"error": str(exc)[:500]})
+            self.repo.session.commit()
             logger.exception("FeatureGenerationFailed", extra={"job_id": str(job_id)})
             raise
 

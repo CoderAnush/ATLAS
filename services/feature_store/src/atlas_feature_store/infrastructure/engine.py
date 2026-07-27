@@ -7,6 +7,7 @@ quality reports and visualizations.
 
 from __future__ import annotations
 
+import math
 import re
 import warnings
 from typing import Any
@@ -30,6 +31,30 @@ from atlas_feature_store.domain import (
 )
 
 warnings.filterwarnings("ignore", category=FutureWarning)
+
+
+def json_safe(value: Any) -> Any:
+    """Recursively sanitize values for PostgreSQL JSON columns (no NaN/Inf)."""
+    if value is None:
+        return None
+    if isinstance(value, dict):
+        return {str(k): json_safe(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [json_safe(v) for v in value]
+    if isinstance(value, np.ndarray):
+        return json_safe(value.tolist())
+    if isinstance(value, (np.floating, float)):
+        v = float(value)
+        if math.isnan(v) or math.isinf(v):
+            return None
+        return v
+    if isinstance(value, (np.integer, int)):
+        return int(value)
+    if isinstance(value, (np.bool_, bool)):
+        return bool(value)
+    if isinstance(value, pd.Timestamp):
+        return value.isoformat()
+    return value
 
 
 def feature_quality_scores(series: pd.Series) -> dict[str, float]:
@@ -1068,11 +1093,11 @@ def run_feature_engineering(
     # Correlation matrix
     numeric_data = matrix_df.select_dtypes(include=[np.number])
     if not numeric_data.empty and len(numeric_data.columns) <= 50:
-        corr_matrix = numeric_data.corr()
+        corr_matrix = numeric_data.corr().fillna(0.0)
         visualizations["correlation_matrix"] = {
             "type": "heatmap",
             "data": corr_matrix.to_dict(),
-            "shape": corr_matrix.shape,
+            "shape": list(corr_matrix.shape),
         }
 
     # PCA plot (if applicable)
@@ -1093,7 +1118,7 @@ def run_feature_engineering(
 
     # Variance distribution
     if not numeric_data.empty:
-        variances = numeric_data.var().sort_values(ascending=False)
+        variances = numeric_data.var().fillna(0.0).sort_values(ascending=False)
         visualizations["variance_distribution"] = {
             "type": "bar",
             "data": variances.head(20).to_dict(),
@@ -1140,22 +1165,24 @@ def run_feature_engineering(
     # Calculate usefulness estimate
     usefulness_score = estimate_usefulness(report)
 
-    return {
-        "pipeline": pipeline,
-        "report": report,
-        "visualizations": visualizations,
-        "recommendations": recommendations,
-        "summary": {
-            "input_shape": df.shape,
-            "output_shape": matrix_df.shape,
-            "features_created": len(matrix_df.columns) - len(df.columns),
-            "usefulness_score": usefulness_score,
-            "quality_issues": len(report["validation"]["issues"]),
-        },
-        "preview_columns": matrix_df.columns.tolist()[:50],
-        "matrix_shape": matrix_df.shape,
-        "matrix_sample": matrix_df.head(5).to_dict(),
-    }
+    return json_safe(
+        {
+            "pipeline": pipeline,
+            "report": report,
+            "visualizations": visualizations,
+            "recommendations": recommendations,
+            "summary": {
+                "input_shape": list(df.shape),
+                "output_shape": list(matrix_df.shape),
+                "features_created": len(matrix_df.columns) - len(df.columns),
+                "usefulness_score": usefulness_score,
+                "quality_issues": len(report["validation"]["issues"]),
+            },
+            "preview_columns": matrix_df.columns.tolist()[:50],
+            "matrix_shape": list(matrix_df.shape),
+            "matrix_sample": matrix_df.head(5).replace({np.nan: None}).to_dict(),
+        }
+    )
 
 
 def estimate_usefulness(report: dict[str, Any]) -> float:
