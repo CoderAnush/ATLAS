@@ -13,6 +13,7 @@ from atlas_api.config import Settings
 from atlas_catalog.infrastructure import models as _catalog_models  # noqa: F401
 from atlas_db.base import Base
 from atlas_db.session import create_session_factory
+from atlas_feature_store.infrastructure import models as _feature_store_models  # noqa: F401
 from atlas_identity.infrastructure import models as _identity_models  # noqa: F401
 from atlas_preparation.infrastructure import models as _prep_models  # noqa: F401
 from atlas_profiling.infrastructure import models as _profiling_models  # noqa: F401
@@ -75,6 +76,7 @@ def engine():
                 "catalog": None,
                 "profiling": None,
                 "preparation": None,
+                "feature_store": None,
             }
         )
         tables = [
@@ -109,6 +111,7 @@ def client(engine) -> TestClient:
                     "catalog": None,
                     "profiling": None,
                     "preparation": None,
+                    "feature_store": None,
                 }
             }
         )

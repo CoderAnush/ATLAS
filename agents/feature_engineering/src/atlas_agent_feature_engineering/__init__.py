@@ -1,4 +1,5 @@
-"""Feature Engineering Agent (placeholder)."""
+"""Feature Engineering Agent package."""
 
-__version__ = "0.0.0"
-AGENT_NAME = "feature_engineering"
+from atlas_agent_feature_engineering.agent import AGENT_NAME, run, template_summary
+
+__all__ = ["AGENT_NAME", "run", "template_summary"]

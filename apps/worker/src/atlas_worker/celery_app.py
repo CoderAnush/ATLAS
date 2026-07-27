@@ -19,6 +19,7 @@ celery_app = Celery(
         "atlas_worker.tasks.heartbeat",
         "atlas_worker.tasks.profiling",
         "atlas_worker.tasks.preparation",
+        "atlas_worker.tasks.features",
     ],
 )
 

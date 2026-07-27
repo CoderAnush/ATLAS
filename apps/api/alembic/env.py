@@ -6,6 +6,7 @@ import os
 from logging.config import fileConfig
 
 import atlas_catalog.infrastructure.models  # noqa: F401
+import atlas_feature_store.infrastructure.models  # noqa: F401
 import atlas_identity.infrastructure.models  # noqa: F401
 import atlas_preparation.infrastructure.models  # noqa: F401
 import atlas_profiling.infrastructure.models  # noqa: F401

@@ -5,20 +5,20 @@
 > From Raw Data to Production AI with One Command.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
-[![Version](https://img.shields.io/badge/version-v0.5.0-blue.svg)](./CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-v0.6.0-blue.svg)](./CHANGELOG.md)
 [![Python](https://img.shields.io/badge/python-%3E%3D3.11-blue.svg)](./pyproject.toml)
-[![Phase](https://img.shields.io/badge/phase-5%20preparation-brightgreen.svg)](./ROADMAP.md)
+[![Phase](https://img.shields.io/badge/phase-6%20features-brightgreen.svg)](./ROADMAP.md)
 [![CI](https://img.shields.io/github/actions/workflow/status/CoderAnush/ATLAS/ci.yml?branch=main&label=CI)](https://github.com/CoderAnush/ATLAS/actions)
 
 ATLAS is an enterprise-grade **Autonomous AI Engineering Platform (AAEP)**. Upload data, describe your goal in natural language, and receive a trained, explainable, deployable, monitored model—orchestrated by specialized AI agents.
 
 | | |
 |---|---|
-| **Release** | **v0.5.0 — ATLAS Intelligent Data Preparation Platform** |
-| **Status** | Phase 5 complete — cleaning recipes, HITL approve, versioned cleaned datasets |
+| **Release** | **v0.6.0 — ATLAS Intelligent Feature Engineering Platform** |
+| **Status** | Phase 6 complete — feature pipelines, HITL approve, versioned feature matrices (offline store) |
 | **License** | MIT |
 
-Phase 5 (data preparation) is complete. Feature engineering and later features start only with explicit Phase 6+ approval.
+Phase 6 (feature engineering) is complete. Training and later features start only with explicit Phase 7+ approval.
 
 ---
 
@@ -123,6 +123,24 @@ curl -X POST http://localhost:8000/v1/preparation/approve \
 ```
 
 UI: http://localhost:3000/preparation
+
+## Features (Phase 6)
+
+```bash
+# Start feature engineering analysis (HITL — does not mutate source)
+curl -X POST http://localhost:8000/v1/features/run/$DATASET_ID \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"config":{}}'
+
+# Approve → creates new dataset version with feature matrix
+curl -X POST http://localhost:8000/v1/features/approve \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d "{\"job_id\":\"$JOB_ID\"}"
+```
+
+API: `/v1/features/*` · Online feature serving is a placeholder (offline-first).
 
 After upgrading, ensure migrations run (API container runs `alembic upgrade head` on start):
 
@@ -278,7 +296,7 @@ Create `docs/screenshots/` and drop PNGs when ready; links above are intentional
 
 ## Roadmap
 
-See [`ROADMAP.md`](./ROADMAP.md). Phases 1–5 complete through **v0.5.0**. Do not start Phase 6 until explicitly approved.
+See [`ROADMAP.md`](./ROADMAP.md). Phases 1–6 complete through **v0.6.0**. Do not start Phase 7 until explicitly approved.
 
 ---
 
@@ -308,9 +326,9 @@ See [`CONTRIBUTING.md`](./CONTRIBUTING.md). Short version:
 
 ## Version
 
-**v0.5.0 — ATLAS Intelligent Data Preparation Platform**
+**v0.6.0 — ATLAS Intelligent Feature Engineering Platform**
 
-Ready to tag on `main` when approved. Create a GitHub Release from the tag (title: *ATLAS Intelligent Data Preparation Platform*).
+Ready to tag on `main` when approved. Create a GitHub Release from the tag (title: *ATLAS Intelligent Feature Engineering Platform*).
 
 ---
 

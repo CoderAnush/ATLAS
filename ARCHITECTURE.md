@@ -2,9 +2,25 @@
 
 High-level system design. For locked decisions, modules, and contracts, see **[`idea.md`](./idea.md)** (source of truth).
 
-**Last Updated:** 2026-07-26 (Phase 5 data preparation)
+**Last Updated:** 2026-07-27 (Phase 6 feature engineering)
 
 ATLAS is an **Autonomous AI Engineering Platform (AAEP)**. Full specification: [`idea.md`](./idea.md) §30–§52. This file remains a concise topology guide; **`idea.md` wins on conflicts**.
+
+### Phase 6 runtime topology
+
+```text
+browser → web:3000 (/features)
+       → api:8000 /v1/features/*
+            → enqueue Celery job (atlas.worker.features)
+worker → download dataset + optional profile → Feature Engineering Agent
+       → persist feature_store.* pipeline/report (awaiting_approval)
+human  → approve/reject (+ optional edited steps)
+       → on approve: materialize feature matrix → new catalog dataset version + lineage featured_from
+postgres: identity.* · catalog.* · profiling.* · preparation.* · feature_store.*
+```
+
+**Feature engineering:** never mutates the source version; HITL gate before writing feature matrices.  
+**Offline store:** registry, versions, views, lineage, tags, statistics; online serving placeholder (`online_enabled=False`).
 
 ### Phase 5 runtime topology
 

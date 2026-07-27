@@ -4,8 +4,8 @@
 > *From Raw Data to Production AI with One Command.*
 
 **Internal product identity:** **ATLAS — Autonomous AI Engineering Platform (AAEP)**  
-**Status:** Phase 5 complete — **v0.5.0 Intelligent Data Preparation Platform**; awaiting Phase 6 instructions  
-**Last Updated:** 2026-07-26  
+**Status:** Phase 6 complete — **v0.6.0 Intelligent Feature Engineering Platform**; awaiting Phase 7 instructions  
+**Last Updated:** 2026-07-27  
 **Primary Branch:** `main`  
 **License:** MIT  
 **Repository:** https://github.com/CoderAnush/ATLAS  
@@ -763,14 +763,22 @@ Full narrative: §51.
 - [x] Missing values, duplicates, outliers strategies  
 - [x] Versioned preparation recipes (HITL approve → new catalog version)  
 - [x] Data Cleaning Agent  
-- [ ] Encoding / scaling pipelines *(Phase 6 Feature Engineering)*  
 
-### Next (Phase 6 — do not start until instructed)
+### Completed (Phase 6)
 
-- [ ] Feature generation & selection baselines  
-- [ ] Time-series / text feature hooks  
-- [ ] Feature Engineering Agent  
-- [ ] Feature store interface (stub)  
+- [x] Feature generation & selection baselines  
+- [x] Time-series / text feature hooks  
+- [x] Feature Engineering Agent  
+- [x] Feature store interface (offline store; online serving placeholder)  
+- [x] Encoding / scaling pipelines *(deferred from Phase 5)*  
+
+### Next (Phase 7 — do not start until instructed)
+
+- [ ] sklearn / XGBoost / LightGBM / CatBoost adapters  
+- [ ] Classification & regression first  
+- [ ] Training Agent + worker execution  
+- [ ] Reproducibility metadata (seeds, env, code hash)  
+- [ ] Target-dependent feature selection (target encoding, RFE, SHAP importance, etc.)
 
 ### Architecture notes (Phase 3)
 

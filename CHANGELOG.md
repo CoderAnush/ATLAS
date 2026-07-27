@@ -2,6 +2,33 @@
 
 All notable changes to ATLAS are documented here.
 
+## [0.6.0] — 2026-07-27 — ATLAS Intelligent Feature Engineering Platform
+
+### Added
+
+- `services/feature_store` Clean Architecture package (generation engine, pipelines, HITL approval, offline store)
+- Feature Engineering Agent (`agents/feature_engineering` + `atlas_feature_store.application.agent`)
+- Feature generation: numeric interactions, polynomial/ratio/diff, log/sqrt/power, binning
+- Time / text / categorical / numeric transforms; **encoding & scaling** (moved from Phase 5 deferral)
+- Target-independent selection (variance threshold, correlation); target-dependent methods stubbed
+- Offline feature store: registry, versions, views, lineage, tags, statistics, transformations
+- HITL approve / reject / edit → immutable feature matrix as new catalog dataset version
+- Async Celery jobs (`atlas.worker.features`) with awaiting_approval → approve/reject/export
+- Approve creates a **new catalog dataset version** (never overwrites) + lineage `featured_from`
+- Alembic `0006_feature_store` (`feature_store` schema, 10 tables)
+- API under `/v1/features/*`
+- Unit tests for the feature engineering engine
+
+### Changed
+
+- Version **0.6.0**; API/worker images install `atlas-feature-store`
+
+### Notes
+
+- Online feature serving is a **placeholder** (`online_enabled=False`; D022 offline-first in Phase 6)
+- Target-dependent selection (target encoding, RFE, SHAP importance, etc.) deferred to **Phase 7**
+- No training, HPO, or AutoML (Phase 7+)
+
 ## [0.5.0] — 2026-07-26 — ATLAS Intelligent Data Preparation Platform
 
 ### Added

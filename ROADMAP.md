@@ -2,7 +2,7 @@
 
 Living delivery plan. **`idea.md` remains the architectural source of truth.** Update both when phases or scope change.
 
-**Last Updated:** 2026-07-23 (Phase 1 frozen as v0.1.0 Platform Foundation)
+**Last Updated:** 2026-07-27 (Phase 6 frozen as v0.6.0 Intelligent Feature Engineering Platform)
 
 ---
 
@@ -101,12 +101,12 @@ Living delivery plan. **`idea.md` remains the architectural source of truth.** U
 
 ---
 
-## Phase 5 — Cleaning Pipeline
+## Phase 5 — Cleaning Pipeline ✅
 
 - [x] Missing values, duplicates, outliers strategies  
 - [x] Versioned preparation recipes (HITL approve → new dataset version)  
 - [x] Data Cleaning Agent  
-- [ ] Encoding / scaling pipelines *(deferred to Phase 6 Feature Engineering)*  
+- [x] Encoding / scaling pipelines *(completed in Phase 6 Feature Engineering)*  
 
 **Exit criteria:** Reproducible cleaned dataset artifact from a profiled source. **Met** (approve creates catalog vN+1 + recipe/report).
 
@@ -114,14 +114,19 @@ Living delivery plan. **`idea.md` remains the architectural source of truth.** U
 
 ---
 
-## Phase 6 — Feature Engineering
+## Phase 6 — Feature Engineering ✅
 
-- [ ] Feature generation & selection baselines  
-- [ ] Time-series / text feature hooks  
-- [ ] Feature Engineering Agent  
-- [ ] Feature store interface (stub)  
+**Release:** **v0.6.0 — ATLAS Intelligent Feature Engineering Platform** (2026-07-27)
 
-**Exit criteria:** Feature matrix version linked to experiment runs.
+- [x] Feature generation & selection baselines  
+- [x] Time-series / text feature hooks  
+- [x] Feature Engineering Agent  
+- [x] Feature store interface (offline store; online serving placeholder)  
+- [x] Encoding / scaling pipelines *(deferred from Phase 5)*  
+
+**Exit criteria:** Feature matrix version linked to dataset (offline store). **Met** (approve creates catalog vN+1 + feature version/lineage).
+
+**Completed:** 2026-07-27 — do not start Phase 7 until explicitly approved.
 
 ---
 
@@ -315,3 +320,4 @@ Phases 0–18 remain the engineering schedule. Versions package outcomes for sta
 | 2026-07-23 | Initial roadmap; Phase 0 marked complete |
 | 2026-07-23 | AAEP expansion: versions/editions, parallel streams, extra north stars |
 | 2026-07-23 | Phase 1 platform foundation marked complete |
+| 2026-07-27 | Phase 6 feature engineering marked complete (v0.6.0) |

@@ -1,4 +1,4 @@
-"""Catalog API integration tests (SQLite + fake object storage)."""
+"""Feature store API integration tests."""
 
 from __future__ import annotations
 
@@ -93,7 +93,7 @@ def engine():
 def client(engine) -> TestClient:
     settings = Settings(
         atlas_env="testing",
-        atlas_secret_key="test-secret-key-for-jwt-signing-phase3",
+        atlas_secret_key="test-secret-key-for-jwt-signing-phase6",
         atlas_json_logs=False,
         database_url="sqlite+pysqlite:///:memory:",
         atlas_max_upload_bytes=5_000_000,
@@ -121,12 +121,8 @@ def client(engine) -> TestClient:
     app.state.container.storage = FakeStorage()  # type: ignore[assignment]
 
     class _Redis:
-        def __init__(self) -> None:
-            self._data: dict[str, int] = {}
-
         def incr(self, key: str) -> int:
-            self._data[key] = self._data.get(key, 0) + 1
-            return self._data[key]
+            return 1
 
         def expire(self, key: str, _: int) -> None:
             return None
@@ -139,12 +135,12 @@ def client(engine) -> TestClient:
         yield test_client
 
 
-def _auth(client: TestClient, suffix: str | None = None) -> dict:
-    suffix = suffix or uuid.uuid4().hex[:8]
+def _auth(client: TestClient) -> dict:
+    suffix = uuid.uuid4().hex[:8]
     payload = {
-        "email": f"cat_{suffix}@example.com",
+        "email": f"feat_{suffix}@example.com",
         "password": "Str0ng!Pass",
-        "full_name": "Catalog User",
+        "full_name": "Featurizer",
         "organization_name": f"Org {suffix}",
     }
     response = client.post("/v1/auth/register", json=payload)
@@ -154,126 +150,73 @@ def _auth(client: TestClient, suffix: str | None = None) -> dict:
     return data
 
 
-def test_project_crud_and_dataset_upload(client: TestClient) -> None:
-    auth = _auth(client, "p1")
+def test_features_run_approve_flow(client: TestClient) -> None:
+    auth = _auth(client)
     h = auth["_headers"]
-    project = client.post(
-        "/v1/projects",
-        headers=h,
-        json={"name": "Demo", "description": "d", "tags": ["ml"]},
+    pid = client.post("/v1/projects", headers=h, json={"name": "P"}).json()["id"]
+    csv_bytes = (
+        b"id,age,score,country,created_at,description,target_label\n"
+        b"1,25,80,US,2024-01-15,hello world from atlas,0\n"
+        b"2,30,90,UK,2024-02-20,feature engineering test row,1\n"
+        b"3,35,85,US,2024-03-10,short text sample,0\n"
+        b"4,40,95,CA,2024-04-05,another description here,1\n"
+        b"5,45,88,UK,2024-05-12,final row with words,0\n"
     )
-    assert project.status_code == 201, project.text
-    pid = project.json()["id"]
-    assert client.get(f"/v1/projects/{pid}", headers=h).status_code == 200
-
-    csv_bytes = b"a,b\n1,2\n3,4\n"
-    upload = client.post(
-        "/v1/datasets/upload",
-        headers=h,
-        data={"project_id": pid, "name": "demo-csv", "tags": "raw,v1"},
-        files={"file": ("demo.csv", io.BytesIO(csv_bytes), "text/csv")},
-    )
-    assert upload.status_code == 201, upload.text
-    body = upload.json()
-    assert body["status"] == "ready"
-    assert body["current_version"] == 1
-    did = body["id"]
-
-    # version 2
-    csv2 = b"a,b\n1,2\n3,4\n5,6\n"
-    upload2 = client.post(
-        "/v1/datasets/upload",
-        headers=h,
-        data={"project_id": pid, "dataset_id": did},
-        files={"file": ("demo.csv", io.BytesIO(csv2), "text/csv")},
-    )
-    assert upload2.status_code == 201, upload2.text
-    assert upload2.json()["current_version"] == 2
-
-    versions = client.get(f"/v1/datasets/{did}/versions", headers=h)
-    assert versions.status_code == 200
-    assert len(versions.json()) == 2
-
-    meta = client.get(f"/v1/datasets/{did}/metadata", headers=h)
-    assert meta.status_code == 200
-    assert meta.json()["statistics"]["row_estimate"] == 3
-
-    dl = client.post(f"/v1/datasets/{did}/download", headers=h)
-    assert dl.status_code == 200
-    assert "url" in dl.json()
-
-    fav = client.post(f"/v1/datasets/{did}/favorite", headers=h)
-    assert fav.status_code == 200 and fav.json()["favorite"] is True
-
-    listed = client.get("/v1/datasets/search", headers=h, params={"q": "demo"})
-    assert listed.status_code == 200
-    assert listed.json()["total"] >= 1
-
-    assert client.post(f"/v1/datasets/{did}/archive", headers=h).status_code == 200
-    assert client.post(f"/v1/datasets/{did}/restore", headers=h).status_code == 200
-    assert client.delete(f"/v1/datasets/{did}", headers=h).status_code == 204
-
-
-def test_tenant_isolation_datasets(client: TestClient) -> None:
-    a = _auth(client, "ta")
-    b = _auth(client, "tb")
-    pa = client.post("/v1/projects", headers=a["_headers"], json={"name": "A"}).json()
-    csv_bytes = b"x\n1\n"
     up = client.post(
         "/v1/datasets/upload",
-        headers=a["_headers"],
-        data={"project_id": pa["id"]},
-        files={"file": ("a.csv", io.BytesIO(csv_bytes), "text/csv")},
+        headers=h,
+        data={"project_id": pid, "name": "features"},
+        files={"file": ("f.csv", io.BytesIO(csv_bytes), "text/csv")},
     )
-    assert up.status_code == 201
+    assert up.status_code == 201, up.text
     did = up.json()["id"]
-    assert client.get(f"/v1/datasets/{did}", headers=b["_headers"]).status_code == 404
-    assert client.get("/v1/datasets", headers=b["_headers"]).json()["total"] == 0
+
+    run = client.post(f"/v1/features/run/{did}", headers=h, json={"config": {}})
+    assert run.status_code == 202, run.text
+    job_id = run.json()["job_id"]
+
+    job = client.get(f"/v1/features/jobs/{job_id}", headers=h)
+    assert job.status_code == 200
+    assert job.json()["status"] == "awaiting_approval"
+
+    summary = client.get(f"/v1/features/dataset/{did}", headers=h)
+    assert summary.status_code == 200, summary.text
+    body = summary.json()
+    assert body["status"] == "awaiting_approval"
+    assert body["feature_set_id"]
+
+    feature_set = client.get(f"/v1/features/{body['feature_set_id']}", headers=h)
+    assert feature_set.status_code == 200
+    assert feature_set.json()["selected_features"]
+
+    approve = client.post("/v1/features/approve", headers=h, json={"job_id": job_id})
+    assert approve.status_code == 200, approve.text
+    assert approve.json()["status"] == "completed"
+
+    ds = client.get(f"/v1/datasets/{did}", headers=h)
+    assert ds.status_code == 200
+    assert ds.json()["current_version"] >= 2
+
+    final = client.get(f"/v1/features/dataset/{did}", headers=h)
+    assert final.json()["status"] == "completed"
 
 
-def test_rejects_bad_extension(client: TestClient) -> None:
-    auth = _auth(client, "bad")
+def test_features_reject(client: TestClient) -> None:
+    auth = _auth(client)
     h = auth["_headers"]
     pid = client.post("/v1/projects", headers=h, json={"name": "P"}).json()["id"]
-    bad = client.post(
+    csv_bytes = b"id,age,country\n1,20,US\n2,30,UK\n3,40,CA\n"
+    up = client.post(
         "/v1/datasets/upload",
         headers=h,
-        data={"project_id": pid},
-        files={"file": ("evil.exe", io.BytesIO(b"MZ"), "application/octet-stream")},
+        data={"project_id": pid, "name": "rej"},
+        files={"file": ("r.csv", io.BytesIO(csv_bytes), "text/csv")},
     )
-    assert bad.status_code == 400
-
-
-def test_duplicate_checksum(client: TestClient) -> None:
-    auth = _auth(client, "dup")
-    h = auth["_headers"]
-    pid = client.post("/v1/projects", headers=h, json={"name": "P"}).json()["id"]
-    payload = b"a,b\n1,2\n"
-    assert (
-        client.post(
-            "/v1/datasets/upload",
-            headers=h,
-            data={"project_id": pid},
-            files={"file": ("one.csv", io.BytesIO(payload), "text/csv")},
-        ).status_code
-        == 201
-    )
-    dup = client.post(
-        "/v1/datasets/upload",
-        headers=h,
-        data={"project_id": pid},
-        files={"file": ("two.csv", io.BytesIO(payload), "text/csv")},
-    )
-    assert dup.status_code == 409
-
-
-def test_connector_stub(client: TestClient) -> None:
-    auth = _auth(client, "conn")
-    h = auth["_headers"]
-    resp = client.post(
-        "/v1/connectors",
-        headers=h,
-        json={"name": "warehouse", "connector_type": "sql", "config": {"host": "db"}},
-    )
-    assert resp.status_code == 201
-    assert resp.json()["connector_type"] == "sql"
+    did = up.json()["id"]
+    run = client.post(f"/v1/features/run/{did}", headers=h, json={"config": {}})
+    job_id = run.json()["job_id"]
+    rej = client.post("/v1/features/reject", headers=h, json={"job_id": job_id, "reason": "nope"})
+    assert rej.status_code == 200
+    assert rej.json()["status"] == "rejected"
+    ds = client.get(f"/v1/datasets/{did}", headers=h)
+    assert ds.json()["current_version"] == 1
