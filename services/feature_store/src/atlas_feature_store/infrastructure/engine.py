@@ -1165,24 +1165,26 @@ def run_feature_engineering(
     # Calculate usefulness estimate
     usefulness_score = estimate_usefulness(report)
 
-    return json_safe(
-        {
-            "pipeline": pipeline,
-            "report": report,
-            "visualizations": visualizations,
-            "recommendations": recommendations,
-            "summary": {
-                "input_shape": list(df.shape),
-                "output_shape": list(matrix_df.shape),
-                "features_created": len(matrix_df.columns) - len(df.columns),
-                "usefulness_score": usefulness_score,
-                "quality_issues": len(report["validation"]["issues"]),
-            },
-            "preview_columns": matrix_df.columns.tolist()[:50],
-            "matrix_shape": list(matrix_df.shape),
-            "matrix_sample": matrix_df.head(5).replace({np.nan: None}).to_dict(),
-        }
-    )
+    payload: dict[str, Any] = {
+        "pipeline": pipeline,
+        "report": report,
+        "visualizations": visualizations,
+        "recommendations": recommendations,
+        "summary": {
+            "input_shape": list(df.shape),
+            "output_shape": list(matrix_df.shape),
+            "features_created": len(matrix_df.columns) - len(df.columns),
+            "usefulness_score": usefulness_score,
+            "quality_issues": len(report["validation"]["issues"]),
+        },
+        "preview_columns": matrix_df.columns.tolist()[:50],
+        "matrix_shape": list(matrix_df.shape),
+        "matrix_sample": matrix_df.head(5).replace({np.nan: None}).to_dict(),
+    }
+    cleaned = json_safe(payload)
+    if not isinstance(cleaned, dict):
+        raise TypeError("json_safe expected dict payload")
+    return cleaned
 
 
 def estimate_usefulness(report: dict[str, Any]) -> float:
