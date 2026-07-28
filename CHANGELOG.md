@@ -2,6 +2,40 @@
 
 All notable changes to ATLAS are documented here.
 
+## [0.8.0] — 2026-07-28 — ATLAS Hyperparameter Optimization Engine
+
+### Added
+
+- `services/hpo` Clean Architecture package (study engine, search spaces, artifacts, HITL approval)
+- Hyperparameter Optimization Agent (`agents/hyperparameter_optimization` + `atlas_hpo.application.agent`)
+- Optuna-first study execution with pluggable optimizer modes (`optuna`, `random`, `grid`, `tpe`, CMA-ES/NSGA-II placeholders)
+- Search-space templates for Random Forest, Decision Tree, SVM, KNN, Extra Trees, Logistic Regression, and Linear Regression
+- Early stopping controls via trial pruning, median pruning, max trials, and max duration budgets
+- MinIO HPO artifact persistence (`study.json`, `best_params.json`, `trials.csv`, `optimization_report.json`, `training_metrics.json`, `optimization_config.json`, `optimization_history.json`, `plots.json`)
+- Async Celery jobs (`atlas.worker.hpo`) with queued/running/awaiting_approval/completed/failed/rejected flow
+- Alembic `0008_hpo_engine` (`hpo` schema, 10 tables)
+- API under `/v1/hpo/*`
+- Web pages `/hpo` and `/hpo/[id]`
+- Unit tests for the HPO engine
+
+### Changed
+
+- Version **0.8.0** across workspace/API/worker/web
+- API/worker/docker wiring now installs `atlas-hpo`
+- SQLite integration fixtures now translate the `hpo` schema for shared tests
+
+### Fixed
+
+- Feature engineering leaky-name matching no longer treats substring `id` inside `target` as leaky; known supervised targets are retained through pipeline build and materialization
+- Feature jobs inherit `target` from profiling metadata when the run config omits it
+- Training encodes remaining non-numeric columns safely, deduplicates one-hot names, and coerces features to numeric before fit
+- HPO API dependency wiring uses `AppContainer.storage` (was `object_storage`, causing `/v1/hpo/run` 500s)
+
+### Notes
+
+- Phase 8 intentionally excludes experiment tracking, explainability, deployment, and monitoring
+- Docker Compose E2E smoke verified: register → upload → profile → prepare → features → train → HPO → approve
+
 ## [0.7.0] — 2026-07-28 — ATLAS Training Engine
 
 ### Added

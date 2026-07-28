@@ -25,6 +25,7 @@ members = [
     "atlas-core",
     "atlas-db",
     "atlas-feature-store",
+    "atlas-hpo",
     "atlas-identity",
     "atlas-ml",
     "atlas-modeling",
@@ -196,7 +197,7 @@ wheels = [
 
 [[package]]
 name = "atlas"
-version = "0.7.0"
+version = "0.8.0"
 source = { virtual = "." }
 
 [package.dev-dependencies]
@@ -225,7 +226,7 @@ dev = [
 
 [[package]]
 name = "atlas-api"
-version = "0.7.0"
+version = "0.8.0"
 source = { editable = "apps/api" }
 dependencies = [
     { name = "alembic" },
@@ -234,6 +235,7 @@ dependencies = [
     { name = "atlas-core" },
     { name = "atlas-db" },
     { name = "atlas-feature-store" },
+    { name = "atlas-hpo" },
     { name = "atlas-identity" },
     { name = "atlas-modeling" },
     { name = "atlas-preparation" },
@@ -257,6 +259,7 @@ requires-dist = [
     { name = "atlas-core", editable = "packages/atlas-core" },
     { name = "atlas-db", editable = "packages/atlas-db" },
     { name = "atlas-feature-store", editable = "services/feature_store" },
+    { name = "atlas-hpo", editable = "services/hpo" },
     { name = "atlas-identity", editable = "services/identity" },
     { name = "atlas-modeling", editable = "services/modeling" },
     { name = "atlas-preparation", editable = "services/preparation" },
@@ -382,6 +385,48 @@ requires-dist = [
     { name = "pydantic", specifier = ">=2.9" },
     { name = "scikit-learn", specifier = ">=1.4" },
     { name = "scipy", specifier = ">=1.11" },
+    { name = "sqlalchemy", specifier = ">=2.0" },
+]
+
+[[package]]
+name = "atlas-hpo"
+version = "0.8.0"
+source = { editable = "services/hpo" }
+dependencies = [
+    { name = "atlas-catalog" },
+    { name = "atlas-contracts" },
+    { name = "atlas-core" },
+    { name = "atlas-db" },
+    { name = "atlas-feature-store" },
+    { name = "atlas-identity" },
+    { name = "atlas-modeling" },
+    { name = "atlas-profiling" },
+    { name = "atlas-storage" },
+    { name = "atlas-telemetry" },
+    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
+    { name = "numpy", version = "2.5.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
+    { name = "optuna" },
+    { name = "pandas" },
+    { name = "pydantic" },
+    { name = "sqlalchemy" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "atlas-catalog", editable = "services/catalog" },
+    { name = "atlas-contracts", editable = "packages/atlas-contracts" },
+    { name = "atlas-core", editable = "packages/atlas-core" },
+    { name = "atlas-db", editable = "packages/atlas-db" },
+    { name = "atlas-feature-store", editable = "services/feature_store" },
+    { name = "atlas-identity", editable = "services/identity" },
+    { name = "atlas-modeling", editable = "services/modeling" },
+    { name = "atlas-profiling", editable = "services/profiling" },
+    { name = "atlas-storage", editable = "packages/atlas-storage" },
+    { name = "atlas-telemetry", editable = "packages/atlas-telemetry" },
+    { name = "numpy", specifier = ">=1.26" },
+    { name = "optuna", specifier = ">=4.0" },
+    { name = "pandas", specifier = ">=2.2" },
+    { name = "pydantic", specifier = ">=2.9" },
     { name = "sqlalchemy", specifier = ">=2.0" },
 ]
 
@@ -596,13 +641,14 @@ provides-extras = ["fastapi", "otlp"]
 
 [[package]]
 name = "atlas-worker"
-version = "0.7.0"
+version = "0.8.0"
 source = { editable = "apps/worker" }
 dependencies = [
     { name = "atlas-catalog" },
     { name = "atlas-core" },
     { name = "atlas-db" },
     { name = "atlas-feature-store" },
+    { name = "atlas-hpo" },
     { name = "atlas-identity" },
     { name = "atlas-modeling" },
     { name = "atlas-preparation" },
@@ -621,6 +667,7 @@ requires-dist = [
     { name = "atlas-core", editable = "packages/atlas-core" },
     { name = "atlas-db", editable = "packages/atlas-db" },
     { name = "atlas-feature-store", editable = "services/feature_store" },
+    { name = "atlas-hpo", editable = "services/hpo" },
     { name = "atlas-identity", editable = "services/identity" },
     { name = "atlas-modeling", editable = "services/modeling" },
     { name = "atlas-preparation", editable = "services/preparation" },
@@ -913,6 +960,18 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/d8/53/6f443c9a4a8358a93a6792e2acffb9d9d5cb0a5cfd8802644b7b1c9a02e4/colorama-0.4.6.tar.gz", hash = "sha256:08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44", size = 27697, upload-time = "2022-10-25T02:36:22.414Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/d1/d6/3965ed04c63042e047cb6a3e6ed1a63a35087b6a609aa3a15ed8ac56c221/colorama-0.4.6-py2.py3-none-any.whl", hash = "sha256:4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6", size = 25335, upload-time = "2022-10-25T02:36:20.889Z" },
+]
+
+[[package]]
+name = "colorlog"
+version = "6.12.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "colorama", marker = "sys_platform == 'win32'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/8c/55/ba79756cb90c8d69d599d57785398ac87bba7b19c80e87f4e8a562197c93/colorlog-6.12.0.tar.gz", hash = "sha256:2a7924c1dadf18b22a0eb8b06d1c7b01d5341707ec1641eb6fcc4fde0c3e8e5f", size = 18151, upload-time = "2026-07-23T13:40:40.71Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/d4/19/0b6647bf5e331521e55d2b63bfbdc210bd9cd605189273f03614a05f702d/colorlog-6.12.0-py3-none-any.whl", hash = "sha256:30d392604e9110045a2c2aeefc27d7a017abbab63f3a8aee594eac0801df784e", size = 12239, upload-time = "2026-07-23T13:40:39.562Z" },
 ]
 
 [[package]]
@@ -1810,6 +1869,25 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/32/a9/d7525a59fdd240e69b5af4a6338e78fafa1b4203394122cbd6701fb5f84a/opentelemetry_util_http-0.65b0.tar.gz", hash = "sha256:84f82d826978bba416ab453460ff6a7391cdc3534c93a786595e4068680016b7", size = 11243, upload-time = "2026-07-16T15:26:27.898Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/23/3f/ab8d29df207ce5f470a07fa96ebb48af4e95b7fab7e7635311b9a32f2fab/opentelemetry_util_http-0.65b0-py3-none-any.whl", hash = "sha256:7553b606f963097cb190536dc30556cce85090692e471a422fff30ca29b04348", size = 8245, upload-time = "2026-07-16T15:25:46.482Z" },
+]
+
+[[package]]
+name = "optuna"
+version = "4.9.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "alembic" },
+    { name = "colorlog" },
+    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
+    { name = "numpy", version = "2.5.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
+    { name = "packaging" },
+    { name = "pyyaml" },
+    { name = "sqlalchemy" },
+    { name = "tqdm" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/f4/aa/05f5e3f662cc96a4c478fc3446b8ed6359825a2b504ecb614a9ac84e4a4d/optuna-4.9.0.tar.gz", hash = "sha256:b322e5cbdf1655fb84c37646c4a7a1f391de1b47806bbe222e015825d0a82b87", size = 485834, upload-time = "2026-06-01T06:23:30.424Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ab/f3/e5fcd5d9b15771ed6dc10e3a7eeddc672e418f4f4c4653d216cc1d857e2d/optuna-4.9.0-py3-none-any.whl", hash = "sha256:f52f3be6148654850c92a5860d398fd88ec6b2c84ab68d9c3d07dcff02e7afee", size = 425553, upload-time = "2026-06-01T06:23:28.804Z" },
 ]
 
 [[package]]
@@ -2807,6 +2885,18 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/b7/4d/08c89e34946fce2aec4fbb45c9016efd5f4d7f24af8e5d93296e935631d8/threadpoolctl-3.6.0.tar.gz", hash = "sha256:8ab8b4aa3491d812b623328249fab5302a68d2d71745c8a4c719a2fcaba9f44e", size = 21274, upload-time = "2025-03-13T13:49:23.031Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/32/d5/f9a850d79b0851d1d4ef6456097579a9005b31fea68726a4ae5f2d82ddd9/threadpoolctl-3.6.0-py3-none-any.whl", hash = "sha256:43a0b8fd5a2928500110039e43a5eed8480b918967083ea48dc3ab9f13c4a7fb", size = 18638, upload-time = "2025-03-13T13:49:21.846Z" },
+]
+
+[[package]]
+name = "tqdm"
+version = "4.70.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "colorama", marker = "sys_platform == 'win32'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/21/3b/6c24bec5be5e743ffd99576daa5cc077722fc7d5bbc00bd133fa0c698dc6/tqdm-4.70.0.tar.gz", hash = "sha256:55b0b0dbd97462d06ebee91e4dac24ed4d4702be82b24f07e6c1d27e08cea220", size = 795438, upload-time = "2026-07-27T11:33:15.271Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f9/1c/01bfd571a64e7f270e6bab5e33777debe0edc56759233ce84f27dec92d14/tqdm-4.70.0-py3-none-any.whl", hash = "sha256:7f585706bfddbdebf89daac705b2dfcc16890130727d3197ca62c732b4310953", size = 80184, upload-time = "2026-07-27T11:33:13.167Z" },
 ]
 
 [[package]]

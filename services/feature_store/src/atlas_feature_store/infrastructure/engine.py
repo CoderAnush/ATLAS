@@ -33,6 +33,31 @@ from atlas_feature_store.domain import (
 warnings.filterwarnings("ignore", category=FutureWarning)
 
 
+def _leaky_name_hint(column: str) -> str | None:
+    """Return matching leaky-name hint using token/prefix rules (not raw substring).
+
+    Short tokens like ``id`` must match a whole name segment so columns such as
+    ``target`` are not flagged because ``id`` appears inside the word.
+    """
+    col_lower = column.lower()
+    normalized = re.sub(r"[^a-z0-9]+", "_", col_lower).strip("_")
+    tokens = {t for t in normalized.split("_") if t}
+    padded = f"_{normalized}_" if normalized else "_"
+
+    for hint in LEAKY_NAME_HINTS:
+        h = hint.lower()
+        if h.endswith("_"):
+            prefix = h.rstrip("_")
+            if col_lower.startswith(h) or normalized == prefix or normalized.startswith(f"{prefix}_"):
+                return hint
+        elif "_" in h:
+            if f"_{h}_" in padded:
+                return hint
+        elif h in tokens:
+            return hint
+    return None
+
+
 def json_safe(value: Any) -> Any:
     """Recursively sanitize values for PostgreSQL JSON columns (no NaN/Inf)."""
     if value is None:
@@ -182,14 +207,12 @@ def validate_features(
             drop_candidates["sparse"].append(col)
             issues.append(f"Sparse feature (>{missing_pct:.1f}% missing): {col}")
 
-    # Check for leaky features
+    # Check for leaky features (token-aware; avoid "id" matching inside "target")
     for col in df.columns:
-        col_lower = col.lower()
-        for hint in LEAKY_NAME_HINTS:
-            if hint in col_lower:
-                drop_candidates["leaky"].append(col)
-                issues.append(f"Potentially leaky feature: {col} (contains '{hint}')")
-                break
+        matched = _leaky_name_hint(str(col))
+        if matched:
+            drop_candidates["leaky"].append(col)
+            issues.append(f"Potentially leaky feature: {col} (contains '{matched}')")
 
     # Check for high correlation (numeric only)
     numeric_cols = df.select_dtypes(include=[np.number]).columns.tolist()
@@ -298,8 +321,11 @@ def build_feature_pipeline(
         "high_correlation": TransformKind.DROP_HIGH_CORR,
     }
 
-    # 1. Drop problematic features
+    # 1. Drop problematic features (never drop the supervised target)
     validation = validate_features(df)
+    if target:
+        for reason, cols in list(validation["drop_candidates"].items()):
+            validation["drop_candidates"][reason] = [c for c in cols if c != target]
     all_drops = []
     for reason, cols in validation["drop_candidates"].items():
         if cols:
@@ -1086,6 +1112,12 @@ def run_feature_engineering(
 
     # Apply pipeline
     matrix_df, report = apply_pipeline(df, pipeline["steps"])
+
+    # Supervised training expects the target column in the feature matrix.
+    target = pipeline.get("target")
+    if target and target in df.columns and target not in matrix_df.columns:
+        matrix_df = matrix_df.copy()
+        matrix_df[target] = df[target].to_numpy()
 
     # Generate visualizations
     visualizations: dict[str, Any] = {}

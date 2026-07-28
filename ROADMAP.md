@@ -2,7 +2,7 @@
 
 Living delivery plan. **`idea.md` remains the architectural source of truth.** Update both when phases or scope change.
 
-**Last Updated:** 2026-07-28 (Phase 7 frozen as v0.7.0 Training Engine)
+**Last Updated:** 2026-07-28 (Phase 8 frozen as v0.8.0 Hyperparameter Optimization Engine)
 
 ---
 
@@ -146,15 +146,19 @@ Living delivery plan. **`idea.md` remains the architectural source of truth.** U
 
 ---
 
-## Phase 8 — Hyperparameter Optimization
+## Phase 8 — Hyperparameter Optimization ✅
 
-- [ ] Optuna integration  
-- [ ] Early stopping  
-- [ ] Search space templates by algorithm  
-- [ ] HPO Agent  
-- [ ] Ray Tune optional path  
+**Release:** **v0.8.0 — ATLAS Hyperparameter Optimization Engine** (2026-07-28)
 
-**Exit criteria:** HPO study produces best-trial model with full trial history.
+- [x] Optuna integration  
+- [x] Early stopping  
+- [x] Search space templates by algorithm  
+- [x] HPO Agent  
+- [x] Ray Tune optional path *(placeholder via pluggable interface; execution deferred)*  
+
+**Exit criteria:** HPO study produces best-trial model with full trial history. **Met.**
+
+**Completed:** 2026-07-28 — frozen as **v0.8.0** after Compose E2E smoke (through HPO approve). Do not start Phase 9 until explicitly approved.
 
 ---
 

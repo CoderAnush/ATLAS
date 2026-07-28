@@ -5,20 +5,20 @@
 > From Raw Data to Production AI with One Command.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
-[![Version](https://img.shields.io/badge/version-v0.7.0-blue.svg)](./CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-v0.8.0-blue.svg)](./CHANGELOG.md)
 [![Python](https://img.shields.io/badge/python-%3E%3D3.11-blue.svg)](./pyproject.toml)
-[![Phase](https://img.shields.io/badge/phase-7%20training-brightgreen.svg)](./ROADMAP.md)
+[![Phase](https://img.shields.io/badge/phase-8%20hpo-brightgreen.svg)](./ROADMAP.md)
 [![CI](https://img.shields.io/github/actions/workflow/status/CoderAnush/ATLAS/ci.yml?branch=main&label=CI)](https://github.com/CoderAnush/ATLAS/actions)
 
 ATLAS is an enterprise-grade **Autonomous AI Engineering Platform (AAEP)**. Upload data, describe your goal in natural language, and receive a trained, explainable, deployable, monitored model—orchestrated by specialized AI agents.
 
 | | |
 |---|---|
-| **Release** | **v0.7.0 — ATLAS Training Engine** |
-| **Status** | Phase 7 complete — deterministic training, metrics/artifacts, immutable model lineage, HITL model approval |
+| **Release** | **v0.8.0 — ATLAS Hyperparameter Optimization Engine** |
+| **Status** | Phase 8 complete — Optuna-first HPO, study artifacts, best trial selection, HITL study approval; Compose E2E smoke verified |
 | **License** | MIT |
 
-Phase 7 (training engine) is complete. HPO, experiment comparison, explainability, deployment, and monitoring remain future phases.
+Phase 8 (hyperparameter optimization) is complete and tagged **v0.8.0**. Experiment comparison, explainability, deployment, and monitoring remain future phases.
 
 ---
 
@@ -159,6 +159,24 @@ curl -X POST http://localhost:8000/v1/training/approve \
 ```
 
 API: `/v1/training/*` · no deployment in Phase 7.
+
+## HPO (Phase 8)
+
+```bash
+# Start HPO from an approved training job
+curl -X POST http://localhost:8000/v1/hpo/run/$TRAINING_JOB_ID \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"optimizer":"optuna","metric_objective":"accuracy","budget":{"max_trials":10,"parallel_workers":1},"config":{}}'
+
+# Approve the study after review
+curl -X POST http://localhost:8000/v1/hpo/approve \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d "{\"study_id\":\"$STUDY_ID\"}"
+```
+
+API: `/v1/hpo/*` · no experiment tracking, deployment, or explainability in Phase 8.
 
 After upgrading, ensure migrations run (API container runs `alembic upgrade head` on start):
 

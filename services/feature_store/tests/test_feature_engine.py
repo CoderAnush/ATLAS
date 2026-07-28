@@ -55,6 +55,15 @@ def test_validate_features() -> None:
     assert "issues" in result
     assert "drop_candidates" in result
     assert isinstance(result["issues"], list)
+    assert "id" in result["drop_candidates"]["leaky"]
+    assert "target_label" not in result["drop_candidates"]["leaky"]
+    assert "target" not in result["drop_candidates"]["leaky"]
+
+
+def test_validate_features_does_not_flag_target_substring() -> None:
+    df = pd.DataFrame({"target": [0, 1, 0, 1], "age": [1.0, 2.0, 3.0, 4.0]})
+    result = validate_features(df)
+    assert "target" not in result["drop_candidates"]["leaky"]
 
 
 def test_build_feature_pipeline() -> None:
@@ -63,6 +72,13 @@ def test_build_feature_pipeline() -> None:
     assert pipeline["steps"]
     assert pipeline["version"]
     assert "numeric" in pipeline["column_types"]
+    dropped = {
+        col
+        for step in pipeline["steps"]
+        if str(getattr(step.get("kind"), "value", step.get("kind"))).startswith("drop")
+        for col in step.get("columns", [])
+    }
+    assert "target_label" not in dropped
 
 
 def test_apply_pipeline_expands_columns() -> None:
@@ -72,6 +88,7 @@ def test_apply_pipeline_expands_columns() -> None:
     assert len(matrix.columns) > len(df.columns)
     assert report["summary"]["final_features"] >= len(df.columns)
     assert report["applied_steps"]
+    assert "target_label" in matrix.columns
 
 
 def test_run_feature_engineering_end_to_end() -> None:
@@ -82,3 +99,4 @@ def test_run_feature_engineering_end_to_end() -> None:
     assert result["summary"]["features_created"] >= 0
     assert "visualizations" in result
     assert "recommendations" in result
+    assert "target_label" in result["preview_columns"]

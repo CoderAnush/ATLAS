@@ -2,9 +2,25 @@
 
 High-level system design. For locked decisions, modules, and contracts, see **[`idea.md`](./idea.md)** (source of truth).
 
-**Last Updated:** 2026-07-28 (Phase 7 training engine)
+**Last Updated:** 2026-07-28 (Phase 8 hyperparameter optimization)
 
 ATLAS is an **Autonomous AI Engineering Platform (AAEP)**. Full specification: [`idea.md`](./idea.md) §30–§52. This file remains a concise topology guide; **`idea.md` wins on conflicts**.
+
+### Phase 8 runtime topology
+
+```text
+browser → web:3000 (/hpo)
+       → api:8000 /v1/hpo/*
+            → enqueue Celery job (atlas.worker.hpo)
+worker → read approved training job + approved feature matrix → HPO Agent
+       → persist hpo.* job/study/trials/artifacts (awaiting_approval)
+human  → approve/reject best trial study
+postgres: identity.* · catalog.* · profiling.* · preparation.* · feature_store.* · modeling.* · hpo.*
+```
+
+**HPO:** deterministic search where possible, Optuna-first, MinIO-backed artifacts, no deployment or experiment comparison in Phase 8.
+
+**Runtime smoke (v0.8.0):** Compose stack verified through features → training → HPO approve. Feature matrices retain the supervised target; training dedupes/coerces encoded columns; HPO deps bind `container.storage`.
 
 ### Phase 7 runtime topology
 

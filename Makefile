@@ -1,8 +1,8 @@
-# ATLAS developer shortcuts — Phase 1 / v0.1.0
+# ATLAS developer shortcuts — Phase 8 / v0.8.0
 .PHONY: help sync lint typecheck test web-install web-build web-dev compose-up compose-down compose-ps compose-logs migrate release-check
 
 help:
-	@echo "ATLAS v0.1.0 commands:"
+	@echo "ATLAS v0.8.0 commands:"
 	@echo "  make sync           - uv sync workspace"
 	@echo "  make lint           - ruff check + format check"
 	@echo "  make typecheck      - mypy"
@@ -18,8 +18,8 @@ sync:
 	uv sync
 
 lint:
-	uv run ruff check apps packages tests
-	uv run ruff format --check apps packages tests
+	uv run ruff check apps packages tests services/hpo agents/hyperparameter_optimization
+	uv run ruff format --check apps packages tests services/hpo agents/hyperparameter_optimization
 
 typecheck:
 	uv run mypy
@@ -52,4 +52,4 @@ migrate:
 	cd apps/api && uv run alembic upgrade head
 
 release-check: lint typecheck test web-build
-	@echo "Release checks passed for ATLAS v0.1.0"
+	@echo "Release checks passed for ATLAS v0.8.0"

@@ -21,6 +21,7 @@ celery_app = Celery(
         "atlas_worker.tasks.preparation",
         "atlas_worker.tasks.features",
         "atlas_worker.tasks.training",
+        "atlas_worker.tasks.hpo",
     ],
 )
 

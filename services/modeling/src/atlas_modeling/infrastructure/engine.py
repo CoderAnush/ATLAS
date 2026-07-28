@@ -186,8 +186,15 @@ def run_training(
 
     y = df[target_column]
     x = df.drop(columns=[target_column]).copy()
-    x = pd.get_dummies(x, drop_first=False)
-    x = x.fillna(0)
+    # Feature matrices may already include one-hot columns; encode any remaining
+    # non-numeric fields and collapse duplicate names afterward.
+    numeric_cols = set(x.select_dtypes(include=["number", "bool"]).columns)
+    encode_cols = [c for c in x.columns if c not in numeric_cols]
+    if encode_cols:
+        x = pd.get_dummies(x, columns=encode_cols, drop_first=False)
+    if x.columns.duplicated().any():
+        x = x.loc[:, ~x.columns.duplicated()].copy()
+    x = x.apply(pd.to_numeric, errors="coerce").fillna(0)
 
     y_for_split = y if (_is_classification(problem_type) and stratify) else None
     x_train, x_val, y_train, y_val = train_test_split(

@@ -206,7 +206,12 @@ class FeatureStoreService:
             if len(df) > 200000:
                 df = memory_safe_sample(df, max_rows=200000)
 
-            result = run_feature_engineering(df, profile, config=job.config)
+            config = dict(job.config or {})
+            if not config.get("target") and profile_row and profile_row.target_column:
+                config["target"] = profile_row.target_column
+            job.config = config
+
+            result = run_feature_engineering(df, profile, config=config)
 
             job.progress = 70
             FEATURE_PIPELINE_CREATED.inc()
@@ -442,9 +447,24 @@ class FeatureStoreService:
 
             feature_matrix, report = apply_pipeline(df, steps)
 
-            # Optionally filter to selected features
+            pipeline_target = feature_set.pipeline_json.get("target")
+            if (
+                pipeline_target
+                and pipeline_target in df.columns
+                and pipeline_target not in feature_matrix.columns
+            ):
+                feature_matrix = feature_matrix.copy()
+                feature_matrix[pipeline_target] = df[pipeline_target].to_numpy()
+
+            # Optionally filter to selected features (always retain supervised target)
             if selected_features:
                 available_features = [f for f in selected_features if f in feature_matrix.columns]
+                if (
+                    pipeline_target
+                    and pipeline_target in feature_matrix.columns
+                    and pipeline_target not in available_features
+                ):
+                    available_features.append(pipeline_target)
                 if available_features:
                     feature_matrix = feature_matrix[available_features]
 

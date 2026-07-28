@@ -1,6 +1,6 @@
 [project]
 name = "atlas"
-version = "0.7.0"
+version = "0.8.0"
 description = "ATLAS - Autonomous Training, Learning And Serving"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -36,6 +36,7 @@ members = [
   "services/preparation",
   "services/feature_store",
   "services/modeling",
+  "services/hpo",
   "apps/api",
   "apps/worker",
 ]
@@ -53,6 +54,7 @@ atlas-profiling = { workspace = true }
 atlas-preparation = { workspace = true }
 atlas-feature-store = { workspace = true }
 atlas-modeling = { workspace = true }
+atlas-hpo = { workspace = true }
 atlas-api = { workspace = true }
 atlas-worker = { workspace = true }
 
@@ -69,12 +71,12 @@ ignore = ["UP040", "E501", "B008"]
 python_version = "3.12"
 strict = true
 warn_unreachable = true
-mypy_path = "packages/atlas-core/src:packages/atlas-contracts/src:packages/atlas-db/src:packages/atlas-storage/src:packages/atlas-telemetry/src:services/identity/src:services/catalog/src:services/profiling/src:services/preparation/src:services/feature_store/src:services/modeling/src:apps/api/src:apps/worker/src:agents/dataset_understanding/src:agents/data_cleaning/src:agents/feature_engineering/src:agents/training/src"
-packages = ["atlas_core", "atlas_contracts", "atlas_db", "atlas_storage", "atlas_telemetry", "atlas_identity", "atlas_catalog", "atlas_profiling", "atlas_preparation", "atlas_feature_store", "atlas_modeling", "atlas_api", "atlas_worker"]
+mypy_path = "packages/atlas-core/src:packages/atlas-contracts/src:packages/atlas-db/src:packages/atlas-storage/src:packages/atlas-telemetry/src:services/identity/src:services/catalog/src:services/profiling/src:services/preparation/src:services/feature_store/src:services/modeling/src:services/hpo/src:apps/api/src:apps/worker/src:agents/dataset_understanding/src:agents/data_cleaning/src:agents/feature_engineering/src:agents/training/src:agents/hyperparameter_optimization/src"
+packages = ["atlas_core", "atlas_contracts", "atlas_db", "atlas_storage", "atlas_telemetry", "atlas_identity", "atlas_catalog", "atlas_profiling", "atlas_preparation", "atlas_feature_store", "atlas_modeling", "atlas_hpo", "atlas_api", "atlas_worker"]
 exclude = ["alembic", "apps/web", ".venv"]
 
 [[tool.mypy.overrides]]
-module = ["minio.*", "celery.*", "prometheus_client.*", "opentelemetry.*", "argon2.*", "jwt.*", "openpyxl.*", "pyarrow.*", "plotly.*", "sklearn.*", "scipy.*", "reportlab.*", "pandas.*", "numpy.*"]
+module = ["minio.*", "celery.*", "prometheus_client.*", "opentelemetry.*", "argon2.*", "jwt.*", "openpyxl.*", "pyarrow.*", "plotly.*", "sklearn.*", "scipy.*", "reportlab.*", "pandas.*", "numpy.*", "optuna.*"]
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
@@ -84,7 +86,7 @@ ignore_errors = true
 disable_error_code = ["syntax", "import-untyped"]
 
 [tool.pytest.ini_options]
-testpaths = ["tests", "packages", "apps", "services/catalog", "services/profiling", "services/preparation", "services/feature_store", "services/modeling"]
+testpaths = ["tests", "packages", "apps", "services/catalog", "services/profiling", "services/preparation", "services/feature_store", "services/modeling", "services/hpo"]
 addopts = "-ra"
 pythonpath = [
   "packages/atlas-core/src",
@@ -98,10 +100,12 @@ pythonpath = [
   "services/preparation/src",
   "services/feature_store/src",
   "services/modeling/src",
+  "services/hpo/src",
   "agents/dataset_understanding/src",
   "agents/data_cleaning/src",
   "agents/feature_engineering/src",
   "agents/training/src",
+  "agents/hyperparameter_optimization/src",
   "apps/api/src",
   "apps/worker/src",
 ]

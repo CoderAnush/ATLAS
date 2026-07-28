@@ -19,6 +19,7 @@ COPY services/profiling /app/services/profiling
 COPY services/preparation /app/services/preparation
 COPY services/feature_store /app/services/feature_store
 COPY services/modeling /app/services/modeling
+COPY services/hpo /app/services/hpo
 COPY apps/api /app/apps/api
 RUN /app/.venv/bin/pip install \
       /app/packages/atlas-core \
@@ -32,6 +33,7 @@ RUN /app/.venv/bin/pip install \
       /app/services/preparation \
       /app/services/feature_store \
       /app/services/modeling \
+      /app/services/hpo \
       /app/apps/api
 
 FROM python:3.11-slim AS runtime
@@ -55,6 +57,7 @@ COPY --from=builder /app/services/profiling /app/services/profiling
 COPY --from=builder /app/services/preparation /app/services/preparation
 COPY --from=builder /app/services/feature_store /app/services/feature_store
 COPY --from=builder /app/services/modeling /app/services/modeling
+COPY --from=builder /app/services/hpo /app/services/hpo
 COPY --from=builder /app/apps/api /app/apps/api
 
 WORKDIR /app/apps/api

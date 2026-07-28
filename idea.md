@@ -4,8 +4,8 @@
 > *From Raw Data to Production AI with One Command.*
 
 **Internal product identity:** **ATLAS — Autonomous AI Engineering Platform (AAEP)**  
-**Status:** Phase 7 complete — **v0.7.0 Training Engine**  
-**Last Updated:** 2026-07-27  
+**Status:** Phase 8 complete — **v0.8.0 Hyperparameter Optimization Engine**  
+**Last Updated:** 2026-07-28  
 **Primary Branch:** `main`  
 **License:** MIT  
 **Repository:** https://github.com/CoderAnush/ATLAS  
@@ -779,6 +779,14 @@ Full narrative: §51.
 - [x] Training Agent + worker execution  
 - [x] Reproducibility metadata (seed/config/lineage/artifacts)  
 - [x] Phase 7 stops before HPO/experiments/explainability/deploy/monitor
+
+### Completed (Phase 8)
+
+- [x] Optuna-first HPO engine with random/grid/TPE modes and CMA-ES/NSGA-II placeholders
+- [x] HPO Agent + worker execution
+- [x] Search-space templates, trial history, best-trial selection, and immutable artifacts
+- [x] HITL approve/reject for optimization studies
+- [x] Compose E2E smoke through HPO approve (target retention in feature matrices; training numeric coercion; HPO storage DI fix)
 
 ### Architecture notes (Phase 3)
 
