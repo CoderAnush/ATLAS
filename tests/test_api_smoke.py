@@ -5,6 +5,7 @@ from unittest.mock import MagicMock
 from atlas_api.app import create_app
 from atlas_api.config import Settings
 from atlas_api.di.container import AppContainer
+from atlas_experiments.application.ports import NoOpExperimentTracker
 from fastapi.testclient import TestClient
 
 
@@ -38,6 +39,7 @@ def test_health_live_with_mocked_container(monkeypatch) -> None:  # type: ignore
         redis=fake_redis,
         storage=MagicMock(),
         minio_client=fake_minio,
+        experiment_tracker=NoOpExperimentTracker(),
     )
 
     def fake_build(_settings: Settings) -> AppContainer:
@@ -65,6 +67,7 @@ def test_root_endpoint(monkeypatch) -> None:  # type: ignore[no-untyped-def]
         redis=MagicMock(),
         storage=MagicMock(),
         minio_client=MagicMock(),
+        experiment_tracker=NoOpExperimentTracker(),
     )
     container.minio_client.bucket_exists.return_value = True
     monkeypatch.setattr("atlas_api.app.build_container", lambda _s: container)
