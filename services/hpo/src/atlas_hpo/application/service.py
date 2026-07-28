@@ -72,7 +72,9 @@ class HpoService:
         if not has_permission(OrgRole(membership.role), permission):
             raise ForbiddenError(f"missing permission {permission.value}")
 
-    def _approved_training_job(self, org_id: uuid.UUID, training_job_id: uuid.UUID) -> TrainingJobModel:
+    def _approved_training_job(
+        self, org_id: uuid.UUID, training_job_id: uuid.UUID
+    ) -> TrainingJobModel:
         job = self.modeling.get_job(org_id, training_job_id)
         if job is None:
             raise NotFoundError("training job not found")
@@ -118,9 +120,7 @@ class HpoService:
         budget = dict(body.get("budget") or {})
         config = dict(body.get("config") or {})
         direction = (
-            "maximize"
-            if MetricObjective(metric_objective) in MAXIMIZE_OBJECTIVES
-            else "minimize"
+            "maximize" if MetricObjective(metric_objective) in MAXIMIZE_OBJECTIVES else "minimize"
         )
         job = OptimizationJobModel(
             organization_id=org_id,
@@ -177,7 +177,9 @@ class HpoService:
             base_model = self.modeling.get_model_by_job(job.organization_id, job.training_job_id)
             if base_model is None:
                 raise NotFoundError("trained model not found")
-            feature_set = self.features.get_feature_set(job.organization_id, training_job.feature_set_id)
+            feature_set = self.features.get_feature_set(
+                job.organization_id, training_job.feature_set_id
+            )
             if feature_set is None or not feature_set.matrix_storage_key:
                 raise NotFoundError("feature set matrix not found")
             dataset = self.catalog.get_dataset(job.organization_id, training_job.dataset_id)
@@ -238,7 +240,9 @@ class HpoService:
             study.status = StudyStatus.COMPLETED.value
             study.direction = result.direction
             study.optimizer = result.optimizer
-            study.feature_count = int(result.best_report.get("feature_schema", {}).get("feature_count", 0))
+            study.feature_count = int(
+                result.best_report.get("feature_schema", {}).get("feature_count", 0)
+            )
             study.total_trials = len(result.trials)
             study.completed_trials = len([t for t in result.trials if t.status == "completed"])
             study.pruned_trials = len([t for t in result.trials if t.status == "pruned"])
@@ -334,7 +338,9 @@ class HpoService:
                         )
                     )
 
-            artifact_prefix = f"{job.organization_id}/{dataset.project_id}/{dataset.id}/hpo/{job.id}"
+            artifact_prefix = (
+                f"{job.organization_id}/{dataset.project_id}/{dataset.id}/hpo/{job.id}"
+            )
             artifact_payloads: list[tuple[str, str, bytes, str]] = [
                 (
                     "study.json",

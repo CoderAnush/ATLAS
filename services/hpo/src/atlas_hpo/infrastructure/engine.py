@@ -55,7 +55,9 @@ def build_search_space(algorithm: str, problem_type: str) -> dict[str, dict[str,
         return {
             "criterion": {
                 "kind": "categorical",
-                "choices": ["gini", "entropy"] if "classification" in problem_type else ["squared_error"],
+                "choices": ["gini", "entropy"]
+                if "classification" in problem_type
+                else ["squared_error"],
             },
             "splitter": {"kind": "categorical", "choices": ["best", "random"]},
             "max_depth": {"kind": "int", "low": 2, "high": 20},
@@ -94,7 +96,9 @@ def build_search_space(algorithm: str, problem_type: str) -> dict[str, dict[str,
 def _sample_param(trial: optuna.Trial, name: str, spec: dict[str, Any]) -> Any:
     kind = spec["kind"]
     if kind == "int":
-        return trial.suggest_int(name, int(spec["low"]), int(spec["high"]), step=int(spec.get("step", 1)))
+        return trial.suggest_int(
+            name, int(spec["low"]), int(spec["high"]), step=int(spec.get("step", 1))
+        )
     if kind == "float":
         return trial.suggest_float(name, float(spec["low"]), float(spec["high"]))
     if kind == "uniform":
@@ -102,7 +106,9 @@ def _sample_param(trial: optuna.Trial, name: str, spec: dict[str, Any]) -> Any:
     if kind == "log_uniform":
         return trial.suggest_float(name, float(spec["low"]), float(spec["high"]), log=True)
     if kind == "discrete_uniform":
-        return trial.suggest_float(name, float(spec["low"]), float(spec["high"]), step=float(spec["step"]))
+        return trial.suggest_float(
+            name, float(spec["low"]), float(spec["high"]), step=float(spec["step"])
+        )
     if kind == "categorical":
         return trial.suggest_categorical(name, list(spec["choices"]))
     if kind == "bool":
@@ -148,7 +154,9 @@ def _direction(metric_objective: MetricObjective) -> str:
     return "maximize" if metric_objective in MAXIMIZE_OBJECTIVES else "minimize"
 
 
-def _sampler(name: OptimizerName, search_space: dict[str, dict[str, Any]], seed: int) -> optuna.samplers.BaseSampler:
+def _sampler(
+    name: OptimizerName, search_space: dict[str, dict[str, Any]], seed: int
+) -> optuna.samplers.BaseSampler:
     if name is OptimizerName.RANDOM:
         return RandomSampler(seed=seed)
     if name is OptimizerName.GRID:
@@ -302,7 +310,8 @@ def run_optimization(
         "pruned_trials": pruned_trials,
         "trials_per_second": completed_trials / duration if duration > 0 else 0.0,
         "average_trial_duration": (
-            sum(t.training_seconds for t in trial_results if t.training_seconds) / max(1, completed_trials)
+            sum(t.training_seconds for t in trial_results if t.training_seconds)
+            / max(1, completed_trials)
         ),
         "visualizations": {
             "optimization_history": history,
@@ -348,7 +357,9 @@ def history_to_trials(history: list[dict[str, Any]]) -> list[TrialResult]:
         TrialResult(
             trial_number=int(item["trial_number"]),
             status=str(item["status"]),
-            objective_value=(float(item["objective_value"]) if item["objective_value"] is not None else None),
+            objective_value=(
+                float(item["objective_value"]) if item["objective_value"] is not None else None
+            ),
             params=dict(item["params"]),
             metrics=dict(item["metrics"]),
             report={},

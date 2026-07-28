@@ -48,7 +48,11 @@ def _leaky_name_hint(column: str) -> str | None:
         h = hint.lower()
         if h.endswith("_"):
             prefix = h.rstrip("_")
-            if col_lower.startswith(h) or normalized == prefix or normalized.startswith(f"{prefix}_"):
+            if (
+                col_lower.startswith(h)
+                or normalized == prefix
+                or normalized.startswith(f"{prefix}_")
+            ):
                 return hint
         elif "_" in h:
             if f"_{h}_" in padded:

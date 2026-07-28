@@ -72,7 +72,9 @@ class HpoRepository:
         )
 
     def get_job_any(self, job_id: UUID) -> OptimizationJobModel | None:
-        return self.session.scalar(select(OptimizationJobModel).where(OptimizationJobModel.id == job_id))
+        return self.session.scalar(
+            select(OptimizationJobModel).where(OptimizationJobModel.id == job_id)
+        )
 
     def list_jobs(self, org_id: UUID) -> list[OptimizationJobModel]:
         return list(
@@ -121,7 +123,9 @@ class HpoRepository:
         )
 
     def get_best_trial(self, study_id: UUID) -> BestTrialModel | None:
-        return self.session.scalar(select(BestTrialModel).where(BestTrialModel.study_id == study_id))
+        return self.session.scalar(
+            select(BestTrialModel).where(BestTrialModel.study_id == study_id)
+        )
 
     def list_metrics(self, org_id: UUID, study_id: UUID) -> list[OptimizationMetricModel]:
         return list(
@@ -144,4 +148,6 @@ class HpoRepository:
         )
 
     def get_search_space(self, study_id: UUID) -> SearchSpaceModel | None:
-        return self.session.scalar(select(SearchSpaceModel).where(SearchSpaceModel.study_id == study_id))
+        return self.session.scalar(
+            select(SearchSpaceModel).where(SearchSpaceModel.study_id == study_id)
+        )

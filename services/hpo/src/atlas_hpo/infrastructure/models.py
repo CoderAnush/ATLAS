@@ -26,11 +26,15 @@ class OptimizationJobModel(Base):
     __table_args__ = {"schema": SCHEMA}
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=_uuid)
-    organization_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
+    organization_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), nullable=False, index=True
+    )
     training_job_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("modeling.training_jobs.id", ondelete="CASCADE"), index=True
     )
-    feature_set_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
+    feature_set_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), nullable=False, index=True
+    )
     dataset_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
     optimizer: Mapped[str] = mapped_column(String(64), nullable=False, default="optuna")
     metric_objective: Mapped[str] = mapped_column(String(64), nullable=False)
@@ -44,7 +48,9 @@ class OptimizationJobModel(Base):
     remaining_trials: Mapped[int | None] = mapped_column(Integer)
     eta_seconds: Mapped[int | None] = mapped_column(Integer)
     error_message: Mapped[str | None] = mapped_column(Text)
-    created_by_user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
+    created_by_user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), nullable=False, index=True
+    )
     started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(
@@ -60,9 +66,13 @@ class OptimizationStudyModel(Base):
     __table_args__ = {"schema": SCHEMA}
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=_uuid)
-    organization_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
+    organization_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), nullable=False, index=True
+    )
     job_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey(f"{SCHEMA}.optimization_jobs.id", ondelete="CASCADE"), index=True
+        UUID(as_uuid=True),
+        ForeignKey(f"{SCHEMA}.optimization_jobs.id", ondelete="CASCADE"),
+        index=True,
     )
     study_name: Mapped[str] = mapped_column(String(255), nullable=False)
     optimizer: Mapped[str] = mapped_column(String(64), nullable=False)
@@ -100,9 +110,13 @@ class OptimizationTrialModel(Base):
     )
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=_uuid)
-    organization_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
+    organization_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), nullable=False, index=True
+    )
     study_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey(f"{SCHEMA}.optimization_studies.id", ondelete="CASCADE"), index=True
+        UUID(as_uuid=True),
+        ForeignKey(f"{SCHEMA}.optimization_studies.id", ondelete="CASCADE"),
+        index=True,
     )
     trial_number: Mapped[int] = mapped_column(Integer, nullable=False)
     status: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
@@ -126,12 +140,18 @@ class BestTrialModel(Base):
     __table_args__ = {"schema": SCHEMA}
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=_uuid)
-    organization_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
+    organization_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), nullable=False, index=True
+    )
     study_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey(f"{SCHEMA}.optimization_studies.id", ondelete="CASCADE"), unique=True
+        UUID(as_uuid=True),
+        ForeignKey(f"{SCHEMA}.optimization_studies.id", ondelete="CASCADE"),
+        unique=True,
     )
     trial_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey(f"{SCHEMA}.optimization_trials.id", ondelete="CASCADE"), unique=True
+        UUID(as_uuid=True),
+        ForeignKey(f"{SCHEMA}.optimization_trials.id", ondelete="CASCADE"),
+        unique=True,
     )
     score: Mapped[float] = mapped_column(Float, nullable=False)
     params_json: Mapped[dict[str, Any]] = mapped_column(JsonType, nullable=False, default=dict)
@@ -150,9 +170,13 @@ class OptimizationConfigModel(Base):
     __table_args__ = {"schema": SCHEMA}
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=_uuid)
-    organization_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
+    organization_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), nullable=False, index=True
+    )
     job_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey(f"{SCHEMA}.optimization_jobs.id", ondelete="CASCADE"), index=True
+        UUID(as_uuid=True),
+        ForeignKey(f"{SCHEMA}.optimization_jobs.id", ondelete="CASCADE"),
+        index=True,
     )
     config_json: Mapped[dict[str, Any]] = mapped_column(JsonType, nullable=False, default=dict)
     created_at: Mapped[datetime] = mapped_column(
@@ -168,9 +192,13 @@ class OptimizationMetricModel(Base):
     __table_args__ = {"schema": SCHEMA}
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=_uuid)
-    organization_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
+    organization_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), nullable=False, index=True
+    )
     study_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey(f"{SCHEMA}.optimization_studies.id", ondelete="CASCADE"), index=True
+        UUID(as_uuid=True),
+        ForeignKey(f"{SCHEMA}.optimization_studies.id", ondelete="CASCADE"),
+        index=True,
     )
     metric_name: Mapped[str] = mapped_column(String(128), nullable=False, index=True)
     metric_value: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
@@ -188,9 +216,13 @@ class OptimizationArtifactModel(Base):
     __table_args__ = {"schema": SCHEMA}
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=_uuid)
-    organization_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
+    organization_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), nullable=False, index=True
+    )
     study_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey(f"{SCHEMA}.optimization_studies.id", ondelete="CASCADE"), index=True
+        UUID(as_uuid=True),
+        ForeignKey(f"{SCHEMA}.optimization_studies.id", ondelete="CASCADE"),
+        index=True,
     )
     artifact_type: Mapped[str] = mapped_column(String(128), nullable=False)
     storage_key: Mapped[str] = mapped_column(String(1024), nullable=False, unique=True)
@@ -209,9 +241,13 @@ class OptimizationLogModel(Base):
     __table_args__ = {"schema": SCHEMA}
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=_uuid)
-    organization_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
+    organization_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), nullable=False, index=True
+    )
     job_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey(f"{SCHEMA}.optimization_jobs.id", ondelete="CASCADE"), index=True
+        UUID(as_uuid=True),
+        ForeignKey(f"{SCHEMA}.optimization_jobs.id", ondelete="CASCADE"),
+        index=True,
     )
     level: Mapped[str] = mapped_column(String(16), nullable=False, default="INFO")
     event: Mapped[str] = mapped_column(String(128), nullable=False, index=True)
@@ -230,12 +266,18 @@ class SearchSpaceModel(Base):
     __table_args__ = {"schema": SCHEMA}
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=_uuid)
-    organization_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
+    organization_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), nullable=False, index=True
+    )
     study_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey(f"{SCHEMA}.optimization_studies.id", ondelete="CASCADE"), unique=True
+        UUID(as_uuid=True),
+        ForeignKey(f"{SCHEMA}.optimization_studies.id", ondelete="CASCADE"),
+        unique=True,
     )
     algorithm: Mapped[str] = mapped_column(String(128), nullable=False, index=True)
-    search_space_json: Mapped[dict[str, Any]] = mapped_column(JsonType, nullable=False, default=dict)
+    search_space_json: Mapped[dict[str, Any]] = mapped_column(
+        JsonType, nullable=False, default=dict
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
@@ -252,9 +294,13 @@ class OptimizationTagModel(Base):
     )
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=_uuid)
-    organization_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
+    organization_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), nullable=False, index=True
+    )
     study_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey(f"{SCHEMA}.optimization_studies.id", ondelete="CASCADE"), index=True
+        UUID(as_uuid=True),
+        ForeignKey(f"{SCHEMA}.optimization_studies.id", ondelete="CASCADE"),
+        index=True,
     )
     tag_key: Mapped[str] = mapped_column(String(128), nullable=False)
     tag_value: Mapped[str] = mapped_column(String(512), nullable=False)

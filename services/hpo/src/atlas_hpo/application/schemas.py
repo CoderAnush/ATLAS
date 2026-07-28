@@ -12,7 +12,9 @@ from pydantic import BaseModel, ConfigDict, Field
 class RunHpoRequest(BaseModel):
     optimizer: str = "optuna"
     metric_objective: str = "accuracy"
-    budget: dict[str, Any] = Field(default_factory=lambda: {"max_trials": 10, "parallel_workers": 1})
+    budget: dict[str, Any] = Field(
+        default_factory=lambda: {"max_trials": 10, "parallel_workers": 1}
+    )
     config: dict[str, Any] = Field(default_factory=dict)
 
 

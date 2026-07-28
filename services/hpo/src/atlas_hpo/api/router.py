@@ -67,14 +67,19 @@ def run_hpo(
 def list_hpo(ctx: CurrentUser, svc: HpoSvc) -> list[StudyResponse]:
     ctx = require_org_context(ctx)
     assert ctx.organization_id is not None
-    return [StudyResponse.model_validate(item) for item in svc.list_studies(ctx.user_id, ctx.organization_id)]
+    return [
+        StudyResponse.model_validate(item)
+        for item in svc.list_studies(ctx.user_id, ctx.organization_id)
+    ]
 
 
 @router.get("/jobs", response_model=list[JobResponse])
 def list_jobs(ctx: CurrentUser, svc: HpoSvc) -> list[JobResponse]:
     ctx = require_org_context(ctx)
     assert ctx.organization_id is not None
-    return [JobResponse.model_validate(item) for item in svc.list_jobs(ctx.user_id, ctx.organization_id)]
+    return [
+        JobResponse.model_validate(item) for item in svc.list_jobs(ctx.user_id, ctx.organization_id)
+    ]
 
 
 @router.get("/jobs/{id}", response_model=JobResponse)
@@ -91,7 +96,10 @@ def get_job(id: UUID, ctx: CurrentUser, svc: HpoSvc) -> JobResponse:
 def list_studies(ctx: CurrentUser, svc: HpoSvc) -> list[StudyResponse]:
     ctx = require_org_context(ctx)
     assert ctx.organization_id is not None
-    return [StudyResponse.model_validate(item) for item in svc.list_studies(ctx.user_id, ctx.organization_id)]
+    return [
+        StudyResponse.model_validate(item)
+        for item in svc.list_studies(ctx.user_id, ctx.organization_id)
+    ]
 
 
 @router.get("/studies/{id}", response_model=StudyResponse)
