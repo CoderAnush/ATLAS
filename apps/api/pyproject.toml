@@ -1,6 +1,6 @@
 [project]
 name = "atlas-api"
-version = "0.6.0"
+version = "0.7.0"
 description = "ATLAS modular-monolith API application."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -14,6 +14,7 @@ dependencies = [
     "atlas-profiling",
     "atlas-preparation",
     "atlas-feature-store",
+    "atlas-modeling",
     "atlas-storage",
     "atlas-telemetry",
     "fastapi>=0.115",

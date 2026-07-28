@@ -2,6 +2,33 @@
 
 All notable changes to ATLAS are documented here.
 
+## [0.7.0] — 2026-07-28 — ATLAS Training Engine
+
+### Added
+
+- `services/modeling` Clean Architecture package (deterministic training engine, adapters, metrics, artifacts, HITL approval)
+- Training Agent (`agents/training` + `atlas_modeling.application.agent`)
+- Algorithm adapter interface with Phase 7 baseline adapters (Logistic/Linear/Tree/Forest/ExtraTrees/KNN/NaiveBayes/SVM/XGBoost-if-installed/Dummy; LightGBM/CatBoost placeholders)
+- Deterministic train/validation pipeline with seed, shuffle, stratify, and cross-validation placeholder flags
+- Classification metrics (accuracy, precision, recall, f1, roc auc, confusion matrix, balanced accuracy)
+- Regression metrics (mae, mse, rmse, r2, mape, residual statistics)
+- MinIO training artifact persistence (`model.pkl`, `model.onnx` placeholder, report/metrics/pipeline/config/schema JSON)
+- Async Celery jobs (`atlas.worker.training`) with queued/running/awaiting_approval/completed/failed/rejected flow
+- Immutable model versions, training lineage, metrics, logs, and artifact references
+- Alembic `0007_training_engine` (`modeling` schema, 10 tables)
+- API under `/v1/training/*`
+- Web pages `/training` and `/training/[id]`
+- Unit tests for training engine metrics
+
+### Changed
+
+- Version **0.7.0** across workspace/API/worker/web
+- API/worker/docker wiring now installs `atlas-modeling`
+
+### Notes
+
+- Phase 7 intentionally excludes HPO, experiment comparison, explainability, deployment, and monitoring
+
 ## [0.6.0] — 2026-07-27 — ATLAS Intelligent Feature Engineering Platform
 
 ### Added

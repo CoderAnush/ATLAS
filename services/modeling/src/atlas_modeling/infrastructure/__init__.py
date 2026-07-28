@@ -1,1 +1,1 @@
-"""Infrastructure adapters for modeling (DB, queue, external APIs)."""
+"""Modeling infrastructure package."""

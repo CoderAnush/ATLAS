@@ -27,6 +27,7 @@ members = [
     "atlas-feature-store",
     "atlas-identity",
     "atlas-ml",
+    "atlas-modeling",
     "atlas-preparation",
     "atlas-profiling",
     "atlas-storage",
@@ -195,7 +196,7 @@ wheels = [
 
 [[package]]
 name = "atlas"
-version = "0.6.0"
+version = "0.7.0"
 source = { virtual = "." }
 
 [package.dev-dependencies]
@@ -224,7 +225,7 @@ dev = [
 
 [[package]]
 name = "atlas-api"
-version = "0.6.0"
+version = "0.7.0"
 source = { editable = "apps/api" }
 dependencies = [
     { name = "alembic" },
@@ -234,6 +235,7 @@ dependencies = [
     { name = "atlas-db" },
     { name = "atlas-feature-store" },
     { name = "atlas-identity" },
+    { name = "atlas-modeling" },
     { name = "atlas-preparation" },
     { name = "atlas-profiling" },
     { name = "atlas-storage" },
@@ -256,6 +258,7 @@ requires-dist = [
     { name = "atlas-db", editable = "packages/atlas-db" },
     { name = "atlas-feature-store", editable = "services/feature_store" },
     { name = "atlas-identity", editable = "services/identity" },
+    { name = "atlas-modeling", editable = "services/modeling" },
     { name = "atlas-preparation", editable = "services/preparation" },
     { name = "atlas-profiling", editable = "services/profiling" },
     { name = "atlas-storage", editable = "packages/atlas-storage" },
@@ -417,6 +420,46 @@ version = "0.1.0"
 source = { editable = "packages/atlas-ml" }
 
 [[package]]
+name = "atlas-modeling"
+version = "0.7.0"
+source = { editable = "services/modeling" }
+dependencies = [
+    { name = "atlas-catalog" },
+    { name = "atlas-contracts" },
+    { name = "atlas-core" },
+    { name = "atlas-db" },
+    { name = "atlas-feature-store" },
+    { name = "atlas-identity" },
+    { name = "atlas-profiling" },
+    { name = "atlas-storage" },
+    { name = "atlas-telemetry" },
+    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
+    { name = "numpy", version = "2.5.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
+    { name = "pandas" },
+    { name = "pydantic" },
+    { name = "scikit-learn" },
+    { name = "sqlalchemy" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "atlas-catalog", editable = "services/catalog" },
+    { name = "atlas-contracts", editable = "packages/atlas-contracts" },
+    { name = "atlas-core", editable = "packages/atlas-core" },
+    { name = "atlas-db", editable = "packages/atlas-db" },
+    { name = "atlas-feature-store", editable = "services/feature_store" },
+    { name = "atlas-identity", editable = "services/identity" },
+    { name = "atlas-profiling", editable = "services/profiling" },
+    { name = "atlas-storage", editable = "packages/atlas-storage" },
+    { name = "atlas-telemetry", editable = "packages/atlas-telemetry" },
+    { name = "numpy", specifier = ">=1.26" },
+    { name = "pandas", specifier = ">=2.2" },
+    { name = "pydantic", specifier = ">=2.9" },
+    { name = "scikit-learn", specifier = ">=1.4" },
+    { name = "sqlalchemy", specifier = ">=2.0" },
+]
+
+[[package]]
 name = "atlas-preparation"
 version = "0.5.0"
 source = { editable = "services/preparation" }
@@ -553,7 +596,7 @@ provides-extras = ["fastapi", "otlp"]
 
 [[package]]
 name = "atlas-worker"
-version = "0.6.0"
+version = "0.7.0"
 source = { editable = "apps/worker" }
 dependencies = [
     { name = "atlas-catalog" },
@@ -561,6 +604,7 @@ dependencies = [
     { name = "atlas-db" },
     { name = "atlas-feature-store" },
     { name = "atlas-identity" },
+    { name = "atlas-modeling" },
     { name = "atlas-preparation" },
     { name = "atlas-profiling" },
     { name = "atlas-storage" },
@@ -578,6 +622,7 @@ requires-dist = [
     { name = "atlas-db", editable = "packages/atlas-db" },
     { name = "atlas-feature-store", editable = "services/feature_store" },
     { name = "atlas-identity", editable = "services/identity" },
+    { name = "atlas-modeling", editable = "services/modeling" },
     { name = "atlas-preparation", editable = "services/preparation" },
     { name = "atlas-profiling", editable = "services/profiling" },
     { name = "atlas-storage", editable = "packages/atlas-storage" },

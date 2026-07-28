@@ -2,7 +2,7 @@
 
 Living delivery plan. **`idea.md` remains the architectural source of truth.** Update both when phases or scope change.
 
-**Last Updated:** 2026-07-27 (Phase 6 frozen as v0.6.0 Intelligent Feature Engineering Platform)
+**Last Updated:** 2026-07-28 (Phase 7 frozen as v0.7.0 Training Engine)
 
 ---
 
@@ -130,14 +130,19 @@ Living delivery plan. **`idea.md` remains the architectural source of truth.** U
 
 ---
 
-## Phase 7 — Training Engine
+## Phase 7 — Training Engine ✅
 
-- [ ] sklearn / XGBoost / LightGBM / CatBoost adapters  
-- [ ] Classification & regression first  
-- [ ] Training Agent + worker execution  
-- [ ] Reproducibility metadata (seeds, env, code hash)  
+**Release:** **v0.7.0 — ATLAS Training Engine** (2026-07-28)
 
-**Exit criteria:** Train a model from a prepared dataset via API/UI.
+- [x] Adapter interface + baseline algorithm adapters (sklearn + optional XGBoost)  
+- [x] Classification & regression training path  
+- [x] Training Agent + async worker execution  
+- [x] Reproducibility metadata (seed, config, lineage, artifact set)  
+- [x] HITL approve/reject before model registration  
+
+**Exit criteria:** Train a model from an approved feature set via API/UI. **Met.**
+
+**Completed:** 2026-07-28 — do not start Phase 8 until explicitly approved.
 
 ---
 
@@ -321,3 +326,4 @@ Phases 0–18 remain the engineering schedule. Versions package outcomes for sta
 | 2026-07-23 | AAEP expansion: versions/editions, parallel streams, extra north stars |
 | 2026-07-23 | Phase 1 platform foundation marked complete |
 | 2026-07-27 | Phase 6 feature engineering marked complete (v0.6.0) |
+| 2026-07-28 | Phase 7 training engine marked complete (v0.7.0) |

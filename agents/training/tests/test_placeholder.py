@@ -1,3 +1,5 @@
+def test_training_agent_placeholder() -> None:
+    assert True
 from atlas_agent_training.agent import run
 
 

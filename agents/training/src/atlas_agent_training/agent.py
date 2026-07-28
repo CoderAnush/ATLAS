@@ -1,3 +1,20 @@
+"""Training Agent module.
+
+Thin re-export of modeling-package agent for the agents/ tree layout.
+"""
+
+from __future__ import annotations
+
+from typing import Any
+
+from atlas_modeling.application.agent import AGENT_NAME, run_training_agent
+
+__all__ = ["AGENT_NAME", "run"]
+
+
+def run(request: dict[str, Any]) -> dict[str, Any]:
+    """Execute the training agent."""
+    return run_training_agent(request)
 """Training Agent implementation placeholder.
 
 Replace `run` with a real agent that validates contracts from atlas-contracts.

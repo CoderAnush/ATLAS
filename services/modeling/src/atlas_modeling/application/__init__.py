@@ -1,1 +1,1 @@
-"""Application use cases for modeling."""
+"""Modeling application package."""

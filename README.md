@@ -5,20 +5,20 @@
 > From Raw Data to Production AI with One Command.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
-[![Version](https://img.shields.io/badge/version-v0.6.0-blue.svg)](./CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-v0.7.0-blue.svg)](./CHANGELOG.md)
 [![Python](https://img.shields.io/badge/python-%3E%3D3.11-blue.svg)](./pyproject.toml)
-[![Phase](https://img.shields.io/badge/phase-6%20features-brightgreen.svg)](./ROADMAP.md)
+[![Phase](https://img.shields.io/badge/phase-7%20training-brightgreen.svg)](./ROADMAP.md)
 [![CI](https://img.shields.io/github/actions/workflow/status/CoderAnush/ATLAS/ci.yml?branch=main&label=CI)](https://github.com/CoderAnush/ATLAS/actions)
 
 ATLAS is an enterprise-grade **Autonomous AI Engineering Platform (AAEP)**. Upload data, describe your goal in natural language, and receive a trained, explainable, deployable, monitored model—orchestrated by specialized AI agents.
 
 | | |
 |---|---|
-| **Release** | **v0.6.0 — ATLAS Intelligent Feature Engineering Platform** |
-| **Status** | Phase 6 complete — feature pipelines, HITL approve, versioned feature matrices (offline store) |
+| **Release** | **v0.7.0 — ATLAS Training Engine** |
+| **Status** | Phase 7 complete — deterministic training, metrics/artifacts, immutable model lineage, HITL model approval |
 | **License** | MIT |
 
-Phase 6 (feature engineering) is complete. Training and later features start only with explicit Phase 7+ approval.
+Phase 7 (training engine) is complete. HPO, experiment comparison, explainability, deployment, and monitoring remain future phases.
 
 ---
 
@@ -141,6 +141,24 @@ curl -X POST http://localhost:8000/v1/features/approve \
 ```
 
 API: `/v1/features/*` · Online feature serving is a placeholder (offline-first).
+
+## Training (Phase 7)
+
+```bash
+# Start training from approved feature set
+curl -X POST http://localhost:8000/v1/training/run/$FEATURE_SET_ID \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"config":{"algorithm":"logistic_regression","random_seed":42}}'
+
+# Approve model registration
+curl -X POST http://localhost:8000/v1/training/approve \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d "{\"job_id\":\"$JOB_ID\"}"
+```
+
+API: `/v1/training/*` · no deployment in Phase 7.
 
 After upgrading, ensure migrations run (API container runs `alembic upgrade head` on start):
 
@@ -296,7 +314,7 @@ Create `docs/screenshots/` and drop PNGs when ready; links above are intentional
 
 ## Roadmap
 
-See [`ROADMAP.md`](./ROADMAP.md). Phases 1–6 complete through **v0.6.0**. Do not start Phase 7 until explicitly approved.
+See [`ROADMAP.md`](./ROADMAP.md). Phases 1–7 complete through **v0.7.0**.
 
 ---
 
@@ -326,9 +344,9 @@ See [`CONTRIBUTING.md`](./CONTRIBUTING.md). Short version:
 
 ## Version
 
-**v0.6.0 — ATLAS Intelligent Feature Engineering Platform**
+**v0.7.0 — ATLAS Training Engine**
 
-Ready to tag on `main` when approved. Create a GitHub Release from the tag (title: *ATLAS Intelligent Feature Engineering Platform*).
+Ready to tag on `main` when approved. Create a GitHub Release from the tag (title: *ATLAS Training Engine*).
 
 ---
 

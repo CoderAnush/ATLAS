@@ -4,7 +4,7 @@
 > *From Raw Data to Production AI with One Command.*
 
 **Internal product identity:** **ATLAS — Autonomous AI Engineering Platform (AAEP)**  
-**Status:** Phase 6 complete — **v0.6.0 Intelligent Feature Engineering Platform**; awaiting Phase 7 instructions  
+**Status:** Phase 7 complete — **v0.7.0 Training Engine**  
 **Last Updated:** 2026-07-27  
 **Primary Branch:** `main`  
 **License:** MIT  
@@ -772,13 +772,13 @@ Full narrative: §51.
 - [x] Feature store interface (offline store; online serving placeholder)  
 - [x] Encoding / scaling pipelines *(deferred from Phase 5)*  
 
-### Next (Phase 7 — do not start until instructed)
+### Completed (Phase 7)
 
-- [ ] sklearn / XGBoost / LightGBM / CatBoost adapters  
-- [ ] Classification & regression first  
-- [ ] Training Agent + worker execution  
-- [ ] Reproducibility metadata (seeds, env, code hash)  
-- [ ] Target-dependent feature selection (target encoding, RFE, SHAP importance, etc.)
+- [x] sklearn / optional XGBoost adapters with shared interface  
+- [x] Classification & regression first  
+- [x] Training Agent + worker execution  
+- [x] Reproducibility metadata (seed/config/lineage/artifacts)  
+- [x] Phase 7 stops before HPO/experiments/explainability/deploy/monitor
 
 ### Architecture notes (Phase 3)
 
