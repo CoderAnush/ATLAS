@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Any
 
 from atlas_db.session import create_engine_from_url, create_session_factory
+from atlas_experiments.infrastructure.mlflow import build_experiment_tracker
 from atlas_storage.minio_client import MinioObjectStorage
 from minio import Minio
 from redis import Redis
@@ -24,6 +26,7 @@ class AppContainer:
     redis: Redis[str]
     storage: MinioObjectStorage
     minio_client: Minio
+    experiment_tracker: Any
 
 
 def build_container(settings: Settings) -> AppContainer:
@@ -38,6 +41,12 @@ def build_container(settings: Settings) -> AppContainer:
         secure=settings.minio_secure,
     )
     storage = MinioObjectStorage(minio_client)
+    if settings.atlas_env == "testing":
+        from atlas_experiments.application.ports import NoOpExperimentTracker
+
+        experiment_tracker = NoOpExperimentTracker()
+    else:
+        experiment_tracker = build_experiment_tracker(settings.mlflow_tracking_uri)
     return AppContainer(
         settings=settings,
         engine=engine,
@@ -45,4 +54,5 @@ def build_container(settings: Settings) -> AppContainer:
         redis=redis,
         storage=storage,
         minio_client=minio_client,
+        experiment_tracker=experiment_tracker,
     )

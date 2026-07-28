@@ -4,7 +4,7 @@
 > *From Raw Data to Production AI with One Command.*
 
 **Internal product identity:** **ATLAS — Autonomous AI Engineering Platform (AAEP)**  
-**Status:** Phase 8 complete — **v0.8.0 Hyperparameter Optimization Engine**  
+**Status:** Phase 9 complete — **v0.9.0 Experiment Tracking Platform**  
 **Last Updated:** 2026-07-28  
 **Primary Branch:** `main`  
 **License:** MIT  
@@ -666,8 +666,8 @@ See `ROADMAP.md` for detail. Phases:
 5. Cleaning pipeline  
 6. Feature engineering  
 7. Training engine  
-8. HPO  
-9. Experiment tracking  
+8. HPO ✅  
+9. Experiment tracking ✅  
 10. Explainability  
 11. Deployment  
 12. Monitoring  
@@ -787,6 +787,14 @@ Full narrative: §51.
 - [x] Search-space templates, trial history, best-trial selection, and immutable artifacts
 - [x] HITL approve/reject for optimization studies
 - [x] Compose E2E smoke through HPO approve (target retention in feature matrices; training numeric coercion; HPO storage DI fix)
+
+### Completed (Phase 9)
+
+- [x] `services/experiments` Clean Architecture package + `ExperimentTracker` port with MLflow adapter
+- [x] Auto-record from training jobs and HPO studies (params, metrics, artifacts, environment)
+- [x] Leaderboard UI + run comparison
+- [x] API `/v1/experiments/*`, web `/experiments`, migration `0009_experiments` (13 tables)
+- [x] Phase 9 stops before explainability/deploy/monitor
 
 ### Architecture notes (Phase 3)
 

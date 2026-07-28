@@ -2,9 +2,21 @@
 
 High-level system design. For locked decisions, modules, and contracts, see **[`idea.md`](./idea.md)** (source of truth).
 
-**Last Updated:** 2026-07-28 (Phase 8 hyperparameter optimization)
+**Last Updated:** 2026-07-28 (Phase 9 experiment tracking)
 
 ATLAS is an **Autonomous AI Engineering Platform (AAEP)**. Full specification: [`idea.md`](./idea.md) §30–§52. This file remains a concise topology guide; **`idea.md` wins on conflicts**.
+
+### Phase 9 runtime topology
+
+```text
+browser → web:3000 (/experiments)
+       → api:8000 /v1/experiments/*
+training/HPO workers → auto-publish runs → experiments service
+       → ExperimentTracker (MLflow adapter) + postgres experiments.*
+postgres: identity.* · catalog.* · profiling.* · preparation.* · feature_store.* · modeling.* · hpo.* · experiments.*
+```
+
+**Experiment tracking:** MLflow behind `ExperimentTracker` port; auto-record from training/HPO; no explainability or deployment in Phase 9.
 
 ### Phase 8 runtime topology
 

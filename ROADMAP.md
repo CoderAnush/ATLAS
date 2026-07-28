@@ -2,7 +2,7 @@
 
 Living delivery plan. **`idea.md` remains the architectural source of truth.** Update both when phases or scope change.
 
-**Last Updated:** 2026-07-28 (Phase 8 frozen as v0.8.0 Hyperparameter Optimization Engine)
+**Last Updated:** 2026-07-28 (Phase 9 frozen as v0.9.0 Experiment Tracking Platform)
 
 ---
 
@@ -162,14 +162,18 @@ Living delivery plan. **`idea.md` remains the architectural source of truth.** U
 
 ---
 
-## Phase 9 — Experiment Tracking
+## Phase 9 — Experiment Tracking ✅
 
-- [ ] MLflow (or port) wired through `ExperimentTracker`  
-- [ ] Params, metrics, artifacts, hardware info  
-- [ ] Leaderboard UI  
-- [ ] Compare runs  
+**Release:** **v0.9.0 — ATLAS Experiment Tracking Platform** (2026-07-28)
 
-**Exit criteria:** Every training/HPO run is queryable and comparable.
+- [x] MLflow (or port) wired through `ExperimentTracker`  
+- [x] Params, metrics, artifacts, hardware info  
+- [x] Leaderboard UI  
+- [x] Compare runs  
+
+**Exit criteria:** Every training/HPO run is queryable and comparable. **Met.**
+
+**Completed:** 2026-07-28 — frozen as **v0.9.0**. Do not start Phase 10 until explicitly approved.
 
 ---
 
@@ -331,3 +335,5 @@ Phases 0–18 remain the engineering schedule. Versions package outcomes for sta
 | 2026-07-23 | Phase 1 platform foundation marked complete |
 | 2026-07-27 | Phase 6 feature engineering marked complete (v0.6.0) |
 | 2026-07-28 | Phase 7 training engine marked complete (v0.7.0) |
+| 2026-07-28 | Phase 8 HPO engine marked complete (v0.8.0) |
+| 2026-07-28 | Phase 9 experiment tracking marked complete (v0.9.0) |

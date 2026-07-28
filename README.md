@@ -5,20 +5,20 @@
 > From Raw Data to Production AI with One Command.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
-[![Version](https://img.shields.io/badge/version-v0.8.0-blue.svg)](./CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-v0.9.0-blue.svg)](./CHANGELOG.md)
 [![Python](https://img.shields.io/badge/python-%3E%3D3.11-blue.svg)](./pyproject.toml)
-[![Phase](https://img.shields.io/badge/phase-8%20hpo-brightgreen.svg)](./ROADMAP.md)
+[![Phase](https://img.shields.io/badge/phase-9%20experiments-brightgreen.svg)](./ROADMAP.md)
 [![CI](https://img.shields.io/github/actions/workflow/status/CoderAnush/ATLAS/ci.yml?branch=main&label=CI)](https://github.com/CoderAnush/ATLAS/actions)
 
 ATLAS is an enterprise-grade **Autonomous AI Engineering Platform (AAEP)**. Upload data, describe your goal in natural language, and receive a trained, explainable, deployable, monitored model—orchestrated by specialized AI agents.
 
 | | |
 |---|---|
-| **Release** | **v0.8.0 — ATLAS Hyperparameter Optimization Engine** |
-| **Status** | Phase 8 complete — Optuna-first HPO, study artifacts, best trial selection, HITL study approval; Compose E2E smoke verified |
+| **Release** | **v0.9.0 — ATLAS Experiment Tracking Platform** |
+| **Status** | Phase 9 complete — experiment registry, auto-record from training/HPO, leaderboard, run comparison; MLflow via `ExperimentTracker` |
 | **License** | MIT |
 
-Phase 8 (hyperparameter optimization) is complete and tagged **v0.8.0**. Experiment comparison, explainability, deployment, and monitoring remain future phases.
+Phase 9 (experiment tracking) is complete and tagged **v0.9.0**. Explainability, deployment, and monitoring remain future phases.
 
 ---
 
@@ -30,7 +30,7 @@ Phase 8 (hyperparameter optimization) is complete and tagged **v0.8.0**. Experim
 | Worker | Celery + Redis |
 | Web | Next.js 15 (App Router), React 19, Tailwind CSS |
 | Data | PostgreSQL 15, Redis 7, MinIO (S3) |
-| ML ops shell | MLflow tracking URI (no experiments yet) |
+| ML ops shell | MLflow via `ExperimentTracker` (experiment registry + runs) |
 | Observability | Structured JSON logs, Prometheus, Grafana, OpenTelemetry hook |
 | Python tooling | `uv`, Ruff, mypy, pytest |
 | Frontend tooling | TypeScript, ESLint, Prettier |
@@ -176,7 +176,29 @@ curl -X POST http://localhost:8000/v1/hpo/approve \
   -d "{\"study_id\":\"$STUDY_ID\"}"
 ```
 
-API: `/v1/hpo/*` · no experiment tracking, deployment, or explainability in Phase 8.
+API: `/v1/hpo/*` · no deployment or explainability in Phase 8.
+
+## Experiments (Phase 9)
+
+```bash
+# List experiments
+curl http://localhost:8000/v1/experiments \
+  -H "Authorization: Bearer $TOKEN"
+
+# Leaderboard
+curl http://localhost:8000/v1/experiments/leaderboard \
+  -H "Authorization: Bearer $TOKEN"
+
+# Compare runs
+curl -X POST http://localhost:8000/v1/experiments/compare \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"run_ids":["$RUN_ID_1","$RUN_ID_2"],"name":"baseline vs tuned"}'
+```
+
+UI: http://localhost:3000/experiments
+
+API: `/v1/experiments/*` · training and HPO auto-publish runs · explainability, deployment, and monitoring remain future phases.
 
 After upgrading, ensure migrations run (API container runs `alembic upgrade head` on start):
 
@@ -332,7 +354,7 @@ Create `docs/screenshots/` and drop PNGs when ready; links above are intentional
 
 ## Roadmap
 
-See [`ROADMAP.md`](./ROADMAP.md). Phases 1–7 complete through **v0.7.0**.
+See [`ROADMAP.md`](./ROADMAP.md). Phases 1–9 complete through **v0.9.0**.
 
 ---
 
@@ -362,9 +384,9 @@ See [`CONTRIBUTING.md`](./CONTRIBUTING.md). Short version:
 
 ## Version
 
-**v0.7.0 — ATLAS Training Engine**
+**v0.9.0 — ATLAS Experiment Tracking Platform**
 
-Ready to tag on `main` when approved. Create a GitHub Release from the tag (title: *ATLAS Training Engine*).
+Ready to tag on `main` when approved. Create a GitHub Release from the tag (title: *ATLAS Experiment Tracking Platform*).
 
 ---
 

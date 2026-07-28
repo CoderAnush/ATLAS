@@ -55,6 +55,7 @@ class HpoService:
         storage: ObjectStorage,
         *,
         bucket: str,
+        experiments: Any | None = None,
     ) -> None:
         self.repo = repo
         self.modeling = modeling
@@ -64,6 +65,7 @@ class HpoService:
         self.profiling = profiling
         self.storage = storage
         self.bucket = bucket
+        self.experiments = experiments
 
     def _require(self, user_id: uuid.UUID, org_id: uuid.UUID, permission: Permission) -> None:
         membership = self.identity.get_membership(org_id, user_id)
@@ -422,6 +424,51 @@ class HpoService:
                     extra_json={"study_id": str(study.id), "best_score": result.best_value},
                 )
             )
+            if self.experiments is not None:
+                try:
+                    best_metrics = dict(result.best_metrics or {})
+                    if result.best_value is not None and job.metric_objective not in best_metrics:
+                        best_metrics[job.metric_objective] = float(result.best_value)
+                    self.experiments.record_hpo_run(
+                        {
+                            "organization_id": job.organization_id,
+                            "created_by_user_id": job.created_by_user_id,
+                            "training_job_id": job.training_job_id,
+                            "hpo_job_id": job.id,
+                            "hpo_study_id": study.id,
+                            "dataset_id": job.dataset_id,
+                            "feature_set_id": job.feature_set_id,
+                            "algorithm": study.algorithm,
+                            "problem_type": study.problem_type,
+                            "summary": f"HPO study {study.study_name}",
+                            "experiment_name": f"hpo_{study.algorithm}_{job.id.hex[:8]}",
+                            "run_name": f"hpo_{study.id.hex[:8]}",
+                            "metrics": best_metrics,
+                            "hyperparameters": result.best_params,
+                            "config": {
+                                "optimizer": job.optimizer,
+                                "metric_objective": job.metric_objective,
+                                "budget": job.budget_json,
+                                **job.config_json,
+                            },
+                            "report": study.report_json,
+                            "random_seed": int(job.config_json.get("random_seed", 42)),
+                            "runtime_seconds": sum(
+                                float(t.training_seconds or 0) for t in result.trials
+                            ),
+                            "primary_metric": job.metric_objective,
+                        }
+                    )
+                except Exception as exp_exc:
+                    self.repo.add_log(
+                        OptimizationLogModel(
+                            organization_id=job.organization_id,
+                            job_id=job.id,
+                            level="WARNING",
+                            event="ExperimentRecordFailed",
+                            message=str(exp_exc)[:1000],
+                        )
+                    )
             return study
         except Exception as exc:
             self.repo.session.rollback()

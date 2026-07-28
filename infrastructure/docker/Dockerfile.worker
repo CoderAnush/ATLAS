@@ -20,6 +20,7 @@ COPY services/preparation /app/services/preparation
 COPY services/feature_store /app/services/feature_store
 COPY services/modeling /app/services/modeling
 COPY services/hpo /app/services/hpo
+COPY services/experiments /app/services/experiments
 COPY apps/worker /app/apps/worker
 RUN /app/.venv/bin/pip install \
       /app/packages/atlas-core \
@@ -34,6 +35,7 @@ RUN /app/.venv/bin/pip install \
       /app/services/feature_store \
       /app/services/modeling \
       /app/services/hpo \
+      /app/services/experiments \
       /app/apps/worker
 
 FROM python:3.11-slim AS runtime

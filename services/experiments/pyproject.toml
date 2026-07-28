@@ -1,0 +1,25 @@
+[project]
+name = "atlas-experiments"
+version = "0.9.0"
+description = "ATLAS experiment tracking platform."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "atlas-core",
+  "atlas-contracts",
+  "atlas-db",
+  "atlas-storage",
+  "atlas-telemetry",
+  "atlas-identity",
+  "atlas-catalog",
+  "pydantic>=2.9",
+  "sqlalchemy>=2.0",
+  "mlflow>=2.20,<3",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/atlas_experiments"]

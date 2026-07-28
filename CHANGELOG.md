@@ -2,6 +2,31 @@
 
 All notable changes to ATLAS are documented here.
 
+## [0.9.0] — 2026-07-28 — ATLAS Experiment Tracking Platform
+
+### Added
+
+- `services/experiments` Clean Architecture package (registry, runs, metrics, artifacts, leaderboard, comparison)
+- `ExperimentTracker` port with MLflow adapter (swap without API changes)
+- Auto-record from training jobs and HPO studies (worker + modeling/hpo service wiring)
+- Params, metrics, artifacts, environment/reproducibility bundles, tags, notes, lineage
+- Leaderboard and run comparison endpoints
+- Alembic `0009_experiments` (`experiments` schema, 13 tables)
+- API under `/v1/experiments/*`
+- Web pages `/experiments` and `/experiments/[id]`
+- Unit tests for experiment registry, leaderboard, and comparison
+
+### Changed
+
+- Version **0.9.0** across workspace/API/worker/web
+- API/worker/docker wiring now installs `atlas-experiments`
+- Training and HPO completion paths auto-publish runs to the experiments service
+
+### Notes
+
+- Phase 9 intentionally excludes explainability, deployment, and monitoring
+- Docker Compose E2E smoke verified: register → upload → profile → prepare → features → train → HPO → experiments list/leaderboard/compare
+
 ## [0.8.0] — 2026-07-28 — ATLAS Hyperparameter Optimization Engine
 
 ### Added

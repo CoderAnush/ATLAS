@@ -30,6 +30,9 @@ def _database_url() -> str:
 def run_training_job(self: Any, job_id: str) -> dict[str, str]:
     from atlas_catalog.infrastructure.repository import CatalogRepository
     from atlas_db.session import create_engine_from_url, create_session_factory
+    from atlas_experiments.application.service import ExperimentsService
+    from atlas_experiments.infrastructure.mlflow import build_experiment_tracker
+    from atlas_experiments.infrastructure.repository import ExperimentRepository
     from atlas_feature_store.infrastructure.repository import FeatureStoreRepository
     from atlas_identity.infrastructure.repository import IdentityRepository
     from atlas_modeling.application.service import ModelingService
@@ -49,6 +52,14 @@ def run_training_job(self: Any, job_id: str) -> dict[str, str]:
         bucket = os.getenv("MINIO_BUCKET", "atlas")
         client = Minio(endpoint, access_key=access, secret_key=secret, secure=secure)
         storage = MinioObjectStorage(client)
+        tracker = build_experiment_tracker(os.getenv("MLFLOW_TRACKING_URI"))
+        experiments = ExperimentsService(
+            ExperimentRepository(session),
+            IdentityRepository(session),
+            storage,
+            tracker,
+            bucket=bucket,
+        )
         svc = ModelingService(
             ModelingRepository(session),
             CatalogRepository(session),
@@ -57,6 +68,7 @@ def run_training_job(self: Any, job_id: str) -> dict[str, str]:
             ProfilingRepository(session),
             storage,
             bucket=bucket,
+            experiments=experiments,
         )
         svc.run_job(uuid.UUID(job_id))
         session.commit()

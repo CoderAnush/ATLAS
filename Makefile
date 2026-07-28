@@ -18,8 +18,8 @@ sync:
 	uv sync
 
 lint:
-	uv run ruff check apps packages tests services/hpo agents/hyperparameter_optimization
-	uv run ruff format --check apps packages tests services/hpo agents/hyperparameter_optimization
+	uv run ruff check apps packages tests services/hpo services/experiments agents/hyperparameter_optimization
+	uv run ruff format --check apps packages tests services/hpo services/experiments agents/hyperparameter_optimization
 
 typecheck:
 	uv run mypy

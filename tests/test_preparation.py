@@ -13,6 +13,7 @@ from atlas_api.config import Settings
 from atlas_catalog.infrastructure import models as _catalog_models  # noqa: F401
 from atlas_db.base import Base
 from atlas_db.session import create_session_factory
+from atlas_experiments.infrastructure import models as _experiments_models  # noqa: F401
 from atlas_feature_store.infrastructure import models as _feature_store_models  # noqa: F401
 from atlas_hpo.infrastructure import models as _hpo_models  # noqa: F401
 from atlas_identity.infrastructure import models as _identity_models  # noqa: F401
@@ -81,6 +82,7 @@ def engine():
                 "feature_store": None,
                 "modeling": None,
                 "hpo": None,
+                "experiments": None,
             }
         )
         tables = [
@@ -118,6 +120,7 @@ def client(engine) -> TestClient:
                     "feature_store": None,
                     "modeling": None,
                     "hpo": None,
+                    "experiments": None,
                 }
             }
         )

@@ -46,6 +46,7 @@ class ModelingService:
         storage: ObjectStorage,
         *,
         bucket: str,
+        experiments: Any | None = None,
     ) -> None:
         self.repo = repo
         self.catalog = catalog
@@ -54,6 +55,7 @@ class ModelingService:
         self.profiling = profiling
         self.storage = storage
         self.bucket = bucket
+        self.experiments = experiments
 
     def _require(self, user_id: uuid.UUID, org_id: uuid.UUID, permission: Permission) -> None:
         membership = self.identity.get_membership(org_id, user_id)
@@ -291,6 +293,45 @@ class ModelingService:
                     extra_json={"model_id": str(model.id)},
                 )
             )
+            if self.experiments is not None:
+                try:
+                    self.experiments.record_training_run(
+                        {
+                            "organization_id": job.organization_id,
+                            "created_by_user_id": job.created_by_user_id,
+                            "training_job_id": job.id,
+                            "dataset_id": job.dataset_id,
+                            "dataset_version": job.dataset_version,
+                            "feature_set_id": job.feature_set_id,
+                            "algorithm": outcome.report["algorithm"],
+                            "problem_type": problem_type,
+                            "summary": model.summary,
+                            "experiment_name": f"train_{dataset.name}_{job.id.hex[:8]}",
+                            "run_name": f"training_{job.id.hex[:8]}",
+                            "metrics": outcome.report.get("metrics") or {},
+                            "hyperparameters": config,
+                            "config": config,
+                            "report": outcome.report,
+                            "feature_schema": outcome.report.get("feature_schema"),
+                            "random_seed": int(config.get("random_seed", 42)),
+                            "git_commit": config.get("git_commit"),
+                            "runtime_seconds": outcome.training_seconds,
+                            "primary_metric": "accuracy"
+                            if "accuracy" in (outcome.report.get("metrics") or {})
+                            else None,
+                            "model_bytes": outcome.model_bytes,
+                        }
+                    )
+                except Exception as exp_exc:
+                    self.repo.add_log(
+                        TrainingLogModel(
+                            organization_id=job.organization_id,
+                            job_id=job.id,
+                            level="WARNING",
+                            event="ExperimentRecordFailed",
+                            message=str(exp_exc)[:1000],
+                        )
+                    )
             return model
         except Exception as exc:
             self.repo.session.rollback()
