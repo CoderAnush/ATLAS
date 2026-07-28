@@ -42,7 +42,9 @@ def run_training(
 ) -> RunTrainingResponse:
     ctx = require_org_context(ctx)
     assert ctx.organization_id is not None
-    job = svc.enqueue(ctx.user_id, ctx.organization_id, feature_set_id, (body or RunTrainingRequest()).config)
+    job = svc.enqueue(
+        ctx.user_id, ctx.organization_id, feature_set_id, (body or RunTrainingRequest()).config
+    )
 
     settings = getattr(request.app.state, "settings", None)
     if getattr(settings, "atlas_env", "") == "testing":
@@ -66,7 +68,9 @@ def run_training(
 def list_training(ctx: CurrentUser, svc: ModelingSvc) -> list[ModelResponse]:
     ctx = require_org_context(ctx)
     assert ctx.organization_id is not None
-    return [ModelResponse.model_validate(m) for m in svc.list_models(ctx.user_id, ctx.organization_id)]
+    return [
+        ModelResponse.model_validate(m) for m in svc.list_models(ctx.user_id, ctx.organization_id)
+    ]
 
 
 @router.get("/jobs", response_model=list[JobResponse])
@@ -90,7 +94,9 @@ def get_job(id: UUID, ctx: CurrentUser, svc: ModelingSvc) -> JobResponse:
 def list_models(ctx: CurrentUser, svc: ModelingSvc) -> list[ModelResponse]:
     ctx = require_org_context(ctx)
     assert ctx.organization_id is not None
-    return [ModelResponse.model_validate(m) for m in svc.list_models(ctx.user_id, ctx.organization_id)]
+    return [
+        ModelResponse.model_validate(m) for m in svc.list_models(ctx.user_id, ctx.organization_id)
+    ]
 
 
 @router.get("/models/{id}", response_model=ModelResponse)
@@ -127,7 +133,9 @@ def reject(body: RejectTrainingRequest, ctx: CurrentUser, svc: ModelingSvc) -> d
 
 
 @router.post("/export")
-def export_training(body: ExportTrainingRequest, ctx: CurrentUser, svc: ModelingSvc) -> JSONResponse:
+def export_training(
+    body: ExportTrainingRequest, ctx: CurrentUser, svc: ModelingSvc
+) -> JSONResponse:
     ctx = require_org_context(ctx)
     assert ctx.organization_id is not None
     return JSONResponse(svc.export(ctx.user_id, ctx.organization_id, body.job_id))

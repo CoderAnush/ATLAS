@@ -141,7 +141,9 @@ class ModelingRepository:
         return list(
             self.session.scalars(
                 select(TrainingLogModel)
-                .where(TrainingLogModel.organization_id == org_id, TrainingLogModel.job_id == job_id)
+                .where(
+                    TrainingLogModel.organization_id == org_id, TrainingLogModel.job_id == job_id
+                )
                 .order_by(TrainingLogModel.created_at.asc())
             )
         )

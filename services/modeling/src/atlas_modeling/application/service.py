@@ -63,7 +63,11 @@ class ModelingService:
             raise ForbiddenError(f"missing permission {permission.value}")
 
     def enqueue(
-        self, user_id: uuid.UUID, org_id: uuid.UUID, feature_set_id: uuid.UUID, config: dict[str, Any]
+        self,
+        user_id: uuid.UUID,
+        org_id: uuid.UUID,
+        feature_set_id: uuid.UUID,
+        config: dict[str, Any],
     ) -> TrainingJobModel:
         self._require(user_id, org_id, Permission.PROJECT_READ)
         feature_set = self.features.get_feature_set(org_id, feature_set_id)
@@ -99,7 +103,9 @@ class ModelingService:
         )
         return job
 
-    def _detect_problem_and_target(self, org_id: uuid.UUID, dataset_id: uuid.UUID) -> tuple[str, str]:
+    def _detect_problem_and_target(
+        self, org_id: uuid.UUID, dataset_id: uuid.UUID
+    ) -> tuple[str, str]:
         profile = self.profiling.get_latest_profile(org_id, dataset_id)
         if profile is None:
             raise ForbiddenError("profiling metadata is required before training")
@@ -137,7 +143,9 @@ class ModelingService:
             dataset = self.catalog.get_dataset(job.organization_id, job.dataset_id)
             if dataset is None:
                 raise NotFoundError("dataset not found")
-            problem_type, target_column = self._detect_problem_and_target(job.organization_id, job.dataset_id)
+            problem_type, target_column = self._detect_problem_and_target(
+                job.organization_id, job.dataset_id
+            )
             target_column = str(job.config_json.get("target_column") or target_column)
 
             raw = self.storage.download(self.bucket, feature_set.matrix_storage_key)
@@ -173,7 +181,10 @@ class ModelingService:
             self.repo.add_trained_model(model)
             self.repo.add_version(
                 ModelVersionModel(
-                    organization_id=job.organization_id, trained_model_id=model.id, version=1, immutable=True
+                    organization_id=job.organization_id,
+                    trained_model_id=model.id,
+                    version=1,
+                    immutable=True,
                 )
             )
 
@@ -301,7 +312,9 @@ class ModelingService:
             self.repo.session.commit()
             raise
 
-    def approve(self, user_id: uuid.UUID, org_id: uuid.UUID, job_id: uuid.UUID, note: str) -> TrainedModelModel:
+    def approve(
+        self, user_id: uuid.UUID, org_id: uuid.UUID, job_id: uuid.UUID, note: str
+    ) -> TrainedModelModel:
         self._require(user_id, org_id, Permission.PROJECT_WRITE)
         job = self.repo.get_job(org_id, job_id)
         if job is None:
@@ -321,12 +334,16 @@ class ModelingService:
         model.status = ModelStatus.APPROVED.value
         job.status = JobStatus.COMPLETED.value
         self.repo.add_log(
-            TrainingLogModel(organization_id=org_id, job_id=job.id, event="ModelApproved", message=note[:1000])
+            TrainingLogModel(
+                organization_id=org_id, job_id=job.id, event="ModelApproved", message=note[:1000]
+            )
         )
         self.repo.session.commit()
         return model
 
-    def reject(self, user_id: uuid.UUID, org_id: uuid.UUID, job_id: uuid.UUID, reason: str) -> TrainingJobModel:
+    def reject(
+        self, user_id: uuid.UUID, org_id: uuid.UUID, job_id: uuid.UUID, reason: str
+    ) -> TrainingJobModel:
         self._require(user_id, org_id, Permission.PROJECT_WRITE)
         job = self.repo.get_job(org_id, job_id)
         if job is None:
@@ -339,7 +356,9 @@ class ModelingService:
         job.status = JobStatus.REJECTED.value
         job.error_message = reason[:2000] if reason else None
         self.repo.add_log(
-            TrainingLogModel(organization_id=org_id, job_id=job.id, event="ModelRejected", message=reason[:1000])
+            TrainingLogModel(
+                organization_id=org_id, job_id=job.id, event="ModelRejected", message=reason[:1000]
+            )
         )
         self.repo.session.commit()
         return job
@@ -348,7 +367,9 @@ class ModelingService:
         self._require(user_id, org_id, Permission.PROJECT_READ)
         return self.repo.list_jobs(org_id)
 
-    def get_job(self, user_id: uuid.UUID, org_id: uuid.UUID, job_id: uuid.UUID) -> TrainingJobModel | None:
+    def get_job(
+        self, user_id: uuid.UUID, org_id: uuid.UUID, job_id: uuid.UUID
+    ) -> TrainingJobModel | None:
         self._require(user_id, org_id, Permission.PROJECT_READ)
         return self.repo.get_job(org_id, job_id)
 
@@ -356,11 +377,15 @@ class ModelingService:
         self._require(user_id, org_id, Permission.PROJECT_READ)
         return self.repo.list_models(org_id)
 
-    def get_model(self, user_id: uuid.UUID, org_id: uuid.UUID, model_id: uuid.UUID) -> TrainedModelModel | None:
+    def get_model(
+        self, user_id: uuid.UUID, org_id: uuid.UUID, model_id: uuid.UUID
+    ) -> TrainedModelModel | None:
         self._require(user_id, org_id, Permission.PROJECT_READ)
         return self.repo.get_model(org_id, model_id)
 
-    def get_report(self, user_id: uuid.UUID, org_id: uuid.UUID, model_id: uuid.UUID) -> dict[str, Any]:
+    def get_report(
+        self, user_id: uuid.UUID, org_id: uuid.UUID, model_id: uuid.UUID
+    ) -> dict[str, Any]:
         self._require(user_id, org_id, Permission.PROJECT_READ)
         model = self.repo.get_model(org_id, model_id)
         if model is None:
@@ -394,7 +419,9 @@ class ModelingService:
             )
         return out
 
-    def search(self, user_id: uuid.UUID, org_id: uuid.UUID, query: str, limit: int) -> list[TrainedModelModel]:
+    def search(
+        self, user_id: uuid.UUID, org_id: uuid.UUID, query: str, limit: int
+    ) -> list[TrainedModelModel]:
         self._require(user_id, org_id, Permission.PROJECT_READ)
         q = f"%{query}%"
         return list(

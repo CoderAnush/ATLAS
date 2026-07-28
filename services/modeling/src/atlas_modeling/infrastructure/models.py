@@ -26,8 +26,12 @@ class TrainingJobModel(Base):
     __table_args__ = {"schema": SCHEMA}
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=_uuid)
-    organization_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
-    feature_set_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
+    organization_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), nullable=False, index=True
+    )
+    feature_set_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), nullable=False, index=True
+    )
     dataset_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
     dataset_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
     status: Mapped[str] = mapped_column(String(32), nullable=False, default="queued", index=True)
@@ -51,7 +55,9 @@ class TrainedModelModel(Base):
     __table_args__ = {"schema": SCHEMA}
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=_uuid)
-    organization_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
+    organization_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), nullable=False, index=True
+    )
     job_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey(f"{SCHEMA}.training_jobs.id", ondelete="CASCADE"), index=True
     )
@@ -76,9 +82,13 @@ class ModelVersionModel(Base):
     __table_args__ = {"schema": SCHEMA}
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=_uuid)
-    organization_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
+    organization_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), nullable=False, index=True
+    )
     trained_model_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey(f"{SCHEMA}.trained_models.id", ondelete="CASCADE"), index=True
+        UUID(as_uuid=True),
+        ForeignKey(f"{SCHEMA}.trained_models.id", ondelete="CASCADE"),
+        index=True,
     )
     version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
     immutable: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
@@ -95,9 +105,13 @@ class TrainingMetricModel(Base):
     __table_args__ = {"schema": SCHEMA}
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=_uuid)
-    organization_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
+    organization_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), nullable=False, index=True
+    )
     trained_model_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey(f"{SCHEMA}.trained_models.id", ondelete="CASCADE"), index=True
+        UUID(as_uuid=True),
+        ForeignKey(f"{SCHEMA}.trained_models.id", ondelete="CASCADE"),
+        index=True,
     )
     metric_name: Mapped[str] = mapped_column(String(128), nullable=False, index=True)
     metric_value: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
@@ -113,9 +127,13 @@ class TrainingArtifactModel(Base):
     __table_args__ = {"schema": SCHEMA}
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=_uuid)
-    organization_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
+    organization_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), nullable=False, index=True
+    )
     trained_model_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey(f"{SCHEMA}.trained_models.id", ondelete="CASCADE"), index=True
+        UUID(as_uuid=True),
+        ForeignKey(f"{SCHEMA}.trained_models.id", ondelete="CASCADE"),
+        index=True,
     )
     artifact_type: Mapped[str] = mapped_column(String(64), nullable=False)
     storage_key: Mapped[str] = mapped_column(String(1024), nullable=False)
@@ -131,7 +149,9 @@ class TrainingConfigModel(Base):
     __table_args__ = {"schema": SCHEMA}
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=_uuid)
-    organization_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
+    organization_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), nullable=False, index=True
+    )
     job_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey(f"{SCHEMA}.training_jobs.id", ondelete="CASCADE"), index=True
     )
@@ -147,9 +167,13 @@ class TrainingLineageModel(Base):
     __table_args__ = {"schema": SCHEMA}
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=_uuid)
-    organization_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
+    organization_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), nullable=False, index=True
+    )
     trained_model_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey(f"{SCHEMA}.trained_models.id", ondelete="CASCADE"), index=True
+        UUID(as_uuid=True),
+        ForeignKey(f"{SCHEMA}.trained_models.id", ondelete="CASCADE"),
+        index=True,
     )
     dataset_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
     dataset_version: Mapped[int] = mapped_column(Integer, nullable=False)
@@ -171,7 +195,9 @@ class AlgorithmRegistryModel(Base):
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=_uuid)
     name: Mapped[str] = mapped_column(String(128), nullable=False, unique=True, index=True)
     family: Mapped[str] = mapped_column(String(64), nullable=False)
-    supports_problem_types: Mapped[list[Any]] = mapped_column(JsonType, nullable=False, default=list)
+    supports_problem_types: Mapped[list[Any]] = mapped_column(
+        JsonType, nullable=False, default=list
+    )
     available: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     notes: Mapped[str] = mapped_column(Text, nullable=False, default="")
     created_at: Mapped[datetime] = mapped_column(
@@ -184,7 +210,9 @@ class TrainingLogModel(Base):
     __table_args__ = {"schema": SCHEMA}
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=_uuid)
-    organization_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
+    organization_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), nullable=False, index=True
+    )
     job_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey(f"{SCHEMA}.training_jobs.id", ondelete="CASCADE"), index=True
     )
@@ -202,9 +230,13 @@ class ModelTagModel(Base):
     __table_args__ = {"schema": SCHEMA}
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=_uuid)
-    organization_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
+    organization_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), nullable=False, index=True
+    )
     trained_model_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey(f"{SCHEMA}.trained_models.id", ondelete="CASCADE"), index=True
+        UUID(as_uuid=True),
+        ForeignKey(f"{SCHEMA}.trained_models.id", ondelete="CASCADE"),
+        index=True,
     )
     tag: Mapped[str] = mapped_column(String(128), nullable=False, index=True)
     created_at: Mapped[datetime] = mapped_column(

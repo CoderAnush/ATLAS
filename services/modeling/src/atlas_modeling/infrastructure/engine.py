@@ -58,7 +58,10 @@ def _problem_type(value: str) -> ProblemType:
 
 
 def _is_classification(problem_type: ProblemType) -> bool:
-    return problem_type in {ProblemType.BINARY_CLASSIFICATION, ProblemType.MULTICLASS_CLASSIFICATION}
+    return problem_type in {
+        ProblemType.BINARY_CLASSIFICATION,
+        ProblemType.MULTICLASS_CLASSIFICATION,
+    }
 
 
 def _build_estimator(algorithm: str, problem_type: ProblemType, seed: int) -> Any:
@@ -69,11 +72,23 @@ def _build_estimator(algorithm: str, problem_type: ProblemType, seed: int) -> An
     if name is AlgorithmName.LINEAR_REGRESSION and not cls:
         return LinearRegression()
     if name is AlgorithmName.DECISION_TREE:
-        return DecisionTreeClassifier(random_state=seed) if cls else DecisionTreeRegressor(random_state=seed)
+        return (
+            DecisionTreeClassifier(random_state=seed)
+            if cls
+            else DecisionTreeRegressor(random_state=seed)
+        )
     if name is AlgorithmName.RANDOM_FOREST:
-        return RandomForestClassifier(random_state=seed) if cls else RandomForestRegressor(random_state=seed)
+        return (
+            RandomForestClassifier(random_state=seed)
+            if cls
+            else RandomForestRegressor(random_state=seed)
+        )
     if name is AlgorithmName.EXTRA_TREES:
-        return ExtraTreesClassifier(random_state=seed) if cls else ExtraTreesRegressor(random_state=seed)
+        return (
+            ExtraTreesClassifier(random_state=seed)
+            if cls
+            else ExtraTreesRegressor(random_state=seed)
+        )
     if name is AlgorithmName.KNN:
         return KNeighborsClassifier() if cls else KNeighborsRegressor()
     if name is AlgorithmName.NAIVE_BAYES and cls:
@@ -108,7 +123,9 @@ def _default_algorithm(problem_type: ProblemType) -> AlgorithmName:
     return AlgorithmName.LINEAR_REGRESSION
 
 
-def _classification_metrics(y_true: pd.Series, y_pred: np.ndarray, y_score: np.ndarray | None) -> dict[str, Any]:
+def _classification_metrics(
+    y_true: pd.Series, y_pred: np.ndarray, y_score: np.ndarray | None
+) -> dict[str, Any]:
     out: dict[str, Any] = {
         "accuracy": float(accuracy_score(y_true, y_pred)),
         "precision": float(precision_score(y_true, y_pred, average="weighted", zero_division=0)),
@@ -122,7 +139,9 @@ def _classification_metrics(y_true: pd.Series, y_pred: np.ndarray, y_score: np.n
             if y_score.ndim == 1:
                 out["roc_auc"] = float(roc_auc_score(y_true, y_score))
             else:
-                out["roc_auc"] = float(roc_auc_score(y_true, y_score, multi_class="ovr", average="weighted"))
+                out["roc_auc"] = float(
+                    roc_auc_score(y_true, y_score, multi_class="ovr", average="weighted")
+                )
         except Exception:  # noqa: BLE001
             out["roc_auc"] = None
     else:
