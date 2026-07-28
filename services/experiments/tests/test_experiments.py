@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import uuid
+from collections.abc import Iterator
 from typing import Any
 
 import atlas_experiments.infrastructure.models  # noqa: F401
@@ -48,7 +49,7 @@ SCHEMA_MAP = {"identity": None, "experiments": None}
 
 
 @pytest.fixture()
-def session() -> Session:
+def session() -> Iterator[Session]:
     engine = create_engine(
         "sqlite+pysqlite:///:memory:",
         connect_args={"check_same_thread": False},
